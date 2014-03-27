@@ -10,13 +10,13 @@
 #include <assert.h>
 
 list_t *
-list_new( void *value )
+list_new( void *el )
 {
     list_t *list;
     list = malloc( sizeof *list );
     if( !list ) return list;
     list->next = NULL;
-    list->value = value;
+    list->el = el;
     return list;
 }
 
@@ -42,7 +42,7 @@ list_length( list_t *list )
 }
 
 void
-list_push( list_t *list, void *value )
+list_push( list_t *list, void *el )
 {
     list_t **p = &list;
     assert( list );
@@ -52,7 +52,7 @@ list_push( list_t *list, void *value )
     *p = malloc( sizeof **p );
     if( !(*p) ) return;
     (*p)->next = NULL;
-    (*p)->value = value;
+    (*p)->el = el;
 }
 
 void
@@ -60,7 +60,7 @@ list_map( list_t *list, list_traversal_t *f, void *userdata )
 {
     assert( f );
     while( list ) {
-        f( &list->value, userdata );
+        f( &list->el, userdata );
         list = list->next;
     }
 }
@@ -70,7 +70,7 @@ list_find_first( list_t *list, list_traversal_t *f, void *userdata )
 {
     assert( f );
     while( list ) {
-        if( f(&list->value, userdata) ) return list;
+        if( f(&list->el, userdata) ) return list;
         list = list->next;
     }
     return NULL;

@@ -10,7 +10,7 @@
 
 typedef struct list_t {
     struct list_t *next;
-    void          *value;
+    void          *el;
 } list_t;
 
 /**

@@ -59,42 +59,42 @@ static const char *test_data[] = {
 };
 
 static int
-value_equal_to( void **value, void *data )
+el_equal_to( void **p, void *userdata )
 {
-    const char *p = *value, *q = data;
-    return !strcmp( p, q );
+    const char *el = *p, *str = userdata;
+    return !strcmp( el, str );
 }
 
 static void
 test_find_first( list_t *list )
 {
     list_t *p, *q;
-    p = list_find_first( list, value_equal_to, "abc" );
-    ok( p, "list_find_first() on first value" );
+    p = list_find_first( list, el_equal_to, "abc" );
+    ok( p, "list_find_first() on first element" );
     cmp_ok( p, "==", list, "... equal to head of list" );
-    is( p->value, "abc", "correct value found" );
-    q = list_find_first( list, value_equal_to, "abc" );
+    is( p->el, "abc", "correct element found" );
+    q = list_find_first( list, el_equal_to, "abc" );
     cmp_ok( p, "==", q );
-    q = list_find_first( list, value_equal_to, "defg" );
+    q = list_find_first( list, el_equal_to, "defg" );
     cmp_ok( p, "!=", q );
-    is( q->value, "defg", "correct value found" );
-    p = list_find_first( list, value_equal_to, "a string that should not appear in the list" );
-    ok( !p, "list_find_first() on value that can not be found" );
-    p = list_find_first( list, value_equal_to, "defg" );
-    q = list_find_first( p, value_equal_to, "defg" );
+    is( q->el, "defg", "correct element found" );
+    p = list_find_first( list, el_equal_to, "a string that should not appear in the list" );
+    ok( !p, "list_find_first() on element that can not be found" );
+    p = list_find_first( list, el_equal_to, "defg" );
+    q = list_find_first( p, el_equal_to, "defg" );
     cmp_ok( p, "==", q );
-    q = list_find_first( p, value_equal_to, "abc" );
+    q = list_find_first( p, el_equal_to, "abc" );
     ok( !q, "'abc' cannot be found after 'defg'" );
-    p = list_find_first( list, value_equal_to, "defg" );
-    p = list_find_first( p, value_equal_to, "lmnop" );
-    p = list_find_first( p, value_equal_to, "long string indeed" );
+    p = list_find_first( list, el_equal_to, "defg" );
+    p = list_find_first( p, el_equal_to, "lmnop" );
+    p = list_find_first( p, el_equal_to, "long string indeed" );
     ok( p, "chained calls" );
-    is( p->value, "long string indeed", "correct value found" );
+    is( p->el, "long string indeed", "correct element found" );
     /* check for more occurrences of string */
     p = p->next;
-    p = list_find_first( p, value_equal_to, "long string indeed" );
+    p = list_find_first( p, el_equal_to, "long string indeed" );
     ok( !p, "no more occurrences of string" );
-    p = list_find_first( NULL, value_equal_to, "01234" );
+    p = list_find_first( NULL, el_equal_to, "01234" );
     ok( !p, "no matches on NULL list (and does not die)" );
     dies_ok( p = list_find_first(list, NULL, NULL);, "assert fails on NULL function" );
 }

@@ -94,11 +94,11 @@ pathcomp_make_from_config( pathcomp_t *composer )
     log = log_get_logger( "pathcomp" );
     psec = config->sections;
     while( (psec = list_find_first(psec, find_section_with_name, composer->name)) ) {
-        cf_section_t *sec = psec->value;
+        cf_section_t *sec = psec->el;
         list_t       *pkv = sec->entries;
         log_debug( log, "found section with name '%s'", sec->name );
         while( pkv ) {
-            cf_kv_t *kv = pkv->value;
+            cf_kv_t *kv = pkv->el;
             log_debug( log, "found key-value pair with name '%s'", kv->key );
             pathcomp_add_attribute( composer, kv );
             pkv = pkv->next;
@@ -145,7 +145,7 @@ pathcomp_eval( pathcomp_t *composer, const char *name )
     assert( composer );
     p = list_find_first( composer->attributes, find_attribute_with_name, (void *) name );
     if( !p ) return NULL;
-    att = p->value;
+    att = p->el;
     return att->value;
 }
 
