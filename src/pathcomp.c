@@ -34,8 +34,8 @@ attribute_new( char *name, char *value )
     att_t *att;
     att = malloc( sizeof *att );
     if( !att ) return att;
-    att->name = name;
-    att->value = value;
+    att->name = strdup( name );
+    att->value = strdup( value );
     return att;
 }
 
