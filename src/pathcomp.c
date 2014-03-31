@@ -7,6 +7,7 @@
 #include "pathcomp.h"
 #include "list.h"
 #include "cf.h"
+#include "value.h"
 #include "log.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -14,8 +15,8 @@
 #include <string.h>
 
 typedef struct {
-    char *name;
-    char *value;
+    char    *name;
+    value_t *value;
 } att_t;
 
 /**
@@ -35,7 +36,7 @@ attribute_new( char *name, char *value )
     att = malloc( sizeof *att );
     if( !att ) return att;
     att->name = strdup( name );
-    att->value = strdup( value );
+    att->value = value_new( value );
     return att;
 }
 
@@ -46,7 +47,7 @@ attribute_free( void **p, void *userdata )
     att_t *att = *p;
     if( !att ) return 0;
     free( att->name );
-    free( att->value );
+    value_free( att->value );
     free( att );
     *p = NULL;
     return 0;
@@ -146,7 +147,7 @@ pathcomp_eval( pathcomp_t *composer, const char *name )
     p = list_find_first( composer->attributes, find_attribute_with_name, (void *) name );
     if( !p ) return NULL;
     att = p->el;
-    return att->value;
+    return value_eval( att->value );
 }
 
 void
