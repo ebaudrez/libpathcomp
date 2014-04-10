@@ -65,6 +65,7 @@ pathcomp_cleanup( void )
 {
     cf_free( config );
     config = NULL;
+    log_cleanup();
 }
 
 static int
