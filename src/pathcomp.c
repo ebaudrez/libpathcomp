@@ -114,6 +114,7 @@ pathcomp_new( const char *name )
     pathcomp_t *composer = NULL;
     assert( name );
     composer = malloc( sizeof *composer );
+    if( !composer ) return composer;
     composer->name = strdup( name );
     composer->attributes = NULL;
     pathcomp_make_from_config( composer );
