@@ -29,6 +29,7 @@ extern void    buf_addstr( buf_t *, const char * );
 extern size_t  buf_fread( buf_t *, size_t, FILE * );
 extern int     buf_read( buf_t *, int, size_t );
 extern int     buf_read_file( buf_t *, const char *, size_t );
+extern void    buf_ltrim( buf_t * );
 extern void    buf_rtrim( buf_t * );
 extern int     buf_fgetc( buf_t * );
 extern int     buf_ungetc( buf_t *, int );

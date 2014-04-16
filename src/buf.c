@@ -214,6 +214,18 @@ buf_read_file( buf_t *buf, const char *path, size_t hint )
 }
 
 void
+buf_ltrim( buf_t *buf )
+{
+    char *b, *end;
+    assert( buf );
+    b = buf->buf;
+    end = buf->buf + buf->len;
+    while( b < end && isspace(*b) ) ++b;
+    memmove( buf->buf, b, end - b );
+    buf_setlen( buf, end - b );
+}
+
+void
 buf_rtrim( buf_t *buf )
 {
     size_t len;

@@ -100,15 +100,69 @@ test_buf( void )
 static void
 test_trim( void )
 {
-    const char *s = "to be trimmed   ";
+    const char *s1 = "to be trimmed     ";
+    const char *s2 = "     to be trimmed";
+    const char *s3 = "  to be trimmed   ";
+    const char *s4 = "  ";
+    const char *s5 = "";
     int n;
     buf_t buf;
+
     note( "test whitespace trimming" );
-    n = strlen(s);
+
+    n = strlen( s1 );
     buf_init( &buf, 0 );
-    buf_addstr( &buf, s );
+    buf_addstr( &buf, s1 );
+    buf_ltrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", n );
+    is( buf.buf, "to be trimmed     " );
     buf_rtrim( &buf );
-    cmp_ok( strlen(buf.buf), "==", n-3 );
+    cmp_ok( strlen(buf.buf), "==", n-5 );
+    is( buf.buf, "to be trimmed" );
+    buf_release( &buf );
+
+    n = strlen( s2 );
+    buf_init( &buf, 0 );
+    buf_addstr( &buf, s2 );
+    buf_ltrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", n-5 );
+    is( buf.buf, "to be trimmed" );
+    buf_rtrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", n-5 );
+    is( buf.buf, "to be trimmed" );
+    buf_release( &buf );
+
+    n = strlen( s3 );
+    buf_init( &buf, 0 );
+    buf_addstr( &buf, s3 );
+    buf_ltrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", n-2 );
+    is( buf.buf, "to be trimmed   " );
+    buf_rtrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", n-5 );
+    is( buf.buf, "to be trimmed" );
+    buf_release( &buf );
+
+    n = strlen( s4 );
+    buf_init( &buf, 0 );
+    buf_addstr( &buf, s4 );
+    buf_ltrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", 0 );
+    is( buf.buf, "" );
+    buf_rtrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", 0 );
+    is( buf.buf, "" );
+    buf_release( &buf );
+
+    n = strlen( s5 );
+    buf_init( &buf, 0 );
+    buf_addstr( &buf, s5 );
+    buf_ltrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", 0 );
+    is( buf.buf, "" );
+    buf_rtrim( &buf );
+    cmp_ok( strlen(buf.buf), "==", 0 );
+    is( buf.buf, "" );
     buf_release( &buf );
 }
 
