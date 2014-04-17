@@ -235,6 +235,27 @@ buf_rtrim( buf_t *buf )
     buf_setlen( buf, len );
 }
 
+void
+buf_splice( buf_t *buf, int off, size_t len, const void *data, size_t data_len )
+{
+    int delta = data_len - len;
+    assert( buf );
+    if( off < 0 ) off = buf->len + off;
+    assert( off >= 0 && off <= buf->len );
+    assert( off + len <= buf->len );
+    assert( !data_len || data );
+    if( delta > 0 ) buf_grow( buf, delta );
+    if( delta ) memmove( buf->buf + off + data_len, buf->buf + off + len, buf->len - off - len );
+    if( data_len ) memcpy( buf->buf + off, data, data_len );
+    buf_setlen( buf, buf->len + delta );
+}
+
+void
+buf_splicestr( buf_t *buf, int off, size_t len, const char *s )
+{
+    buf_splice( buf, off, len, s, s ? strlen(s) : 0 );
+}
+
 int
 buf_fgetc( buf_t *buf )
 {

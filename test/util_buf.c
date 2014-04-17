@@ -214,6 +214,36 @@ test_stream( void )
     buf_release( &buf );
 }
 
+static void
+test_splice( void )
+{
+    const char *s = "abfgZYXhijWVl";
+    buf_t buf;
+    buf_init( &buf, 0 );
+    buf_addstr( &buf, s );
+    buf_splicestr( &buf, 2, 0, "cde" );
+    is( buf.buf, "abcdefgZYXhijWVl" );
+    buf_splicestr( &buf, 7, 3, NULL );
+    is( buf.buf, "abcdefghijWVl" );
+    buf_splicestr( &buf, -3, 2, "k" );
+    is( buf.buf, "abcdefghijkl" );
+    buf_splicestr( &buf, buf.len, 0, "mnopqrstuvwxyz" );
+    is( buf.buf, "abcdefghijklmnopqrstuvwxyz" );
+    buf_splicestr( &buf, 0, 5, "" );
+    is( buf.buf, "fghijklmnopqrstuvwxyz" );
+    buf_splicestr( &buf, 0, 0, "ABCDE" );
+    is( buf.buf, "ABCDEfghijklmnopqrstuvwxyz" );
+    buf_splicestr( &buf, -1, 1, NULL );
+    is( buf.buf, "ABCDEfghijklmnopqrstuvwxy" );
+    buf_splicestr( &buf, -1, 1, NULL );
+    is( buf.buf, "ABCDEfghijklmnopqrstuvwx" );
+    buf_splicestr( &buf, 0, 1, NULL );
+    is( buf.buf, "BCDEfghijklmnopqrstuvwx" );
+    buf_splicestr( &buf, -2, 1, NULL );
+    is( buf.buf, "BCDEfghijklmnopqrstuvx" );
+    buf_release( &buf );
+}
+
 int
 main( void )
 {
@@ -221,5 +251,6 @@ main( void )
     test_buf();
     test_trim();
     test_stream();
+    test_splice();
     done_testing();
 }

@@ -31,6 +31,8 @@ extern int     buf_read( buf_t *, int, size_t );
 extern int     buf_read_file( buf_t *, const char *, size_t );
 extern void    buf_ltrim( buf_t * );
 extern void    buf_rtrim( buf_t * );
+extern void    buf_splice( buf_t *, int, size_t, const void *, size_t );
+extern void    buf_splicestr( buf_t *, int, size_t, const char * );
 extern int     buf_fgetc( buf_t * );
 extern int     buf_ungetc( buf_t *, int );
 extern size_t  buf_ftell( buf_t * );
