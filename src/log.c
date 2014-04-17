@@ -41,9 +41,9 @@ log_cleanup( void )
 static void
 log_emit( log_t *log, int level, char *fmt, va_list ap )
 {
-    fprintf( stderr, "[%s] ", log_level_string[level] );
-    vfprintf( stderr, fmt, ap );
-    fputc( '\n', stderr );
+    fprintf( stdout, "# [%s] ", log_level_string[level] );
+    vfprintf( stdout, fmt, ap );
+    fputc( '\n', stdout );
 }
 
 void
@@ -52,5 +52,14 @@ log_debug( log_t *log, char *fmt, ... )
     va_list ap;
     va_start( ap, fmt );
     log_emit( log, LOG_LEVEL_DEBUG, fmt, ap );
+    va_end( ap );
+}
+
+void
+log_error( log_t *log, char *fmt, ... )
+{
+    va_list ap;
+    va_start( ap, fmt );
+    log_emit( log, LOG_LEVEL_ERROR, fmt, ap );
     va_end( ap );
 }

@@ -17,9 +17,13 @@ AC_PROG_CC
 AC_PATH_PROG([PROVE], [prove])
 
 # Checks for libraries.
+AC_CHECK_LIB([dl], [dlopen])
+AC_CHECK_LIB([m], [pow])
+AC_CHECK_LIB([lua], [luaL_newstate])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h sys/param.h unistd.h])
+AC_CHECK_HEADERS([lua.h lauxlib.h lualib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 

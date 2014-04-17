@@ -9,10 +9,14 @@
 #include "cf.h"
 #include "value.h"
 #include "log.h"
+#include "interpreter.h"
+#include "buf.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <lua.h>
+#include <lauxlib.h>
 
 typedef struct {
     char    *name;
@@ -25,6 +29,7 @@ typedef struct {
 struct pathcomp_t {
     char   *name;
     list_t *attributes;
+    char   *metatable; /**< \brief Name of the Lua metatable */
 };
 
 static cf_t *config;
@@ -65,6 +70,7 @@ pathcomp_cleanup( void )
 {
     cf_free( config );
     config = NULL;
+    interpreter_cleanup();
     log_cleanup();
 }
 
@@ -109,9 +115,26 @@ pathcomp_make_from_config( pathcomp_t *composer )
     }
 }
 
+static int
+pathcomp_eval_callback( lua_State *L )
+{
+    pathcomp_t *composer;
+    const char *name, *value;
+    assert( lua_isuserdata(L, -2) );
+    composer = *( (pathcomp_t **) lua_touserdata(L, -2) );
+    assert( lua_isstring(L, -1) );
+    name = lua_tostring( L, -1 );
+    value = pathcomp_eval( composer, name );
+    lua_pushstring( L, value );
+    return 1;
+}
+
 pathcomp_t *
 pathcomp_new( const char *name )
 {
+    buf_t       buf;
+    lua_State  *L = interpreter_get_state();
+    const char *metatable_prefix = "libpathcomp::";
     pathcomp_t *composer = NULL;
     assert( name );
     composer = malloc( sizeof *composer );
@@ -119,6 +142,14 @@ pathcomp_new( const char *name )
     composer->name = strdup( name );
     composer->attributes = NULL;
     pathcomp_make_from_config( composer );
+    buf_init( &buf, 0 );
+    buf_addstr( &buf, metatable_prefix );
+    buf_addstr( &buf, name );
+    composer->metatable = buf_detach( &buf, NULL );
+    luaL_newmetatable( L, composer->metatable );
+    lua_pushcfunction( L, pathcomp_eval_callback );
+    lua_setfield( L, -2, "__index" );
+    lua_pop( L, 1 );
     return composer;
 }
 
@@ -149,7 +180,14 @@ pathcomp_eval( pathcomp_t *composer, const char *name )
     p = list_find_first( composer->attributes, find_attribute_with_name, (void *) name );
     if( !p ) return NULL;
     att = p->el;
-    return value_eval( att->value );
+    return value_eval( att->value, composer );
+}
+
+const char *
+pathcomp_metatable( pathcomp_t *composer )
+{
+    assert( composer );
+    return composer->metatable;
 }
 
 void

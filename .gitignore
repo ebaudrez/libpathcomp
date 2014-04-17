@@ -23,5 +23,6 @@ m4/
 missing
 stamp-h1
 test/literal
+test/lua
 test/util_*
 !test/util_*.c
