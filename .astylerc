@@ -1,0 +1,9 @@
+# invoke with
+#    astyle --options=.astylerc <file1> <file2> ...
+--indent=spaces=4
+--convert-tabs
+--indent-switches
+#--keep-one-line-statements
+--keep-one-line-blocks
+--unpad-paren
+--pad-header

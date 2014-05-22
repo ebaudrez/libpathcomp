@@ -28,39 +28,39 @@ static void
 test_basic()
 {
     pathcomp_t *c = NULL;
-    ok( c = pathcomp_new("test.basic") );
-    is( pathcomp_eval(c, "sum"), "27" );
-    pathcomp_free( c );
+    ok(c = pathcomp_new("test.basic"));
+    is(pathcomp_eval(c, "sum"), "27");
+    pathcomp_free(c);
 }
 
 static void
 test_callbacks()
 {
     pathcomp_t *c = NULL;
-    ok( c = pathcomp_new("test.callbacks") );
-    is( pathcomp_eval(c, "instrument"), "G2" );
-    is( pathcomp_eval(c, "imager"), "SEV1" );
-    is( pathcomp_eval(c, "level"), "20" ); /* everything evaluates as strings */
-    is( pathcomp_eval(c, "resolution"), "BARG" );
-    is( pathcomp_eval(c, "product"), "SOL_M15_R50" );
-    is( pathcomp_eval(c, "version"), "V003" );
-    is( pathcomp_eval(c, "extension"), ".hdf.gz" );
-    is( pathcomp_eval(c, "slot"), "200403011130" );
-    is( pathcomp_eval(c, "yyyy"), "2004" );
-    is( pathcomp_eval(c, "mmdd"), "0301" ); /* leading 0 not stripped! */
-    is( pathcomp_eval(c, "hhmm"), "1130" );
-    is( pathcomp_eval(c, "ss"), "00" );
-    is( pathcomp_eval(c, "hms"), "113000" );
-    is( pathcomp_eval(c, "prefix"), "G2_SEV1_L20_BARG_SOL_M15_R50" );
-    is( pathcomp_eval(c, "filename"), "G2_SEV1_L20_BARG_SOL_M15_R50_20040301_113000_V003.hdf.gz" );
-    pathcomp_free( c );
+    ok(c = pathcomp_new("test.callbacks"));
+    is(pathcomp_eval(c, "instrument"), "G2");
+    is(pathcomp_eval(c, "imager"), "SEV1");
+    is(pathcomp_eval(c, "level"), "20");   /* everything evaluates as strings */
+    is(pathcomp_eval(c, "resolution"), "BARG");
+    is(pathcomp_eval(c, "product"), "SOL_M15_R50");
+    is(pathcomp_eval(c, "version"), "V003");
+    is(pathcomp_eval(c, "extension"), ".hdf.gz");
+    is(pathcomp_eval(c, "slot"), "200403011130");
+    is(pathcomp_eval(c, "yyyy"), "2004");
+    is(pathcomp_eval(c, "mmdd"), "0301");   /* leading 0 not stripped! */
+    is(pathcomp_eval(c, "hhmm"), "1130");
+    is(pathcomp_eval(c, "ss"), "00");
+    is(pathcomp_eval(c, "hms"), "113000");
+    is(pathcomp_eval(c, "prefix"), "G2_SEV1_L20_BARG_SOL_M15_R50");
+    is(pathcomp_eval(c, "filename"), "G2_SEV1_L20_BARG_SOL_M15_R50_20040301_113000_V003.hdf.gz");
+    pathcomp_free(c);
 }
 
 int
-main( void )
+main(void)
 {
-    plan( NO_PLAN );
-    pathcomp_use_config_from( config );
+    plan(NO_PLAN);
+    pathcomp_use_config_from(config);
     test_basic();
     test_callbacks();
     pathcomp_cleanup();

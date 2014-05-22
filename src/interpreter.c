@@ -8,25 +8,25 @@
 static lua_State *state = NULL;
 
 static void
-interpreter_initialize( lua_State *L )
+interpreter_initialize(lua_State *L)
 {
-    assert( L );
-    luaL_openlibs( L );
+    assert(L);
+    luaL_openlibs(L);
 }
 
 lua_State *
-interpreter_get_state( void )
+interpreter_get_state(void)
 {
-    if( state ) return state;
+    if (state) return state;
     state = luaL_newstate();
-    interpreter_initialize( state );
+    interpreter_initialize(state);
     return state;
 }
 
 void
-interpreter_cleanup( void )
+interpreter_cleanup(void)
 {
-    if( !state ) return;
-    lua_close( state );
+    if (!state) return;
+    lua_close(state);
     state = NULL;
 }

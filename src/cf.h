@@ -26,7 +26,7 @@ typedef struct cf_t {
     list_t *sections;
 } cf_t;
 
-extern cf_t *cf_new_from_string( const char * );
-extern void  cf_free( cf_t * );
+extern cf_t *cf_new_from_string(const char *);
+extern void  cf_free(cf_t *);
 
 #endif /* CF_INCLUDED */

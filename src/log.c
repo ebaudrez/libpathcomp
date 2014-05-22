@@ -28,38 +28,38 @@ static log_t global_logger;
  * \note We do absolutely nothing with the category right now.
  */
 log_t *
-log_get_logger( char *category )
+log_get_logger(char *category)
 {
     return &global_logger;
 }
 
 void
-log_cleanup( void )
+log_cleanup(void)
 {
 }
 
 static void
-log_emit( log_t *log, int level, char *fmt, va_list ap )
+log_emit(log_t *log, int level, char *fmt, va_list ap)
 {
-    fprintf( stdout, "# [%s] ", log_level_string[level] );
-    vfprintf( stdout, fmt, ap );
-    fputc( '\n', stdout );
+    fprintf(stdout, "# [%s] ", log_level_string[level]);
+    vfprintf(stdout, fmt, ap);
+    fputc('\n', stdout);
 }
 
 void
-log_debug( log_t *log, char *fmt, ... )
+log_debug(log_t *log, char *fmt, ...)
 {
     va_list ap;
-    va_start( ap, fmt );
-    log_emit( log, LOG_LEVEL_DEBUG, fmt, ap );
-    va_end( ap );
+    va_start(ap, fmt);
+    log_emit(log, LOG_LEVEL_DEBUG, fmt, ap);
+    va_end(ap);
 }
 
 void
-log_error( log_t *log, char *fmt, ... )
+log_error(log_t *log, char *fmt, ...)
 {
     va_list ap;
-    va_start( ap, fmt );
-    log_emit( log, LOG_LEVEL_ERROR, fmt, ap );
-    va_end( ap );
+    va_start(ap, fmt);
+    log_emit(log, LOG_LEVEL_ERROR, fmt, ap);
+    va_end(ap);
 }
