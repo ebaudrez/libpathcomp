@@ -1,10 +1,11 @@
-check_PROGRAMS = util_buf util_cf util_list literal lua
+check_PROGRAMS = util_buf util_cf util_list util_value literal lua
 TESTS = $(check_PROGRAMS)
 AM_CPPFLAGS = -I$(top_srcdir)/src
 add_libraries = ../src/libpathcomp.la ../src/libutil.la tap.o
 util_buf_LDADD = $(add_libraries)
 util_cf_LDADD = $(add_libraries)
 util_list_LDADD = $(add_libraries)
+util_value_LDADD = $(add_libraries)
 literal_LDADD = $(add_libraries)
 lua_LDADD = $(add_libraries)
 ## prove cannot just depend on check, because that rule will run the tests!
