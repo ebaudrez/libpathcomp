@@ -3,7 +3,6 @@
 #include "interpreter.h"
 #include "log.h"
 #include "buf.h"
-#include "pathcomp.h"
 #include <stddef.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -101,13 +100,19 @@ value_free(value_t *val)
     free(val);
 }
 
+/**
+ * \param composer Pointer to composer object
+ * \param metatable Name of the Lua metatable
+ */
 static const char *
-value_eval_lua(value_lua_t *val, pathcomp_t *composer)
+value_eval_lua(value_lua_t *val, void *composer, const char *metatable)
 {
-    log_t       *log;
-    lua_State   *L = interpreter_get_state();
-    pathcomp_t **p;
+    log_t      *log;
+    lua_State  *L = interpreter_get_state();
+    void      **p;
     assert(val);
+    assert(metatable);
+    assert(composer);
     log = log_get_logger("pathcomp");
     if (luaL_loadstring(L, val->source) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
@@ -116,7 +121,7 @@ value_eval_lua(value_lua_t *val, pathcomp_t *composer)
     }
     p = lua_newuserdata(L, sizeof(*p));
     *p = composer;
-    luaL_getmetatable(L, pathcomp_metatable(composer));
+    luaL_getmetatable(L, metatable);
     lua_setmetatable(L, -2);
     if (lua_pcall(L, 1, 1, 0) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
@@ -126,15 +131,18 @@ value_eval_lua(value_lua_t *val, pathcomp_t *composer)
     return lua_tostring(L, -1);
 }
 
+/**
+ * \a metatable and \a composer may be null if no Lua code is to be evaluated.
+ */
 const char *
-value_eval(value_t *val, pathcomp_t *composer)
+value_eval(value_t *val, void *composer, const char *metatable)
 {
     assert(val);
     switch (val->type) {
         case VALUE_LITERAL:
             return val->literal;
         case VALUE_LUA:
-            return value_eval_lua((value_lua_t *) val, composer);
+            return value_eval_lua((value_lua_t *) val, composer, metatable);
         default:
             assert(0);
     }

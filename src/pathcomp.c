@@ -180,14 +180,7 @@ pathcomp_eval(pathcomp_t *composer, const char *name)
     p = list_find_first(composer->attributes, find_attribute_with_name, (void *) name);
     if (!p) return NULL;
     att = p->el;
-    return value_eval(att->value, composer);
-}
-
-const char *
-pathcomp_metatable(pathcomp_t *composer)
-{
-    assert(composer);
-    return composer->metatable;
+    return value_eval(att->value, composer, composer->metatable);
 }
 
 void
