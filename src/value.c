@@ -103,6 +103,14 @@ value_free(value_t *val)
 /**
  * \param composer Pointer to composer object
  * \param metatable Name of the Lua metatable
+ *
+ * \a composer and \a metatable may be null if the Lua code to be evaluated
+ * does not need access to other attributes in the composer object via 'self'.
+ * This is mainly useful for testing. Otherwise, it is probably a mistake.
+ * Fortunately, the user does not normally have access to value_eval() and
+ * value_eval_lua(). It will be called for him by pathcomp_eval(), and the
+ * composer and metatable arguments will be properly set. Hence, the user will
+ * always have access to 'self' in the Lua code.
  */
 static const char *
 value_eval_lua(value_lua_t *val, void *composer, const char *metatable)
@@ -110,20 +118,22 @@ value_eval_lua(value_lua_t *val, void *composer, const char *metatable)
     log_t      *log;
     lua_State  *L = interpreter_get_state();
     void      **p;
+    int         nargs = 0;
     assert(val);
-    assert(metatable);
-    assert(composer);
     log = log_get_logger("pathcomp");
     if (luaL_loadstring(L, val->source) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
         log_error(log, "cannot parse Lua code: %s", error);
         return NULL;
     }
-    p = lua_newuserdata(L, sizeof(*p));
-    *p = composer;
-    luaL_getmetatable(L, metatable);
-    lua_setmetatable(L, -2);
-    if (lua_pcall(L, 1, 1, 0) != LUA_OK) {
+    if (composer && metatable) {
+        p = lua_newuserdata(L, sizeof(*p));
+        *p = composer;
+        luaL_getmetatable(L, metatable);
+        lua_setmetatable(L, -2);
+        nargs = 1;
+    }
+    if (lua_pcall(L, nargs, 1, 0) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
         log_error(log, "cannot execute Lua code: %s", error);
         return NULL;
@@ -132,7 +142,8 @@ value_eval_lua(value_lua_t *val, void *composer, const char *metatable)
 }
 
 /**
- * \a metatable and \a composer may be null if no Lua code is to be evaluated.
+ * \a composer and \a metatable may be null if the Lua code to be evaluated
+ * does not need access to other attributes in the composer object via 'self'.
  */
 const char *
 value_eval(value_t *val, void *composer, const char *metatable)
