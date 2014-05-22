@@ -13,12 +13,29 @@ test_literal(void)
     value_free(val);
 }
 
+static void
+test_lua(void)
+{
+    value_t *val;
+
+    ok(val = value_new("lua { return 1+2 }"));
+    is(value_eval(val, NULL, NULL), "3");
+    value_free(val);
+    ok(val = value_new("lua { return some_weird_name + 2 }"));
+    ok(!value_eval(val, NULL, NULL), "use of undefined variables raises an error");
+    value_free(val);
+    ok(val = value_new("lua { return self.slot }"));
+    ok(!value_eval(val, NULL, NULL), "inadvertent use of value_eval() with NULL composer raises an error");
+    value_free(val);
+    /* can't test value_lua_t more thoroughly without a composer object and a
+     * metatable, but this functionality is tested in lua.c */
+}
+
 int
 main(void)
 {
     plan(NO_PLAN);
     test_literal();
-    /* can't test value_lua_t without a composer object and a metatable, but
-     * this functionality is tested in lua.c */
+    test_lua();
     done_testing();
 }
