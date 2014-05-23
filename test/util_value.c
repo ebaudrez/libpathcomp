@@ -36,12 +36,70 @@ test_lua(void)
      * metatable, but this functionality is tested in lua.c */
 }
 
+static void
+test_alt_2elements(void)
+{
+    value_t *val, *val2;
+
+    ok(val = value_new("abc"));
+    cmp_ok(val->type, "==", VALUE_LITERAL);
+    is(value_eval(val, NULL, NULL), "abc");
+    ok(val2 = value_new("def"));
+    cmp_ok(val2->type, "==", VALUE_LITERAL);
+    value_add(&val, val2);
+    cmp_ok(val->type, "==", VALUE_ALT);
+
+    value_alt_t *alt = (value_alt_t *) val;
+    is(value_eval(val, NULL, NULL), "abc");
+    alt->current = alt->current->next;
+    is(value_eval(val, NULL, NULL), "def");
+    alt->current = alt->current->next;
+    cmp_ok(alt->current, "==", NULL);
+    value_free(val);
+}
+
+static void
+test_alt_4elements(void)
+{
+    value_t *val, *val2;
+
+    ok(val = value_new("abc"));
+    cmp_ok(val->type, "==", VALUE_LITERAL);
+    is(value_eval(val, NULL, NULL), "abc");
+    ok(val2 = value_new("def"));
+    cmp_ok(val2->type, "==", VALUE_LITERAL);
+    value_add(&val, val2);
+    cmp_ok(val->type, "==", VALUE_ALT);
+    ok(val2 = value_new("lua { return 'g' .. 'h' .. 'i' }"));
+    cmp_ok(val2->type, "==", VALUE_LUA);
+    value_add(&val, val2);
+    cmp_ok(val->type, "==", VALUE_ALT);
+    ok(val2 = value_new("jkl"));
+    cmp_ok(val2->type, "==", VALUE_LITERAL);
+    value_add(&val, val2);
+    cmp_ok(val->type, "==", VALUE_ALT);
+
+    value_alt_t *alt = (value_alt_t *) val;
+    is(value_eval(val, NULL, NULL), "abc");
+    alt->current = alt->current->next;
+    is(value_eval(val, NULL, NULL), "def");
+    alt->current = alt->current->next;
+    is(value_eval(val, NULL, NULL), "ghi");
+    alt->current = alt->current->next;
+    is(value_eval(val, NULL, NULL), "jkl");
+    alt->current = alt->current->next;
+    cmp_ok(alt->current, "==", NULL);
+    value_free(val);
+}
+
 int
 main(void)
 {
     plan(NO_PLAN);
     test_literal();
     test_lua();
+    test_alt_2elements();
+    test_alt_4elements();
     interpreter_cleanup();
     done_testing();
 }

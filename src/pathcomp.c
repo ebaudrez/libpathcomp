@@ -107,7 +107,7 @@ pathcomp_add_attribute(pathcomp_t *composer, cf_kv_t *kv)
         return;
     }
     /* there happens to be an attribute with this name already */
-    assert(0);
+    value_add((value_t **) &(pval->el), att->value);
 }
 
 static void

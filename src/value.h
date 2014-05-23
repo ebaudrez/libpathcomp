@@ -2,8 +2,9 @@
 #define VALUE_INCLUDED
 
 #include "config.h"
+#include "list.h"
 
-typedef enum { VALUE_LITERAL, VALUE_LUA } value_type_t;
+typedef enum { VALUE_LITERAL, VALUE_LUA, VALUE_ALT } value_type_t;
 
 typedef struct {
     value_type_t  type;
@@ -15,8 +16,15 @@ typedef struct {
     char         *source;
 } value_lua_t;
 
+typedef struct {
+    value_type_t  type;
+    list_t       *alternatives;
+    list_t       *current;
+} value_alt_t;
+
 extern value_t    *value_new(const char *);
 extern void        value_free(value_t *);
 extern const char *value_eval(value_t *, void *, const char *);
+extern void        value_add(value_t **, value_t *);
 
 #endif /* VALUE_INCLUDED */

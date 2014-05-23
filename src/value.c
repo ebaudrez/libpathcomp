@@ -123,6 +123,43 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
 
 /**
  * \}
+ * \name Routines specific to alternatives
+ * \{
+ */
+
+static value_t *
+value_alt_new(value_t *orig)
+{
+    value_alt_t *val;
+    assert(orig);
+    val = malloc(sizeof *val);
+    if (!val) return (value_t *) val;
+    val->type = VALUE_ALT;
+    val->alternatives = list_new(orig);
+    val->current = val->alternatives;
+    return (value_t *) val;
+}
+
+static int
+alt_el_free(void **p, void *userdata)
+{
+    value_t *val = *p;
+    value_free(val);
+    *p = NULL;
+    return 0;
+}
+
+static void
+value_alt_free(value_alt_t *val)
+{
+    assert(val);
+    list_map(val->alternatives, alt_el_free, NULL);
+    list_free(val->alternatives);
+    free(val);
+}
+
+/**
+ * \}
  * \name Generic \a value_t routines
  * \{
  */
@@ -154,6 +191,9 @@ value_free(value_t *val)
         case VALUE_LUA:
             value_lua_free((value_lua_t *) val);
             break;
+        case VALUE_ALT:
+            value_alt_free((value_alt_t *) val);
+            break;
         default:
             assert(0);
     }
@@ -172,9 +212,32 @@ value_eval(value_t *val, void *composer, const char *metatable)
             return val->literal;
         case VALUE_LUA:
             return value_lua_eval((value_lua_t *) val, composer, metatable);
+        case VALUE_ALT:
+            return value_eval(((value_alt_t *) val)->current->el, composer, metatable);
         default:
             assert(0);
     }
+}
+
+/**
+ * \brief Upgrade any \a value_t to \a value_alt_t in place
+ */
+static void
+value_upgrade(value_t **pval)
+{
+    assert(pval && *pval);
+    if ((*pval)->type == VALUE_ALT) return;
+    *pval = value_alt_new(*pval);
+}
+
+/* add a value to another value, converting the latter into a \a value_alt_t if necessary */
+void
+value_add(value_t **pdst, value_t *src)
+{
+    assert(pdst);
+    assert(src);
+    value_upgrade(pdst);
+    list_push(((value_alt_t *) *pdst)->alternatives, src);
 }
 
 /**
