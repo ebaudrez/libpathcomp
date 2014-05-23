@@ -96,6 +96,7 @@ test_find_first(list_t *list)
     ok(!p, "no more occurrences of string");
     p = list_find_first(NULL, el_equal_to, "01234");
     ok(!p, "no matches on NULL list (and does not die)");
+    /* Valgrind will report a 'still reachable' memory leak for the following test */
     dies_ok(p = list_find_first(list, NULL, NULL); , "assert fails on NULL function");
 }
 
