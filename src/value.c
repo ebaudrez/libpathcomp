@@ -11,6 +11,11 @@
 #include <lua.h>
 #include <lauxlib.h>
 
+/**
+ * \name Routines specific to literal values
+ * \{
+ */
+
 static value_t *
 value_literal_new(const char *text)
 {
@@ -22,6 +27,12 @@ value_literal_new(const char *text)
     val->literal = strdup(text);
     return val;
 }
+
+/**
+ * \}
+ * \name Routines specific to Lua values
+ * \{
+ */
 
 static char *
 is_lua_code(const char *text)
@@ -61,43 +72,11 @@ value_lua_new(const char *source)
     return (value_t *) val;
 }
 
-value_t *
-value_new(const char *text)
-{
-    char *source;
-    assert(text);
-    if ((source = is_lua_code(text))) {
-        value_t *val = value_lua_new(source);
-        free(source);
-        return val;
-    }
-    else {
-        return value_literal_new(text);
-    }
-}
-
 static void
 value_lua_free(value_lua_t *val)
 {
     assert(val);
     free(val->source);
-}
-
-void
-value_free(value_t *val)
-{
-    if (!val) return;
-    switch (val->type) {
-        case VALUE_LITERAL:
-            free(val->literal);
-            break;
-        case VALUE_LUA:
-            value_lua_free((value_lua_t *) val);
-            break;
-        default:
-            assert(0);
-    }
-    free(val);
 }
 
 /**
@@ -142,6 +121,44 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
 }
 
 /**
+ * \}
+ * \name Generic \a value_t routines
+ * \{
+ */
+
+value_t *
+value_new(const char *text)
+{
+    char *source;
+    assert(text);
+    if ((source = is_lua_code(text))) {
+        value_t *val = value_lua_new(source);
+        free(source);
+        return val;
+    }
+    else {
+        return value_literal_new(text);
+    }
+}
+
+void
+value_free(value_t *val)
+{
+    if (!val) return;
+    switch (val->type) {
+        case VALUE_LITERAL:
+            free(val->literal);
+            break;
+        case VALUE_LUA:
+            value_lua_free((value_lua_t *) val);
+            break;
+        default:
+            assert(0);
+    }
+    free(val);
+}
+
+/**
  * \a composer and \a metatable may be null if the Lua code to be evaluated
  * does not need access to other attributes in the composer object via 'self'.
  */
@@ -158,3 +175,7 @@ value_eval(value_t *val, void *composer, const char *metatable)
             assert(0);
     }
 }
+
+/**
+ * \}
+ */
