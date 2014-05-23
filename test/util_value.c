@@ -1,6 +1,7 @@
 #include "config.h"
 #include "tap.h"
 #include "value.h"
+#include "interpreter.h"
 #include <string.h>
 
 static void
@@ -37,5 +38,6 @@ main(void)
     plan(NO_PLAN);
     test_literal();
     test_lua();
+    interpreter_cleanup();
     done_testing();
 }

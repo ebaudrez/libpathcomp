@@ -160,6 +160,7 @@ pathcomp_free(pathcomp_t *composer)
     free(composer->name);
     list_map(composer->attributes, attribute_free, NULL);
     list_free(composer->attributes);
+    free(composer->metatable);
     free(composer);
 }
 
