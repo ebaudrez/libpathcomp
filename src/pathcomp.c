@@ -82,14 +82,32 @@ find_section_with_name(void **p, void *userdata)
     return !strcmp(sec->name, name);
 }
 
+static int
+find_attribute_with_name(void **p, void *userdata)
+{
+    att_t *att = *p;
+    const char *name = userdata;
+    return !strcmp(att->name, name);
+}
+
 static void
 pathcomp_add_attribute(pathcomp_t *composer, cf_kv_t *kv)
 {
     att_t *att;
+    list_t *pval;
     assert(kv);
     att = attribute_new(kv->key, kv->value);
-    if (composer->attributes) list_push(composer->attributes, att);
-    else                      composer->attributes = list_new(att);
+    if (!composer->attributes) {
+        composer->attributes = list_new(att);
+        return;
+    }
+    pval = list_find_first(composer->attributes, find_attribute_with_name, kv->key);
+    if (!pval) {
+        list_push(composer->attributes, att);
+        return;
+    }
+    /* there happens to be an attribute with this name already */
+    assert(0);
 }
 
 static void
@@ -162,14 +180,6 @@ pathcomp_free(pathcomp_t *composer)
     list_free(composer->attributes);
     free(composer->metatable);
     free(composer);
-}
-
-static int
-find_attribute_with_name(void **p, void *userdata)
-{
-    att_t *att = *p;
-    const char *name = userdata;
-    return !strcmp(att->name, name);
 }
 
 const char *
