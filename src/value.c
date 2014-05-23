@@ -12,7 +12,7 @@
 #include <lauxlib.h>
 
 static value_t *
-value_new_literal(const char *text)
+value_literal_new(const char *text)
 {
     value_t *val;
     assert(text);
@@ -50,7 +50,7 @@ fail:
 }
 
 static value_t *
-value_new_lua(const char *source)
+value_lua_new(const char *source)
 {
     value_lua_t *val;
     assert(source);
@@ -67,17 +67,17 @@ value_new(const char *text)
     char *source;
     assert(text);
     if ((source = is_lua_code(text))) {
-        value_t *val = value_new_lua(source);
+        value_t *val = value_lua_new(source);
         free(source);
         return val;
     }
     else {
-        return value_new_literal(text);
+        return value_literal_new(text);
     }
 }
 
 static void
-value_free_lua(value_lua_t *val)
+value_lua_free(value_lua_t *val)
 {
     assert(val);
     free(val->source);
@@ -92,7 +92,7 @@ value_free(value_t *val)
             free(val->literal);
             break;
         case VALUE_LUA:
-            value_free_lua((value_lua_t *) val);
+            value_lua_free((value_lua_t *) val);
             break;
         default:
             assert(0);
@@ -108,12 +108,12 @@ value_free(value_t *val)
  * does not need access to other attributes in the composer object via 'self'.
  * This is mainly useful for testing. Otherwise, it is probably a mistake.
  * Fortunately, the user does not normally have access to value_eval() and
- * value_eval_lua(). It will be called for him by pathcomp_eval(), and the
+ * value_lua_eval(). It will be called for him by pathcomp_eval(), and the
  * composer and metatable arguments will be properly set. Hence, the user will
  * always have access to 'self' in the Lua code.
  */
 static const char *
-value_eval_lua(value_lua_t *val, void *composer, const char *metatable)
+value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
 {
     log_t      *log;
     lua_State  *L = interpreter_get_state();
@@ -153,7 +153,7 @@ value_eval(value_t *val, void *composer, const char *metatable)
         case VALUE_LITERAL:
             return val->literal;
         case VALUE_LUA:
-            return value_eval_lua((value_lua_t *) val, composer, metatable);
+            return value_lua_eval((value_lua_t *) val, composer, metatable);
         default:
             assert(0);
     }
