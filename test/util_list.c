@@ -8,7 +8,7 @@ strarray_len(const char **strings)
 {
     const char **p = strings;
     while (*p) p++;
-    return (int)(p - strings);
+    return (int) (p - strings);
 }
 
 static list_t *
