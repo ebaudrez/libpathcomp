@@ -77,6 +77,7 @@ value_lua_free(value_lua_t *val)
 {
     assert(val);
     free(val->source);
+    free(val);
 }
 
 /**
@@ -148,6 +149,7 @@ value_free(value_t *val)
     switch (val->type) {
         case VALUE_LITERAL:
             free(val->literal);
+            free(val);
             break;
         case VALUE_LUA:
             value_lua_free((value_lua_t *) val);
@@ -155,7 +157,6 @@ value_free(value_t *val)
         default:
             assert(0);
     }
-    free(val);
 }
 
 /**
