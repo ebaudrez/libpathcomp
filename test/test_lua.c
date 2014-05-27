@@ -22,10 +22,14 @@ const char *config = "\
     hms        = lua { return self.hhmm .. self.ss }\n\
     prefix     = lua { return string.format('%s_%s_L%s_%s_%s', self.instrument, self.imager, self.level, self.resolution, self.product) }\n\
     filename   = lua { return self.prefix .. '_' .. self.yyyy .. self.mmdd .. '_' .. self.hms .. '_' .. self.version .. self.extension }\n\
+\n\
+[test.args]\n\
+    sum    = lua { ? }\n\
+    number = lua { return self.sum(1, -5, -3, 2) } \n\
 ";
 
 static void
-test_basic()
+test_basic(void)
 {
     pathcomp_t *c = NULL;
     ok(c = pathcomp_new("test.basic"));
@@ -34,7 +38,7 @@ test_basic()
 }
 
 static void
-test_callbacks()
+test_callbacks(void)
 {
     pathcomp_t *c = NULL;
     ok(c = pathcomp_new("test.callbacks"));
@@ -56,6 +60,17 @@ test_callbacks()
     pathcomp_free(c);
 }
 
+static void
+test_args(void)
+{
+    pathcomp_t *c = NULL;
+    ok(c = pathcomp_new("test.args"));
+    todo("Lua function args not implemented");
+    is(pathcomp_eval(c, "number"), "-5");
+    end_todo;
+    pathcomp_free(c);
+}
+
 int
 main(void)
 {
@@ -63,6 +78,7 @@ main(void)
     pathcomp_use_config_from(config);
     test_basic();
     test_callbacks();
+    test_args();
     pathcomp_cleanup();
     done_testing();
 }
