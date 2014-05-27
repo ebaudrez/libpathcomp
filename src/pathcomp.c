@@ -94,20 +94,20 @@ static void
 pathcomp_add_attribute(pathcomp_t *composer, cf_kv_t *kv)
 {
     att_t *att;
-    list_t *pval;
+    list_t *patt;
     assert(kv);
     att = attribute_new(kv->key, kv->value);
     if (!composer->attributes) {
         composer->attributes = list_new(att);
         return;
     }
-    pval = list_find_first(composer->attributes, find_attribute_with_name, kv->key);
-    if (!pval) {
+    patt = list_find_first(composer->attributes, find_attribute_with_name, kv->key);
+    if (!patt) {
         list_push(composer->attributes, att);
         return;
     }
     /* there happens to be an attribute with this name already */
-    value_add((value_t **) &(pval->el), att->value);
+    value_add((value_t **) &(((att_t *) patt->el)->value), att->value);
 }
 
 static void
