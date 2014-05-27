@@ -14,6 +14,7 @@ typedef struct {
 typedef struct {
     value_type_t  type;
     char         *source;
+    char         *result;
 } value_lua_t;
 
 typedef struct {

@@ -69,6 +69,7 @@ value_lua_new(const char *source)
     if (!val) return (value_t *) val;
     val->type = VALUE_LUA;
     val->source = strdup(source);
+    val->result = NULL;
     return (value_t *) val;
 }
 
@@ -77,6 +78,7 @@ value_lua_free(value_lua_t *val)
 {
     assert(val);
     free(val->source);
+    free(val->result);
     free(val);
 }
 
@@ -118,7 +120,8 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
         log_error(log, "cannot execute Lua code: %s", error);
         return NULL;
     }
-    return lua_tostring(L, -1);
+    free(val->result);
+    return val->result = strdup(lua_tostring(L, -1));
 }
 
 /**
