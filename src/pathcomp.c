@@ -182,6 +182,9 @@ pathcomp_free(pathcomp_t *composer)
     free(composer);
 }
 
+/**
+ * \note The string returned by this function must not be deallocated by the user.
+ */
 const char *
 pathcomp_eval(pathcomp_t *composer, const char *name)
 {
@@ -192,6 +195,30 @@ pathcomp_eval(pathcomp_t *composer, const char *name)
     if (!p) return NULL;
     att = p->el;
     return value_eval(att->value, composer, composer->metatable);
+}
+
+/**
+ * \note The string returned by this function must be deallocated by the user.
+ */
+char *
+pathcomp_yield(pathcomp_t *composer)
+{
+    buf_t path;
+    const char *root, *compose;
+    assert(composer);
+    buf_init(&path, 0);
+    root = pathcomp_eval(composer, "root");
+    compose = pathcomp_eval(composer, "compose");
+    if (root && strlen(root)) {
+        buf_addstr(&path, root);
+        buf_addch(&path, '/');
+    }
+    if (compose && strlen(compose)) {
+        buf_addstr(&path, compose);
+    }
+    if (path.len) return buf_detach(&path, NULL);
+    buf_release(&path);
+    return NULL;
 }
 
 void

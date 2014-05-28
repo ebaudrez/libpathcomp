@@ -1,4 +1,4 @@
-check_PROGRAMS = test_buf test_cf test_list test_value test_literal test_lua
+check_PROGRAMS = test_buf test_cf test_list test_value test_literal test_lua test_yield
 TESTS = $(check_PROGRAMS)
 AM_CPPFLAGS = -I$(top_srcdir)/src
 add_libraries = ../src/libpathcomp.la ../src/libutil.la tap.o
@@ -8,6 +8,7 @@ test_list_LDADD = $(add_libraries)
 test_value_LDADD = $(add_libraries)
 test_literal_LDADD = $(add_libraries)
 test_lua_LDADD = $(add_libraries)
+test_yield_LDADD = $(add_libraries)
 ## prove cannot just depend on check, because that rule will run the tests!
 ## therefore, we have to imitate it
 prove-TESTS: $(TESTS)
