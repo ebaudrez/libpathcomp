@@ -1,3 +1,5 @@
+/* test Lua callbacks in config */
+
 #include "config.h"
 #include "tap.h"
 #include "pathcomp.h"

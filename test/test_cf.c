@@ -1,3 +1,5 @@
+/* test config reading */
+
 #include "config.h"
 #include "tap.h"
 #include "cf.h"

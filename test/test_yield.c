@@ -1,3 +1,5 @@
+/* test pathcomp_yield() */
+
 #include "config.h"
 #include "tap.h"
 #include "pathcomp.h"
