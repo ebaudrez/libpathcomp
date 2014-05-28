@@ -164,10 +164,19 @@ static int
 cf_parse_text(cf_t *cf, buf_t *text)
 {
     cf_section_t *sec = NULL;
+    int comment = 0;
     for (;;) {
         int ch = buf_fgetc(text);
         if (ch < 0) break;
-        if (isspace(ch)) continue;
+        if (ch == '\n') {
+            comment = 0;
+            continue;
+        }
+        if (comment || isspace(ch)) continue;
+        if (ch == ';' || ch == '#' ) {
+            comment = 1;
+            continue;
+        }
         if (ch == '[') {
             buf_t name;
 

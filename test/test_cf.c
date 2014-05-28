@@ -117,11 +117,14 @@ and another stray entry = goes there\n\
     test            = yes\n\
     long_entry_name = 1\n\
 \n\
+; just a comment\n\
 [MYSECTION   ]\n\
 whatever = goes up\n\
 must come= down,\\\n\
            albeit in a slightly\\\n\
            different form maybe\n\
+      ; just another silly comment over here ...\n\
+      ; and another one ...\n\
 do we allow non-identifier characters?           =  definitely!\n\
      and this?=as \\well...             \n\
          \n\
