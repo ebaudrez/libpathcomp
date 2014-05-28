@@ -110,7 +110,7 @@ cf_parse_value(buf_t *text, buf_t *value)
     /* skip initial spaces */
     for (;;) {
         int ch = buf_fgetc(text);
-        if (!isspace(ch)) {
+        if (!isspace(ch) || ch == '\n') {
             buf_ungetc(text, ch);
             break;
         }
