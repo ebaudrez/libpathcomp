@@ -56,7 +56,7 @@ test_alt_2elements(void)
     alt->current = alt->current->next;
     is(value_eval(val, NULL, NULL), "def");
     alt->current = alt->current->next;
-    cmp_ok(alt->current, "==", NULL);
+    ok(!alt->current);
     value_free(val);
 }
 
@@ -90,7 +90,7 @@ test_alt_4elements(void)
     alt->current = alt->current->next;
     is(value_eval(val, NULL, NULL), "jkl");
     alt->current = alt->current->next;
-    cmp_ok(alt->current, "==", NULL);
+    ok(!alt->current);
     value_free(val);
 }
 

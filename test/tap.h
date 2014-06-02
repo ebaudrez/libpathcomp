@@ -44,7 +44,11 @@ void    tap_end_todo    (void);
 
 #define NO_PLAN          -1
 #define SKIP_ALL         -2
+#ifdef __GNUC__
+#define ok(condition, ...) ok_at_loc(__FILE__, __LINE__, !!(condition), ##__VA_ARGS__, NULL)
+#else
 #define ok(...)          ok_at_loc(__FILE__, __LINE__, __VA_ARGS__, NULL)
+#endif
 #define is(...)          is_at_loc(__FILE__, __LINE__, __VA_ARGS__, NULL)
 #define isnt(...)        isnt_at_loc(__FILE__, __LINE__, __VA_ARGS__, NULL)
 #define cmp_ok(...)      cmp_ok_at_loc(__FILE__, __LINE__, __VA_ARGS__, NULL)
