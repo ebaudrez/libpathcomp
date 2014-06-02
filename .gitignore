@@ -21,6 +21,8 @@ libtool
 ltmain.sh
 m4/
 missing
+obsolete/
 stamp-h1
 test/test_*
 !test/test_*.c
+todo/
