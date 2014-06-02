@@ -23,6 +23,7 @@ extern list_t *list_new(void *);
 extern void    list_free(list_t *);
 extern int     list_length(list_t *);
 extern void    list_push(list_t *, void *);
+extern void    list_push_or_new(list_t **, void *);
 extern void    list_map(list_t *, list_traversal_t *, void *);
 extern list_t *list_find_first(list_t *list, list_traversal_t *, void *);
 

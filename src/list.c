@@ -56,6 +56,14 @@ list_push(list_t *list, void *el)
 }
 
 void
+list_push_or_new(list_t **plist, void *el)
+{
+    assert(plist);
+    if (*plist) list_push(*plist, el);
+    else *plist = list_new(el);
+}
+
+void
 list_map(list_t *list, list_traversal_t *f, void *userdata)
 {
     assert(f);
