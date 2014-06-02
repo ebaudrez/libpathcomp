@@ -4,6 +4,7 @@
 AC_PREREQ([2.68])
 AC_INIT([libpathcomp], [0.1], [edward.baudrez@gmail.com])
 AM_INIT_AUTOMAKE
+AM_SILENT_RULES
 LT_PREREQ([2.2])
 LT_INIT
 AC_CONFIG_SRCDIR([src/pathcomp.h])
