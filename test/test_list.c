@@ -17,7 +17,6 @@ static list_t *
 test_construction(const char **strings)
 {
     list_t *list;
-    int n;
     const char **p = strings;
     list = list_new((void *) *p++);
     ok(list, "list_new()");
