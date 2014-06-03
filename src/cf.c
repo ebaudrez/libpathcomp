@@ -27,16 +27,13 @@ cf_kv_new(const char *key, const char *value)
     return kv;
 }
 
-static int
-cf_kv_free(void **p, void *userdata)
+static void
+cf_kv_free(cf_kv_t *kv)
 {
-    cf_kv_t *kv = *p;
-    if (!kv) return 0;
+    if (!kv) return;
     free(kv->key);
     free(kv->value);
     free(kv);
-    *p = NULL;
-    return 0;
 }
 
 static cf_section_t *
@@ -50,17 +47,14 @@ cf_section_new(const char *name)
     return section;
 }
 
-static int
-cf_section_free(void **p, void *userdata)
+static void
+cf_section_free(cf_section_t *section)
 {
-    cf_section_t *section = *p;
-    if (!section) return 0;
+    if (!section) return;
     free(section->name);
-    list_map(section->entries, cf_kv_free, NULL);
+    list_foreach(section->entries, (list_traversal_t *) cf_kv_free, NULL);
     list_free(section->entries);
     free(section);
-    *p = NULL;
-    return 0;
 }
 
 cf_t *
@@ -86,7 +80,7 @@ void
 cf_free(cf_t *cf)
 {
     if (!cf) return;
-    list_map(cf->sections, cf_section_free, NULL);
+    list_foreach(cf->sections, (list_traversal_t *) cf_section_free, NULL);
     list_free(cf->sections);
     free(cf);
 }
@@ -206,7 +200,7 @@ cf_parse_text(cf_t *cf, buf_t *text)
             buf_release(&value);
             if (!sec) {
                 /* there is no section to attach this entry to */
-                cf_kv_free((void **) &kv, NULL);
+                cf_kv_free(kv);
                 continue;
             }
             if (sec->entries) list_push(sec->entries, kv);

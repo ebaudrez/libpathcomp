@@ -27,22 +27,19 @@ test_construction(const char **strings)
     return list;
 }
 
-static int
-my_mapper(void **val, void *udata)
+static void
+compute_len(const char *s, int **dst)
 {
-    const char *s = *val;
-    int **dst = udata;
     **dst = strlen(s);
     ++(*dst); /* advance pointer in destination array */
-    return 1;
 }
 
 static void
-test_map(list_t *list, const char **strings)
+test_foreach(list_t *list, const char **strings)
 {
     int *len = malloc(strarray_len(strings) * sizeof(*len)), *tmp = len;
-    list_map(list, my_mapper, &len);
-    len = tmp; /* my_mapper() advances len! */
+    list_foreach(list, (list_traversal_t *) compute_len, &len);
+    len = tmp; /* compute_len() advances len! */
     while (*strings) {
         cmp_ok(strlen(*strings++), "==", *len++);
     }
@@ -60,9 +57,9 @@ static const char *test_data[] = {
 };
 
 static int
-el_equal_to(void **p, void *userdata)
+el_equal_to(void *p, void *userdata)
 {
-    const char *el = *p, *str = userdata;
+    const char *el = p, *str = userdata;
     return !strcmp(el, str);
 }
 
@@ -122,7 +119,7 @@ main(void)
     list_t *list;
     plan(NO_PLAN);
     list = test_construction(test_data);
-    test_map(list, test_data);
+    test_foreach(list, test_data);
     test_find_first(list);
     /* no need to deallocate the entries of list, as they are pointers to string literals */
     list_free(list);

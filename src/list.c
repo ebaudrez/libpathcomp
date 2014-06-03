@@ -64,11 +64,11 @@ list_push_or_new(list_t **plist, void *el)
 }
 
 void
-list_map(list_t *list, list_traversal_t *f, void *userdata)
+list_foreach_byval(list_t *list, list_traversal_t *f, void *userdata)
 {
     assert(f);
     while (list) {
-        f(&list->el, userdata);
+        f(list->el, userdata);
         list = list->next;
     }
 }
@@ -78,7 +78,7 @@ list_find_first(list_t *list, list_traversal_t *f, void *userdata)
 {
     assert(f);
     while (list) {
-        if (f(&list->el, userdata)) return list;
+        if (f(list->el, userdata)) return list;
         list = list->next;
     }
     return NULL;

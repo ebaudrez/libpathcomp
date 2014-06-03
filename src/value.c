@@ -143,20 +143,11 @@ value_alt_new(value_t *orig)
     return (value_t *) val;
 }
 
-static int
-alt_el_free(void **p, void *userdata)
-{
-    value_t *val = *p;
-    value_free(val);
-    *p = NULL;
-    return 0;
-}
-
 static void
 value_alt_free(value_alt_t *val)
 {
     assert(val);
-    list_map(val->alternatives, alt_el_free, NULL);
+    list_foreach(val->alternatives, (list_traversal_t *) value_free, NULL);
     list_free(val->alternatives);
     free(val);
 }

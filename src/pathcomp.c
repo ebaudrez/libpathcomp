@@ -60,17 +60,13 @@ attribute_add_value(att_t *att, const char *value)
     value_add(&att->value, value_new(value));
 }
 
-/* in order to match the type of list_traversal_t, attribute_free() takes a pointer to pointer */
-static int
-attribute_free(void **p, void *userdata)
+static void
+attribute_free(att_t *att)
 {
-    att_t *att = *p;
-    if (!att) return 0;
+    if (!att) return;
     free(att->name);
     value_free(att->value);
     free(att);
-    *p = NULL;
-    return 0;
 }
 
 void
@@ -90,18 +86,14 @@ pathcomp_cleanup(void)
 }
 
 static int
-find_section_with_name(void **p, void *userdata)
+find_section_with_name(cf_section_t *sec, char *name)
 {
-    cf_section_t *sec = *p;
-    const char *name = userdata;
     return !strcmp(sec->name, name);
 }
 
 static int
-find_attribute_with_name(void **p, void *userdata)
+find_attribute_with_name(att_t *att, char *name)
 {
-    att_t *att = *p;
-    const char *name = userdata;
     return !strcmp(att->name, name);
 }
 
@@ -117,7 +109,7 @@ pathcomp_add_or_replace(pathcomp_t *composer, const char *name, const char *valu
         composer->attributes = list_new(new);
         return;
     }
-    patt = list_find_first(composer->attributes, find_attribute_with_name, (void *) name);
+    patt = list_find_first(composer->attributes, (list_traversal_t *) find_attribute_with_name, (void *) name);
     if (!patt) {
         att_t *new;
         new = attribute_new(name, value);
@@ -138,7 +130,7 @@ pathcomp_make_from_config(pathcomp_t *composer)
     assert(config);
     log = log_get_logger("pathcomp");
     psec = config->sections;
-    while ((psec = list_find_first(psec, find_section_with_name, composer->name))) {
+    while ((psec = list_find_first(psec, (list_traversal_t *) find_section_with_name, composer->name))) {
         cf_section_t *sec = psec->el;
         list_t       *pkv = sec->entries;
         log_debug(log, "found section with name '%s'", sec->name);
@@ -195,7 +187,7 @@ pathcomp_free(pathcomp_t *composer)
 {
     if (!composer) return;
     free(composer->name);
-    list_map(composer->attributes, attribute_free, NULL);
+    list_foreach(composer->attributes, (list_traversal_t *) attribute_free, NULL);
     list_free(composer->attributes);
     free(composer->metatable);
     free(composer);
@@ -210,7 +202,7 @@ pathcomp_eval(pathcomp_t *composer, const char *name)
     list_t *p;
     att_t *att;
     assert(composer);
-    p = list_find_first(composer->attributes, find_attribute_with_name, (void *) name);
+    p = list_find_first(composer->attributes, (list_traversal_t *) find_attribute_with_name, (void *) name);
     if (!p) return NULL;
     att = p->el;
     return value_eval(att->value, composer, composer->metatable);
