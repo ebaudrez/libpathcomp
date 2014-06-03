@@ -103,17 +103,11 @@ pathcomp_add_or_replace(pathcomp_t *composer, const char *name, const char *valu
     list_t *patt;
     assert(name);
     assert(value);
-    if (!composer->attributes) {
-        att_t *new;
-        new = attribute_new(name, value);
-        composer->attributes = list_new(new);
-        return;
-    }
     patt = list_find_first(composer->attributes, (list_traversal_t *) find_attribute_with_name, (void *) name);
     if (!patt) {
         att_t *new;
         new = attribute_new(name, value);
-        list_push(composer->attributes, new);
+        composer->attributes = list_push(composer->attributes, new);
         return;
     }
     /* there happens to be an attribute with this name already */

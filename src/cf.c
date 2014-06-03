@@ -177,8 +177,7 @@ cf_parse_text(cf_t *cf, buf_t *text)
             buf_init(&name, 0);
             /* any existing section must be pushed onto the list now */
             if (sec) {
-                if (cf->sections) list_push(cf->sections, sec);
-                else              cf->sections = list_new(sec);
+                cf->sections = list_push(cf->sections, sec);
             }
             if (!cf_parse_section_name(text, &name)) return 0;
             sec = cf_section_new(name.buf);
@@ -203,13 +202,11 @@ cf_parse_text(cf_t *cf, buf_t *text)
                 cf_kv_free(kv);
                 continue;
             }
-            if (sec->entries) list_push(sec->entries, kv);
-            else              sec->entries = list_new(kv);
+            sec->entries = list_push(sec->entries, kv);
         }
     }
     if (sec) {
-        if (cf->sections) list_push(cf->sections, sec);
-        else              cf->sections = list_new(sec);
+        cf->sections = list_push(cf->sections, sec);
     }
     return 1;
 }

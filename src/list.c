@@ -41,26 +41,18 @@ list_length(list_t *list)
     return n;
 }
 
-void
+list_t *
 list_push(list_t *list, void *el)
 {
-    list_t **p = &list;
-    assert(list);
-    while (*p) {
-        p = & (*p)->next;
-    }
-    *p = malloc(sizeof **p);
-    if (!(*p)) return;
-    (*p)->next = NULL;
-    (*p)->el = el;
-}
-
-void
-list_push_or_new(list_t **plist, void *el)
-{
-    assert(plist);
-    if (*plist) list_push(*plist, el);
-    else *plist = list_new(el);
+    list_t *new, *p = list;
+    new = malloc(sizeof *new);
+    if (!new) return NULL;
+    new->next = NULL;
+    new->el = el;
+    if (!list) return new;
+    while (p->next) p = p->next;
+    p->next = new;
+    return list;
 }
 
 void

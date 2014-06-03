@@ -99,15 +99,15 @@ test_find_first(list_t *list)
 }
 
 static void
-test_push_or_new(void)
+test_push2(void)
 {
     list_t *list = NULL;
     ok(!list);
     cmp_ok(list_length(list), "==", 0);
-    list_push_or_new(&list, "abc");
+    list = list_push(list, "abc");
     ok(list);
     cmp_ok(list_length(list), "==", 1);
-    list_push_or_new(&list, "def");
+    list = list_push(list, "def");
     ok(list);
     cmp_ok(list_length(list), "==", 2);
     list_free(list);
@@ -123,6 +123,6 @@ main(void)
     test_find_first(list);
     /* no need to deallocate the entries of list, as they are pointers to string literals */
     list_free(list);
-    test_push_or_new();
+    test_push2();
     done_testing();
 }
