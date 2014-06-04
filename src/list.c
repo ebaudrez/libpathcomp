@@ -90,3 +90,20 @@ list_find_first(list_t *list, list_traversal_t *f, void *userdata)
     }
     return NULL;
 }
+
+list_t *
+list_remove(list_t *list, list_t *link)
+{
+    list_t *p = list, *prev = NULL;
+    while (p) {
+        if (p == link) {
+            if (prev) prev->next = link->next;
+            else      list = link->next;
+            link->next = NULL;
+            break;
+        }
+        prev = p;
+        p = p->next;
+    }
+    return list;
+}

@@ -25,5 +25,6 @@ extern list_t *list_from(void *, ...);
 extern void    list_foreach_byval(list_t *, list_traversal_t *, void *);
 /*extern void    list_foreach_byref(list_t *, list_traversal_ref_t *, void *);*/
 extern list_t *list_find_first(list_t *list, list_traversal_t *, void *);
+extern list_t *list_remove(list_t *, list_t *);
 
 #endif /* LIST_INCLUDED */

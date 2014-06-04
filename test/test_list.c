@@ -134,6 +134,62 @@ test_from(void)
     list_free(list);
 }
 
+static void
+test_remove(void)
+{
+    list_t *list, *p;
+    list = list_from("abc", "def", "ghi", "jkl", "mno", NULL);
+    cmp_ok(list_length(list), "==", 5);
+
+    p = list_find_first(list, el_equal_to, "ghi");
+    list = list_remove(list, p);
+    cmp_ok(list_length(list), "==", 4);
+    is(list->el, "abc");
+    is(p->el, "ghi");
+    ok(!p->next);
+    list_free(p);
+
+    p = list_find_first(list, el_equal_to, "jkl");
+    list = list_remove(list, p);
+    cmp_ok(list_length(list), "==", 3);
+    is(list->el, "abc");
+    is(p->el, "jkl");
+    ok(!p->next);
+    list_free(p);
+
+    p = list_find_first(list, el_equal_to, "jkl");
+    ok(!p);
+    list = list_remove(list, p);
+    cmp_ok(list_length(list), "==", 3);
+    is(list->el, "abc");
+
+    p = list_find_first(list, el_equal_to, "abc");
+    list = list_remove(list, p);
+    cmp_ok(list_length(list), "==", 2);
+    is(list->el, "def");
+    is(p->el, "abc");
+    ok(!p->next);
+    list_free(p);
+
+    p = list_find_first(list, el_equal_to, "mno");
+    list = list_remove(list, p);
+    cmp_ok(list_length(list), "==", 1);
+    is(list->el, "def");
+    is(p->el, "mno");
+    ok(!p->next);
+    list_free(p);
+
+    p = list_find_first(list, el_equal_to, "def");
+    list = list_remove(list, p);
+    ok(!list);
+    cmp_ok(list_length(list), "==", 0);
+    is(p->el, "def");
+    ok(!p->next);
+    list_free(p);
+
+    list_free(list);
+}
+
 int
 main(void)
 {
@@ -146,5 +202,6 @@ main(void)
     list_free(list);
     test_push2();
     test_from();
+    test_remove();
     done_testing();
 }
