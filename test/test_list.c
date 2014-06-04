@@ -113,6 +113,27 @@ test_push2(void)
     list_free(list);
 }
 
+static void
+test_from(void)
+{
+    list_t *list, *p;
+    list = list_from("abc", "def", "ghi", "jkl", "mno", NULL);
+    ok(list);
+    cmp_ok(list_length(list), "==", 5);
+    p = list;
+    is(p->el, "abc");
+    ok(p = p->next);
+    is(p->el, "def");
+    ok(p = p->next);
+    is(p->el, "ghi");
+    ok(p = p->next);
+    is(p->el, "jkl");
+    ok(p = p->next);
+    is(p->el, "mno");
+    ok(!p->next);
+    list_free(list);
+}
+
 int
 main(void)
 {
@@ -124,5 +145,6 @@ main(void)
     /* no need to deallocate the entries of list, as they are pointers to string literals */
     list_free(list);
     test_push2();
+    test_from();
     done_testing();
 }

@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdarg.h>
 
 list_t *
 list_new(void *el)
@@ -52,6 +53,20 @@ list_push(list_t *list, void *el)
     if (!list) return new;
     while (p->next) p = p->next;
     p->next = new;
+    return list;
+}
+
+list_t *
+list_from(void *el, ...)
+{
+    list_t *list = NULL;
+    va_list ap;
+    va_start(ap, el);
+    while (el) {
+        list = list_push(list, el);
+        el = va_arg(ap, void *);
+    }
+    va_end(ap);
     return list;
 }
 

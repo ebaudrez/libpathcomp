@@ -20,6 +20,7 @@ extern list_t *list_new(void *);
 extern void    list_free(list_t *);
 extern int     list_length(list_t *);
 extern list_t *list_push(list_t *, void *);
+extern list_t *list_from(void *, ...);
 #define list_foreach list_foreach_byval
 extern void    list_foreach_byval(list_t *, list_traversal_t *, void *);
 /*extern void    list_foreach_byref(list_t *, list_traversal_ref_t *, void *);*/
