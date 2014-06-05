@@ -243,3 +243,25 @@ pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
     assert(value);
     pathcomp_add_or_replace(composer, name, value, 0);
 }
+
+/*
+ * when pathcomp_next() returns 0, all alternatives are again at their first value
+ */
+int
+pathcomp_next(pathcomp_t *composer)
+{
+    list_t *p;
+    assert(composer);
+    for (p = composer->attributes; p; p = p->next) {
+        att_t *att = p->el;
+        value_t *val = att->value;
+        if (val->type != VALUE_ALT) continue;
+        value_alt_t *alt = (value_alt_t *) val;
+        assert(alt->current);
+        alt->current = alt->current->next;
+        if (alt->current) return 1;
+        /* an alternative has wrapped around: reset and cycle next alternative */
+        alt->current = alt->alternatives;
+    }
+    return 0;
+}

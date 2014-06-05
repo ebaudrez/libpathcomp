@@ -2,7 +2,9 @@
 
 #include "config.h"
 #include "tap.h"
+#include "taputil.h"
 #include "pathcomp.h"
+#include "list.h"
 
 const char *config = "\
 [test.basic.1]\n\
@@ -33,6 +35,8 @@ test_basic(void)
 {
     pathcomp_t *c = NULL;
     char *s;
+    list_t *got = NULL, *expected;
+
     ok(c = pathcomp_new("test.basic.1"));
     is(s = pathcomp_yield(c), "my_filename");
     free(s);
@@ -64,8 +68,19 @@ test_basic(void)
     pathcomp_free(c);
 
     ok(c = pathcomp_new("test.basic.7"));
-    is(s = pathcomp_yield(c), "def");
-    free(s);
+    for (;;) {
+        got = list_push(got, pathcomp_yield(c));
+        if (!pathcomp_next(c)) break;
+    }
+    expected = list_from("def",
+        "nosync/cache/def",
+        "abc",
+        "nosync/cache/abc",
+        NULL);
+    cmp_bag(got, expected, "pathcomp_yield() yields all alternatives");
+    list_foreach(got, (list_traversal_t *) free, NULL);
+    list_free(got);
+    list_free(expected);
     pathcomp_free(c);
 }
 

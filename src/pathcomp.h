@@ -21,5 +21,6 @@ extern const char *pathcomp_eval(pathcomp_t *, const char *);
 extern char       *pathcomp_yield(pathcomp_t *);
 extern void        pathcomp_set(pathcomp_t *, const char *, const char *);
 extern void        pathcomp_add(pathcomp_t *, const char *, const char *);
+extern int         pathcomp_next(pathcomp_t *);
 
 #endif /* PATHCOMP_INCLUDED */
