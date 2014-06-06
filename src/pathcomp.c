@@ -30,6 +30,7 @@ struct pathcomp_t {
     char   *name;
     list_t *attributes;
     char   *metatable; /**< \brief Name of the Lua metatable */
+    int     done;      /**< \brief Iterator state */
 };
 
 static cf_t *config;
@@ -173,6 +174,7 @@ pathcomp_new(const char *name)
     lua_pushcfunction(L, pathcomp_eval_callback);
     lua_setfield(L, -2, "__index");
     lua_pop(L, 1);
+    composer->done = 0;
     return composer;
 }
 
@@ -226,6 +228,30 @@ pathcomp_yield(pathcomp_t *composer)
     return NULL;
 }
 
+/**
+ * pathcomp_set() will reset all alternatives to their first value. This is
+ * necessary because alternatives are tried in order, and there is no guarantee
+ * that a matching combination of alternatives comes later in the list of
+ * possible combinations.
+ *
+ * Imagine the situation where you have successfully located a GERB archive
+ * file with the following characteristics:
+ *
+ *    -# instrument = G2
+ *    -# extension  = .hdf
+ *    -# extension  = .hdf.gz
+ *    -# etc.
+ *
+ * After executing pathcomp_find(), the \e extension alternative will point to
+ * the .hdf.gz value, because G2 files are gzip-compressed. If you now call
+ *
+ *   pathcomp_set(composer, "instrument", "GL")
+ *
+ * pathcomp_find() will fail, because GERB-like files are not compressed
+ * externally, and the alternative .hdf comes before .hdf.gz in the list of
+ * alternatives, and pathcomp_find() will not rewind it! Therefore,
+ * pathcomp_reset() must be called to rewind all the alternatives.
+ */
 void
 pathcomp_set(pathcomp_t *composer, const char *name, const char *value)
 {
@@ -233,8 +259,14 @@ pathcomp_set(pathcomp_t *composer, const char *name, const char *value)
     assert(name);
     assert(value);
     pathcomp_add_or_replace(composer, name, value, 1);
+    pathcomp_reset(composer);
 }
 
+/**
+ * All alternatives are rewound after calling this function, so that a failed
+ * search with pathcomp_find() can be retried using the newly added
+ * alternative.
+ */
 void
 pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
 {
@@ -242,13 +274,11 @@ pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
     assert(name);
     assert(value);
     pathcomp_add_or_replace(composer, name, value, 0);
+    pathcomp_reset(composer);
 }
 
-/*
- * when pathcomp_next() returns 0, all alternatives are again at their first value
- */
-int
-pathcomp_next(pathcomp_t *composer)
+void
+pathcomp_reset(pathcomp_t *composer)
 {
     list_t *p;
     assert(composer);
@@ -257,11 +287,34 @@ pathcomp_next(pathcomp_t *composer)
         value_t *val = att->value;
         if (val->type != VALUE_ALT) continue;
         value_alt_t *alt = (value_alt_t *) val;
+        alt->current = alt->alternatives;
+    }
+    composer->done = 0;
+}
+
+int
+pathcomp_done(pathcomp_t *composer)
+{
+    assert(composer);
+    return composer->done;
+}
+
+void
+pathcomp_next(pathcomp_t *composer)
+{
+    list_t *p;
+    assert(composer);
+    if (composer->done) return;
+    for (p = composer->attributes; p; p = p->next) {
+        att_t *att = p->el;
+        value_t *val = att->value;
+        if (val->type != VALUE_ALT) continue;
+        value_alt_t *alt = (value_alt_t *) val;
         assert(alt->current);
         alt->current = alt->current->next;
-        if (alt->current) return 1;
+        if (alt->current) return;
         /* an alternative has wrapped around: reset and cycle next alternative */
         alt->current = alt->alternatives;
     }
-    return 0;
+    composer->done = 1;
 }

@@ -68,9 +68,8 @@ test_basic(void)
     pathcomp_free(c);
 
     ok(c = pathcomp_new("test.basic.7"));
-    for (;;) {
+    for (; !pathcomp_done(c); pathcomp_next(c)) {
         got = list_push(got, pathcomp_yield(c));
-        if (!pathcomp_next(c)) break;
     }
     expected = list_from("def",
         "nosync/cache/def",
@@ -81,6 +80,24 @@ test_basic(void)
     list_foreach(got, (list_traversal_t *) free, NULL);
     list_free(got);
     list_free(expected);
+
+    ok(pathcomp_done(c), "iteration done after loop");
+    is(s = pathcomp_yield(c), "def", "all alternatives have been reset");
+    free(s);
+    pathcomp_next(c);
+    ok(pathcomp_done(c), "pathcomp_next() after iteration is done has no effect");
+    is(s = pathcomp_yield(c), "def", "pathcomp_next() after iteration is done has no effect");
+    free(s);
+
+    pathcomp_reset(c);
+    ok(!pathcomp_done(c), "pathcomp_reset()");
+    pathcomp_next(c);
+    ok(!pathcomp_done(c));
+    isnt(s = pathcomp_yield(c), "def", "advance to next alternative");
+    free(s);
+    pathcomp_reset(c);
+    is(s = pathcomp_yield(c), "def", "all alternatives rewound after pathcomp_reset()");
+    free(s);
     pathcomp_free(c);
 }
 
