@@ -92,3 +92,53 @@ cmp_bag_at_loc(const char *file, int line, list_t *got, list_t *expected, const 
     list_free(expected);
     return test;
 }
+
+int
+path_exists_ok_at_loc(const char *file, int line, const char *path, const char *fmt, ...)
+{
+    int test;
+    FILE *f;
+    va_list ap;
+
+    va_start(ap, fmt);
+    assert(path);
+    f = fopen(path, "r");
+    test = (f != NULL);
+    if (fmt) vok_at_loc(file, line, test, fmt, ap);
+    else {
+        const char *def = "path %s exists";
+        char *s;
+        s = malloc((strlen(def) - 2 + strlen(path) + 1)*sizeof *s);
+        sprintf(s, def, path);
+        vok_at_loc(file, line, test, s, ap);
+        free(s);
+    }
+    if (f) fclose(f);
+    va_end(ap);
+    return test;
+}
+
+int
+path_not_exists_ok_at_loc(const char *file, int line, const char *path, const char *fmt, ...)
+{
+    int test;
+    FILE *f;
+    va_list ap;
+
+    va_start(ap, fmt);
+    assert(path);
+    f = fopen(path, "r");
+    test = (f == NULL);
+    if (fmt) vok_at_loc(file, line, test, fmt, ap);
+    else {
+        const char *def = "path %s does not exist";
+        char *s;
+        s = malloc((strlen(def) - 2 + strlen(path) + 1)*sizeof *s);
+        sprintf(s, def, path);
+        vok_at_loc(file, line, test, s, ap);
+        free(s);
+    }
+    if (f) fclose(f);
+    va_end(ap);
+    return test;
+}

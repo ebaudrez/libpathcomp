@@ -17,6 +17,7 @@
 #include <string.h>
 #include <lua.h>
 #include <lauxlib.h>
+#include <sys/stat.h>
 
 typedef struct {
     char    *name;
@@ -317,4 +318,33 @@ pathcomp_next(pathcomp_t *composer)
         alt->current = alt->alternatives;
     }
     composer->done = 1;
+}
+
+static int
+path_exists(const char *path)
+{
+    struct stat statbuf;
+    assert(path);
+    return stat(path, &statbuf) == 0;
+}
+
+/**
+ * \note The string returned by this function must be deallocated by the user.
+ *
+ * Do not mix calls to pathcomp_yield() and pathcomp_find() on the same object.
+ * pathcomp_find() will leave the object pointing to the \e next alternative!
+ */
+char *
+pathcomp_find(pathcomp_t *composer)
+{
+    char *path = NULL;
+    assert(composer);
+    while (!pathcomp_done(composer)) {
+        path = pathcomp_yield(composer);
+        pathcomp_next(composer);
+        if (path_exists(path)) break;
+        free(path);
+        path = NULL;
+    }
+    return path;
 }
