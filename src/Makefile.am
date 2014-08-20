@@ -7,5 +7,5 @@ libutil_la_LIBADD = $(LIBLUA)
 include_HEADERS = pathcomp.h
 lib_LTLIBRARIES = libpathcomp.la
 libpathcomp_la_SOURCES = pathcomp.c
-libpathcomp_la_LIBADD = $(LIBLUA)
+libpathcomp_la_LIBADD = libutil.la $(LIBLUA)
 prove: check
