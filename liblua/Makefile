@@ -4,7 +4,7 @@
 # == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
 
 # Your platform. See PLATS for possible values.
-PLAT= none
+PLAT=linux
 
 # Where to install. The installation starts in the src and doc directories,
 # so take care if INSTALL_TOP is not an absolute path. See the local target.
@@ -51,8 +51,10 @@ R= $V.3
 # Targets start here.
 all:	$(PLAT)
 
-$(PLATS) clean:
+$(PLATS) clean distclean:
 	cd src && $(MAKE) $@
+
+check:  all
 
 test:	dummy
 	src/lua -v
@@ -109,6 +111,6 @@ pc:
 	@echo "includedir=$(INSTALL_INC)"
 
 # list targets that do not create files (but not all makes understand .PHONY)
-.PHONY: all $(PLATS) clean test install local none dummy echo pecho lecho
+.PHONY: all $(PLATS) clean distclean check test install local none dummy echo pecho lecho
 
 # (end of Makefile)

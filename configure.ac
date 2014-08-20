@@ -20,11 +20,9 @@ AC_PATH_PROG([PROVE], [prove])
 # Checks for libraries.
 AC_CHECK_LIB([dl], [dlopen])
 AC_CHECK_LIB([m], [pow])
-AC_CHECK_LIB([lua], [luaL_newstate])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h sys/param.h unistd.h])
-AC_CHECK_HEADERS([lua.h lauxlib.h lualib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
@@ -34,7 +32,24 @@ AC_FUNC_MALLOC
 AC_FUNC_MMAP
 AC_CHECK_FUNCS([regcomp])
 
+# Lua support
+saved_CPPFLAGS="$CPPFLAGS"
+saved_LDFLAGS="$LDFLAGS"
+lua_dir="$srcdir/liblua"
+abs_lua_dir=`(cd "$lua_dir"; pwd)`
+CPPFLAGS="$CPPFLAGS -I$abs_lua_dir/src"
+LDFLAGS="$LDFLAGS -L$abs_lua_dir/src"
+AC_CHECK_HEADERS([lua.h lauxlib.h lualib.h],
+                 [AC_SUBST([LIBLUACPPFLAGS], ["-I$abs_lua_dir/src"])])
+AC_CHECK_LIB([lua], [luaL_newstate],
+             [AC_SUBST([LIBLUALDFLAGS], ["-L$abs_lua_dir/src"])
+              AC_SUBST([LIBLUA], ["-llua"])
+              AC_DEFINE([HAVE_LIBLUA], [1], [Define if you have a Lua library])])
+CPPFLAGS="$saved_CPPFLAGS"
+LDFLAGS="$saved_LDFLAGS"
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  test/Makefile])
+AC_CONFIG_SUBDIRS([liblua])
 AC_OUTPUT

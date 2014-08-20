@@ -1,7 +1,7 @@
 check_PROGRAMS = test_buf test_cf test_list test_value test_literal test_lua \
                  test_yield test_set test_find
 TESTS = $(check_PROGRAMS)
-AM_CPPFLAGS = -I$(top_srcdir)/src
+AM_CPPFLAGS = -I$(top_srcdir)/src $(LIBLUACPPFLAGS)
 add_libraries = ../src/libpathcomp.la ../src/libutil.la tap.o taputil.o
 test_buf_LDADD = $(add_libraries)
 test_cf_LDADD = $(add_libraries)

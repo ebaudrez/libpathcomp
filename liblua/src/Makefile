@@ -19,7 +19,7 @@ SYSCFLAGS=
 SYSLDFLAGS=
 SYSLIBS=
 
-MYCFLAGS=
+MYCFLAGS=-fPIC
 MYLDFLAGS=
 MYLIBS=
 MYOBJS=
@@ -49,7 +49,7 @@ ALL_A= $(LUA_A)
 # Targets start here.
 default: $(PLAT)
 
-all:	$(ALL_T)
+all:	$(ALL_A)
 
 o:	$(ALL_O)
 
@@ -65,7 +65,7 @@ $(LUA_T): $(LUA_O) $(LUA_A)
 $(LUAC_T): $(LUAC_O) $(LUA_A)
 	$(CC) -o $@ $(LDFLAGS) $(LUAC_O) $(LUA_A) $(LIBS)
 
-clean:
+clean distclean:
 	$(RM) $(ALL_T) $(ALL_O)
 
 depend:
@@ -121,7 +121,7 @@ solaris:
 	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN" SYSLIBS="-ldl"
 
 # list targets that do not create files (but not all makes understand .PHONY)
-.PHONY: all $(PLATS) default o a clean depend echo none
+.PHONY: all $(PLATS) default o a clean distclean depend echo none
 
 # DO NOT DELETE
 
