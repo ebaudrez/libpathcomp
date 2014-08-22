@@ -32,6 +32,7 @@ struct pathcomp_t {
     list_t *attributes;
     char   *metatable; /**< \brief Name of the Lua metatable */
     int     done;      /**< \brief Iterator state */
+    int     started;   /**< \brief pathcomp_find() has been called at least once */
 };
 
 static cf_t *config;
@@ -176,6 +177,7 @@ pathcomp_new(const char *name)
     lua_setfield(L, -2, "__index");
     lua_pop(L, 1);
     composer->done = 0;
+    composer->started = 0;
     return composer;
 }
 
@@ -291,6 +293,7 @@ pathcomp_reset(pathcomp_t *composer)
         alt->current = alt->alternatives;
     }
     composer->done = 0;
+    composer->started = 0;
 }
 
 int
@@ -330,21 +333,19 @@ path_exists(const char *path)
 
 /**
  * \note The string returned by this function must be deallocated by the user.
- *
- * Do not mix calls to pathcomp_yield() and pathcomp_find() on the same object.
- * pathcomp_find() will leave the object pointing to the \e next alternative!
  */
 char *
 pathcomp_find(pathcomp_t *composer)
 {
-    char *path = NULL;
+    char *path;
     assert(composer);
-    while (!pathcomp_done(composer)) {
+    for (;;) {
+        if (composer->started) pathcomp_next(composer);
+        composer->started = 1;
+        if (pathcomp_done(composer)) break;
         path = pathcomp_yield(composer);
-        pathcomp_next(composer);
-        if (path_exists(path)) break;
+        if (path_exists(path)) return path;
         free(path);
-        path = NULL;
     }
-    return path;
+    return NULL;
 }
