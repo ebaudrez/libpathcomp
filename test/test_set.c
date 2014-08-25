@@ -12,15 +12,15 @@ test_set(void)
 {
     pathcomp_t *c = NULL;
     ok(c = pathcomp_new("test.empty"));
-    is(pathcomp_eval(c, "att"), NULL);
+    is(pathcomp_eval_nocopy(c, "att"), NULL);
     pathcomp_set(c, "att", "123");
-    is(pathcomp_eval(c, "att"), "123");
+    is(pathcomp_eval_nocopy(c, "att"), "123");
     pathcomp_add(c, "att", "456");
-    is(pathcomp_eval(c, "att"), "123");
+    is(pathcomp_eval_nocopy(c, "att"), "123");
     pathcomp_add(c, "att", "789");
-    is(pathcomp_eval(c, "att"), "123");
+    is(pathcomp_eval_nocopy(c, "att"), "123");
     pathcomp_set(c, "att", "abc");
-    is(pathcomp_eval(c, "att"), "abc");
+    is(pathcomp_eval_nocopy(c, "att"), "abc");
     pathcomp_free(c);
 }
 

@@ -21,7 +21,7 @@ test_literal1()
 {
     pathcomp_t *composer = NULL;
     ok(composer = pathcomp_new("test.literal1"));
-    const char *val = pathcomp_eval(composer, "key");
+    const char *val = pathcomp_eval_nocopy(composer, "key");
     is(val, "value");
     pathcomp_free(composer);
 }
@@ -31,11 +31,11 @@ test_literal2()
 {
     pathcomp_t *c = NULL;
     ok(c = pathcomp_new("test.literal2"));
-    is(pathcomp_eval(c, "instrument"), "G2");
-    is(pathcomp_eval(c, "imager"), "SEV1");
-    is(pathcomp_eval(c, "level"), "20");   /* everything evaluates as strings */
-    is(pathcomp_eval(c, "resolution"), "HR");
-    is(pathcomp_eval(c, "product"), "SOL_TH");
+    is(pathcomp_eval_nocopy(c, "instrument"), "G2");
+    is(pathcomp_eval_nocopy(c, "imager"), "SEV1");
+    is(pathcomp_eval_nocopy(c, "level"), "20");   /* everything evaluates as strings */
+    is(pathcomp_eval_nocopy(c, "resolution"), "HR");
+    is(pathcomp_eval_nocopy(c, "product"), "SOL_TH");
     pathcomp_free(c);
 }
 

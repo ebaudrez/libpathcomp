@@ -35,7 +35,7 @@ test_basic(void)
 {
     pathcomp_t *c = NULL;
     ok(c = pathcomp_new("test.basic"));
-    is(pathcomp_eval(c, "sum"), "27");
+    is(pathcomp_eval_nocopy(c, "sum"), "27");
     pathcomp_free(c);
 }
 
@@ -44,21 +44,21 @@ test_callbacks(void)
 {
     pathcomp_t *c = NULL;
     ok(c = pathcomp_new("test.callbacks"));
-    is(pathcomp_eval(c, "instrument"), "G2");
-    is(pathcomp_eval(c, "imager"), "SEV1");
-    is(pathcomp_eval(c, "level"), "20");   /* everything evaluates as strings */
-    is(pathcomp_eval(c, "resolution"), "BARG");
-    is(pathcomp_eval(c, "product"), "SOL_M15_R50");
-    is(pathcomp_eval(c, "version"), "V003");
-    is(pathcomp_eval(c, "extension"), ".hdf.gz");
-    is(pathcomp_eval(c, "slot"), "200403011130");
-    is(pathcomp_eval(c, "yyyy"), "2004");
-    is(pathcomp_eval(c, "mmdd"), "0301");   /* leading 0 not stripped! */
-    is(pathcomp_eval(c, "hhmm"), "1130");
-    is(pathcomp_eval(c, "ss"), "00");
-    is(pathcomp_eval(c, "hms"), "113000");
-    is(pathcomp_eval(c, "prefix"), "G2_SEV1_L20_BARG_SOL_M15_R50");
-    is(pathcomp_eval(c, "filename"), "G2_SEV1_L20_BARG_SOL_M15_R50_20040301_113000_V003.hdf.gz");
+    is(pathcomp_eval_nocopy(c, "instrument"), "G2");
+    is(pathcomp_eval_nocopy(c, "imager"), "SEV1");
+    is(pathcomp_eval_nocopy(c, "level"), "20");   /* everything evaluates as strings */
+    is(pathcomp_eval_nocopy(c, "resolution"), "BARG");
+    is(pathcomp_eval_nocopy(c, "product"), "SOL_M15_R50");
+    is(pathcomp_eval_nocopy(c, "version"), "V003");
+    is(pathcomp_eval_nocopy(c, "extension"), ".hdf.gz");
+    is(pathcomp_eval_nocopy(c, "slot"), "200403011130");
+    is(pathcomp_eval_nocopy(c, "yyyy"), "2004");
+    is(pathcomp_eval_nocopy(c, "mmdd"), "0301");   /* leading 0 not stripped! */
+    is(pathcomp_eval_nocopy(c, "hhmm"), "1130");
+    is(pathcomp_eval_nocopy(c, "ss"), "00");
+    is(pathcomp_eval_nocopy(c, "hms"), "113000");
+    is(pathcomp_eval_nocopy(c, "prefix"), "G2_SEV1_L20_BARG_SOL_M15_R50");
+    is(pathcomp_eval_nocopy(c, "filename"), "G2_SEV1_L20_BARG_SOL_M15_R50_20040301_113000_V003.hdf.gz");
     pathcomp_free(c);
 }
 
@@ -68,7 +68,7 @@ test_args(void)
     pathcomp_t *c = NULL;
     ok(c = pathcomp_new("test.args"));
     todo("Lua function args not implemented");
-    is(pathcomp_eval(c, "number"), "-5");
+    is(pathcomp_eval_nocopy(c, "number"), "-5");
     end_todo;
     pathcomp_free(c);
 }

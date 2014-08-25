@@ -150,7 +150,7 @@ pathcomp_eval_callback(lua_State *L)
     composer = *((pathcomp_t **) lua_touserdata(L, -2));
     assert(lua_isstring(L, -1));
     name = lua_tostring(L, -1);
-    value = pathcomp_eval(composer, name);
+    value = pathcomp_eval_nocopy(composer, name); /* lua_pushstring() creates a copy */
     lua_pushstring(L, value);
     return 1;
 }
@@ -196,7 +196,7 @@ pathcomp_free(pathcomp_t *composer)
  * \note The string returned by this function must not be deallocated by the user.
  */
 const char *
-pathcomp_eval(pathcomp_t *composer, const char *name)
+pathcomp_eval_nocopy(pathcomp_t *composer, const char *name)
 {
     list_t *p;
     att_t *att;
@@ -217,8 +217,8 @@ pathcomp_yield(pathcomp_t *composer)
     const char *root, *compose;
     assert(composer);
     buf_init(&path, 0);
-    root = pathcomp_eval(composer, "root");
-    compose = pathcomp_eval(composer, "compose");
+    root = pathcomp_eval_nocopy(composer, "root");
+    compose = pathcomp_eval_nocopy(composer, "compose");
     if (root && strlen(root)) {
         buf_addstr(&path, root);
         buf_addch(&path, '/');
