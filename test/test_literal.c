@@ -23,6 +23,9 @@ test_literal1()
     ok(composer = pathcomp_new("test.literal1"));
     const char *val = pathcomp_eval_nocopy(composer, "key");
     is(val, "value");
+    char *s = pathcomp_eval(composer, "key");
+    is(s, val);
+    free(s);
     pathcomp_free(composer);
 }
 

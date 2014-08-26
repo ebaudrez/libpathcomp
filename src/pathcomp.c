@@ -211,6 +211,15 @@ pathcomp_eval_nocopy(pathcomp_t *composer, const char *name)
  * \note The string returned by this function must be deallocated by the user.
  */
 char *
+pathcomp_eval(pathcomp_t *composer, const char *name)
+{
+    return strdup(pathcomp_eval_nocopy(composer, name));
+}
+
+/**
+ * \note The string returned by this function must be deallocated by the user.
+ */
+char *
 pathcomp_yield(pathcomp_t *composer)
 {
     buf_t path;
