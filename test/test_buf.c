@@ -166,6 +166,31 @@ test_trim(void)
     cmp_ok(strlen(buf.buf), "==", 0);
     is(buf.buf, "");
     buf_release(&buf);
+
+    /* test buf.pos */
+    n = strlen(s2);
+    buf_init(&buf, 0);
+    buf_addstr(&buf, s2);
+    buf.pos = 2;
+    buf_ltrim(&buf);
+    cmp_ok(buf.pos, "==", 0);
+    buf_release(&buf);
+
+    n = strlen(s2);
+    buf_init(&buf, 0);
+    buf_addstr(&buf, s2);
+    buf.pos = 5;
+    buf_ltrim(&buf);
+    cmp_ok(buf.pos, "==", 0);
+    buf_release(&buf);
+
+    n = strlen(s2);
+    buf_init(&buf, 0);
+    buf_addstr(&buf, s2);
+    buf.pos = 6;
+    buf_ltrim(&buf);
+    cmp_ok(buf.pos, "==", 1);
+    buf_release(&buf);
 }
 
 static void

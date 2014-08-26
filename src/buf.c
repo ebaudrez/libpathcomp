@@ -221,6 +221,8 @@ buf_ltrim(buf_t *buf)
     b = buf->buf;
     end = buf->buf + buf->len;
     while (b < end && isspace(*b)) ++b;
+    if (buf->pos < b - buf->buf) buf->pos = 0;
+    else buf->pos -= b - buf->buf;
     memmove(buf->buf, b, end - b);
     buf_setlen(buf, end - b);
 }
@@ -235,6 +237,9 @@ buf_rtrim(buf_t *buf)
     buf_setlen(buf, len);
 }
 
+/**
+ * \note The value of buf->pos is unspecified after calling this function!
+ */
 void
 buf_splice(buf_t *buf, int off, size_t len, const void *data, size_t data_len)
 {
@@ -250,6 +255,9 @@ buf_splice(buf_t *buf, int off, size_t len, const void *data, size_t data_len)
     buf_setlen(buf, buf->len + delta);
 }
 
+/**
+ * \note The value of buf->pos is unspecified after calling this function!
+ */
 void
 buf_splicestr(buf_t *buf, int off, size_t len, const char *s)
 {
