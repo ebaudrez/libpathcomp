@@ -7,7 +7,7 @@
 #include "pathcomp.h"
 #include "list.h"
 #include "cf.h"
-#include "value.h"
+#include "att.h"
 #include "log.h"
 #include "interpreter.h"
 #include "buf.h"
@@ -18,11 +18,6 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <sys/stat.h>
-
-typedef struct {
-    char    *name;
-    value_t *value;
-} att_t;
 
 /**
  * \brief Main data type
@@ -36,41 +31,6 @@ struct pathcomp_t {
 };
 
 static cf_t *config;
-
-static att_t *
-attribute_new(const char *name, const char *value)
-{
-    att_t *att;
-    att = malloc(sizeof *att);
-    if (!att) return att;
-    att->name = strdup(name);
-    att->value = value_new(value);
-    return att;
-}
-
-static void
-attribute_replace_value(att_t *att, const char *value)
-{
-    assert(att);
-    value_free(att->value);
-    att->value = value_new(value);
-}
-
-static void
-attribute_add_value(att_t *att, const char *value)
-{
-    assert(att);
-    value_add(&att->value, value_new(value));
-}
-
-static void
-attribute_free(att_t *att)
-{
-    if (!att) return;
-    free(att->name);
-    value_free(att->value);
-    free(att);
-}
 
 void
 pathcomp_use_config_from(const char *string)
@@ -94,28 +54,22 @@ find_section_with_name(cf_section_t *sec, char *name)
     return !strcmp(sec->name, name);
 }
 
-static int
-find_attribute_with_name(att_t *att, char *name)
-{
-    return !strcmp(att->name, name);
-}
-
 static void
 pathcomp_add_or_replace(pathcomp_t *composer, const char *name, const char *value, int replace)
 {
     list_t *patt;
     assert(name);
     assert(value);
-    patt = list_find_first(composer->attributes, (list_traversal_t *) find_attribute_with_name, (void *) name);
+    patt = list_find_first(composer->attributes, (list_traversal_t *) att_name_equal_to, (void *) name);
     if (!patt) {
         att_t *new;
-        new = attribute_new(name, value);
+        new = att_new(name, value);
         composer->attributes = list_push(composer->attributes, new);
         return;
     }
     /* there happens to be an attribute with this name already */
-    if (replace) attribute_replace_value(patt->el, value);
-    else attribute_add_value(patt->el, value);
+    if (replace) att_replace_value(patt->el, value);
+    else att_add_value(patt->el, value);
 }
 
 static void
@@ -186,7 +140,7 @@ pathcomp_free(pathcomp_t *composer)
 {
     if (!composer) return;
     free(composer->name);
-    list_foreach(composer->attributes, (list_traversal_t *) attribute_free, NULL);
+    list_foreach(composer->attributes, (list_traversal_t *) att_free, NULL);
     list_free(composer->attributes);
     free(composer->metatable);
     free(composer);
@@ -201,10 +155,10 @@ pathcomp_eval_nocopy(pathcomp_t *composer, const char *name)
     list_t *p;
     att_t *att;
     assert(composer);
-    p = list_find_first(composer->attributes, (list_traversal_t *) find_attribute_with_name, (void *) name);
+    p = list_find_first(composer->attributes, (list_traversal_t *) att_name_equal_to, (void *) name);
     if (!p) return NULL;
     att = p->el;
-    return value_eval(att->value, composer, composer->metatable);
+    return att_eval(att, composer, composer->metatable);
 }
 
 /**
@@ -294,13 +248,7 @@ pathcomp_reset(pathcomp_t *composer)
 {
     list_t *p;
     assert(composer);
-    for (p = composer->attributes; p; p = p->next) {
-        att_t *att = p->el;
-        value_t *val = att->value;
-        if (val->type != VALUE_ALT) continue;
-        value_alt_t *alt = (value_alt_t *) val;
-        alt->current = alt->alternatives;
-    }
+    for (p = composer->attributes; p; p = p->next) att_reset(p->el);
     composer->done = 0;
     composer->started = 0;
 }
@@ -319,15 +267,7 @@ pathcomp_next(pathcomp_t *composer)
     assert(composer);
     if (composer->done) return;
     for (p = composer->attributes; p; p = p->next) {
-        att_t *att = p->el;
-        value_t *val = att->value;
-        if (val->type != VALUE_ALT) continue;
-        value_alt_t *alt = (value_alt_t *) val;
-        assert(alt->current);
-        alt->current = alt->current->next;
-        if (alt->current) return;
-        /* an alternative has wrapped around: reset and cycle next alternative */
-        alt->current = alt->alternatives;
+        if (att_next(p->el)) return;
     }
     composer->done = 1;
 }
