@@ -260,16 +260,17 @@ pathcomp_done(pathcomp_t *composer)
     return composer->done;
 }
 
-void
+int
 pathcomp_next(pathcomp_t *composer)
 {
     list_t *p;
     assert(composer);
-    if (composer->done) return;
+    if (composer->done) return 0;
     for (p = composer->attributes; p; p = p->next) {
-        if (att_next(p->el)) return;
+        if (att_next(p->el)) return 1;
     }
     composer->done = 1;
+    return 0;
 }
 
 static int

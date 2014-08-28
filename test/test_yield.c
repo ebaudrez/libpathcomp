@@ -84,14 +84,14 @@ test_basic(void)
     ok(pathcomp_done(c), "iteration done after loop");
     is(s = pathcomp_yield(c), "def", "all alternatives have been reset");
     free(s);
-    pathcomp_next(c);
+    ok(!pathcomp_next(c), "pathcomp_next() itself returns false when done");
     ok(pathcomp_done(c), "pathcomp_next() after iteration is done has no effect");
     is(s = pathcomp_yield(c), "def", "pathcomp_next() after iteration is done has no effect");
     free(s);
 
     pathcomp_reset(c);
     ok(!pathcomp_done(c), "pathcomp_reset()");
-    pathcomp_next(c);
+    ok(pathcomp_next(c), "pathcomp_next() returns true when there is a next alternative");
     ok(!pathcomp_done(c));
     isnt(s = pathcomp_yield(c), "def", "advance to next alternative");
     free(s);
