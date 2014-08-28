@@ -268,6 +268,8 @@ pathcomp_next(pathcomp_t *composer)
     if (composer->done) return 0;
     for (p = composer->attributes; p; p = p->next) {
         if (att_next(p->el)) return 1;
+        /* alternative has wrapped around: reset and cycle next attribute */
+        att_reset(p->el);
     }
     composer->done = 1;
     return 0;

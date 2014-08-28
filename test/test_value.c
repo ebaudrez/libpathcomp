@@ -55,9 +55,7 @@ test_alt_2elements(void)
     ok(value_next(val));
     is(value_eval(val, NULL, NULL), "def");
     ok(!value_next(val));
-    todo("transfer recycling functionality to pathcomp.c");
     ok(!value_next(val), "value_next() doesn't recycle");
-    end_todo;
     value_free(val);
 }
 
@@ -90,9 +88,7 @@ test_alt_4elements(void)
     ok(value_next(val));
     is(value_eval(val, NULL, NULL), "jkl");
     ok(!value_next(val));
-    todo("transfer recycling functionality to pathcomp.c");
     ok(!value_next(val), "value_next() doesn't recycle");
-    end_todo;
     value_free(val);
 }
 
