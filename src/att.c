@@ -64,21 +64,12 @@ void
 att_reset(att_t *att)
 {
     assert(att);
-    if (att->value->type != VALUE_ALT) return;
-    value_alt_t *alt = (value_alt_t *) att->value;
-    alt->current = alt->alternatives;
+    value_reset(att->value);
 }
 
 int
 att_next(att_t *att)
 {
     assert(att);
-    if (att->value->type != VALUE_ALT) return 0;
-    value_alt_t *alt = (value_alt_t *) att->value;
-    assert(alt->current);
-    alt->current = alt->current->next;
-    if (alt->current) return 1;
-    /* alternative has wrapped around: reset, next attribute will be cycled */
-    alt->current = alt->alternatives;
-    return 0;
+    return value_next(att->value);
 }

@@ -27,5 +27,7 @@ extern value_t    *value_new(const char *);
 extern void        value_free(value_t *);
 extern const char *value_eval(value_t *, void *, const char *);
 extern void        value_add(value_t **, value_t *);
+extern void        value_reset(value_t *);
+extern int         value_next(value_t *);
 
 #endif /* VALUE_INCLUDED */

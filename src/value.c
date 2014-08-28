@@ -235,6 +235,29 @@ value_add(value_t **pdst, value_t *src)
     list_push(((value_alt_t *) *pdst)->alternatives, src);
 }
 
+void
+value_reset(value_t *val)
+{
+    assert(val);
+    if (val->type != VALUE_ALT) return;
+    value_alt_t *alt = (value_alt_t *) val;
+    alt->current = alt->alternatives;
+}
+
+int
+value_next(value_t *val)
+{
+    assert(val);
+    if (val->type != VALUE_ALT) return 0;
+    value_alt_t *alt = (value_alt_t *) val;
+    assert(alt->current);
+    alt->current = alt->current->next;
+    if (alt->current) return 1;
+    /* alternative has wrapped around: reset, next attribute will be cycled */
+    alt->current = alt->alternatives;
+    return 0;
+}
+
 /**
  * \}
  */

@@ -51,12 +51,13 @@ test_alt_2elements(void)
     value_add(&val, val2);
     cmp_ok(val->type, "==", VALUE_ALT);
 
-    value_alt_t *alt = (value_alt_t *) val;
     is(value_eval(val, NULL, NULL), "abc");
-    alt->current = alt->current->next;
+    ok(value_next(val));
     is(value_eval(val, NULL, NULL), "def");
-    alt->current = alt->current->next;
-    ok(!alt->current);
+    ok(!value_next(val));
+    todo("transfer recycling functionality to pathcomp.c");
+    ok(!value_next(val), "value_next() doesn't recycle");
+    end_todo;
     value_free(val);
 }
 
@@ -81,16 +82,17 @@ test_alt_4elements(void)
     value_add(&val, val2);
     cmp_ok(val->type, "==", VALUE_ALT);
 
-    value_alt_t *alt = (value_alt_t *) val;
     is(value_eval(val, NULL, NULL), "abc");
-    alt->current = alt->current->next;
+    ok(value_next(val));
     is(value_eval(val, NULL, NULL), "def");
-    alt->current = alt->current->next;
+    ok(value_next(val));
     is(value_eval(val, NULL, NULL), "ghi");
-    alt->current = alt->current->next;
+    ok(value_next(val));
     is(value_eval(val, NULL, NULL), "jkl");
-    alt->current = alt->current->next;
-    ok(!alt->current);
+    ok(!value_next(val));
+    todo("transfer recycling functionality to pathcomp.c");
+    ok(!value_next(val), "value_next() doesn't recycle");
+    end_todo;
     value_free(val);
 }
 
