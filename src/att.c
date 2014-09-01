@@ -53,6 +53,11 @@ att_name_equal_to(att_t *att, char *name)
     return !strcmp(att->name, name);
 }
 
+/*
+ * \note Beware: this function may return a pointer to internal storage. There
+ * are no guarantees on the lifetime of the object pointed to by the return
+ * value of this function.
+ */
 const char *
 att_eval(att_t *att, void *composer, const char *metatable)
 {

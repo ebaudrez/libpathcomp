@@ -148,6 +148,11 @@ pathcomp_free(pathcomp_t *composer)
 
 /**
  * \note The string returned by this function must not be deallocated by the user.
+ * \note Beware: this function may return a pointer to internal storage. There
+ * are no guarantees on the lifetime of the object pointed to by the return
+ * value of this function. Therefore, this function should probably only be
+ * used for debugging. Prefer pathcomp_eval().
+ * \seealso pathcomp_eval()
  */
 const char *
 pathcomp_eval_nocopy(pathcomp_t *composer, const char *name)
