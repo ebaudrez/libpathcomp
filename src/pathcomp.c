@@ -301,7 +301,7 @@ pathcomp_find(pathcomp_t *composer)
         composer->started = 1;
         if (pathcomp_done(composer)) break;
         path = pathcomp_yield(composer);
-        if (path_exists(path)) return path;
+        if (path && path_exists(path)) return path;
         free(path);
     }
     return NULL;

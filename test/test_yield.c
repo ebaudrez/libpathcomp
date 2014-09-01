@@ -53,7 +53,7 @@ test_basic(void)
     pathcomp_free(c);
 
     ok(c = pathcomp_new("test.basic.4"));
-    is(s = pathcomp_yield(c), NULL);
+    is(s = pathcomp_yield(c), NULL, "empty class");
     free(s);
     pathcomp_free(c);
 

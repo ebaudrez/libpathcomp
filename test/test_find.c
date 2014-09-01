@@ -32,6 +32,8 @@ const char *config = "\
     extension = .hdf\n\
     extension = .hdf.gz\n\
     compose   = lua { return self.dir .. '/' .. self.file .. self.extension }\n\
+\n\
+[test.find.empty]\n\
 ";
 
 static void
@@ -156,12 +158,22 @@ test_find()
     pathcomp_free(c);
 }
 
+static void
+test_find_empty(void)
+{
+    pathcomp_t *c;
+    c = pathcomp_new("test.find.empty");
+    ok(!pathcomp_find(c));
+    pathcomp_free(c);
+}
+
 int
 main(void)
 {
     plan(NO_PLAN);
     pathcomp_use_config_from(config);
     test_find();
+    test_find_empty();
     pathcomp_cleanup();
     done_testing();
 }
