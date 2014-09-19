@@ -26,5 +26,6 @@ extern void        pathcomp_reset(pathcomp_t *);
 extern int         pathcomp_done(pathcomp_t *);
 extern int         pathcomp_next(pathcomp_t *);
 extern char       *pathcomp_find(pathcomp_t *);
+extern int         pathcomp_mkdir(pathcomp_t *);
 
 #endif /* PATHCOMP_INCLUDED */

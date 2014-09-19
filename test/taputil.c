@@ -4,6 +4,7 @@
 #include "list.h"
 #include <assert.h>
 #include <string.h>
+#include <sys/stat.h>
 
 static void
 list_diag_el(char *p)
@@ -139,6 +140,30 @@ path_not_exists_ok_at_loc(const char *file, int line, const char *path, const ch
         free(s);
     }
     if (f) fclose(f);
+    va_end(ap);
+    return test;
+}
+
+int
+dir_exists_ok_at_loc(const char *file, int line, const char *path, const char *fmt, ...)
+{
+    int test;
+    va_list ap;
+    struct stat buf;
+
+    va_start(ap, fmt);
+    assert(path);
+    if (stat(path, &buf) == -1) test = 0;
+    else test = S_ISDIR(buf.st_mode);
+    if (fmt) vok_at_loc(file, line, test, fmt, ap);
+    else {
+        const char *def = "path %s exists and is a directory";
+        char *s;
+        s = malloc((strlen(def) - 2 + strlen(path) + 1)*sizeof *s);
+        sprintf(s, def, path);
+        vok_at_loc(file, line, test, s, ap);
+        free(s);
+    }
     va_end(ap);
     return test;
 }

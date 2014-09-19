@@ -18,6 +18,8 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
 
 /**
  * \brief Main data type
@@ -305,4 +307,32 @@ pathcomp_find(pathcomp_t *composer)
         free(path);
     }
     return NULL;
+}
+
+int
+pathcomp_mkdir(pathcomp_t *composer)
+{
+    log_t *log;
+    char *path, *p;
+    int success = 1;
+    assert(composer);
+    log = log_get_logger("pathcomp");
+    path = pathcomp_yield(composer);
+    p = path;
+    for (;;) {
+        while (*p && *p == '/') ++p; /* skip initial slashes */
+        while (*p && *p != '/') ++p; /* then seek to slash after first component */
+        if (!*p) break;
+        *p = '\0';
+        if (mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
+            int sv = errno;
+            if (sv != EEXIST) {
+                log_error(log, "mkdir '%s': %s", path, strerror(sv));
+                success = 0;
+            }
+        }
+        *p++ = '/';
+    }
+    free(path);
+    return success;
 }
