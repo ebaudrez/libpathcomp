@@ -8,10 +8,6 @@
 #include <errno.h>
 #include <string.h>
 
-const char *config = "\
-[test.mkdir]\n\
-";
-
 static void
 test_basic(void)
 {
@@ -48,7 +44,6 @@ int
 main(void)
 {
     plan(NO_PLAN);
-    pathcomp_use_config_from(config);
     test_basic();
     pathcomp_cleanup();
     done_testing();

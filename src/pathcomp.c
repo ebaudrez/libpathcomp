@@ -80,7 +80,7 @@ pathcomp_make_from_config(pathcomp_t *composer)
     list_t *psec;
     log_t *log;
     assert(composer);
-    assert(config);
+    if (!config) return;
     log = log_get_logger("pathcomp");
     psec = config->sections;
     while ((psec = list_find_first(psec, (list_traversal_t *) find_section_with_name, composer->name))) {
