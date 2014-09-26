@@ -29,5 +29,6 @@ typedef struct cf_t {
 extern cf_t *cf_new(void);
 extern void  cf_free(cf_t *);
 extern int   cf_add_from_string(cf_t *, const char *);
+extern int   cf_add_from_file(cf_t *, const char *);
 
 #endif /* CF_INCLUDED */

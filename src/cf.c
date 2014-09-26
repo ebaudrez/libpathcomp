@@ -7,11 +7,13 @@
 #include "cf.h"
 #include "list.h"
 #include "buf.h"
+#include "log.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <errno.h>
 
 /* forward declaration */
 static int cf_parse_text(cf_t *, buf_t *);
@@ -84,6 +86,26 @@ cf_add_from_string(cf_t *cf, const char *string)
     assert(cf);
     buf_init(&text, 0);
     buf_addstr(&text, string);
+    rc = cf_parse_text(cf, &text);
+    buf_release(&text);
+    return rc;
+}
+
+int
+cf_add_from_file(cf_t *cf, const char *filename)
+{
+    buf_t text;
+    log_t *log;
+    int rc;
+    assert(cf);
+    log = log_get_logger("cf");
+    buf_init(&text, 0);
+    rc = buf_read_file(&text, filename, 0);
+    if (rc == -1) {
+        int sv = errno;
+        log_error(log, "cannot read file %s: %s", filename, strerror(sv));
+        return 0;
+    }
     rc = cf_parse_text(cf, &text);
     buf_release(&text);
     return rc;

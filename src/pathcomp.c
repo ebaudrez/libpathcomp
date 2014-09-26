@@ -43,6 +43,14 @@ pathcomp_add_config_from_string(const char *string)
 }
 
 void
+pathcomp_add_config_from_file(const char *filename)
+{
+    assert(filename);
+    if (!config) config = cf_new();
+    cf_add_from_file(config, filename);
+}
+
+void
 pathcomp_cleanup(void)
 {
     cf_free(config);
