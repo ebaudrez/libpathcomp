@@ -16,8 +16,9 @@ test1(void)
     key = value";
 
     note("simple test - one entry");
-    cf = cf_new_from_string(text);
+    cf = cf_new();
     ok(cf, "cf object returned");
+    ok(cf_add_from_string(cf, text), "parses ok");
     ok(cf->sections, "sections are present");
     ok(!cf->sections->next, "only one section");
     section = cf->sections->el;
@@ -46,8 +47,9 @@ stray_entry = some_stuff\n\
 ";
 
     note("simple test - stray entry + two entries in section");
-    cf = cf_new_from_string(text);
+    cf = cf_new();
     ok(cf);
+    ok(cf_add_from_string(cf, text), "parses ok");
     ok(cf->sections);
     ok(!cf->sections->next);
     ok(sec = cf->sections->el);
@@ -80,8 +82,9 @@ test3(void)
 ";
 
     note("testing backslash continuation");
-    cf = cf_new_from_string(text);
+    cf = cf_new();
     ok(cf);
+    ok(cf_add_from_string(cf, text), "parses ok");
     ok(cf->sections);
     ok(!cf->sections->next, "only one section");
     ok(sec = cf->sections->el);
@@ -132,7 +135,8 @@ do we allow non-identifier characters?           =  definitely!\n\
 ";
 
     note("more testing - 3 sections & some odd formatting");
-    ok(cf   = cf_new_from_string(text));
+    ok(cf = cf_new());
+    ok(cf_add_from_string(cf, text), "parses ok");
     ok(psec = cf->sections);
     ok(sec  = psec->el);
     is(sec->name, "test.class1");

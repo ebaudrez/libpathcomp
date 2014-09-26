@@ -28,7 +28,7 @@ int
 main(void)
 {
     plan(NO_PLAN);
-    pathcomp_use_config_from(config);
+    pathcomp_add_config_from_string(config);
     test_set();
     pathcomp_cleanup();
     done_testing();

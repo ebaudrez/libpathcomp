@@ -35,10 +35,11 @@ struct pathcomp_t {
 static cf_t *config;
 
 void
-pathcomp_use_config_from(const char *string)
+pathcomp_add_config_from_string(const char *string)
 {
     assert(string);
-    config = cf_new_from_string(string);
+    if (!config) config = cf_new();
+    cf_add_from_string(config, string);
 }
 
 void

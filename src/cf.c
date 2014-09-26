@@ -58,21 +58,12 @@ cf_section_free(cf_section_t *section)
 }
 
 cf_t *
-cf_new_from_string(const char *string)
+cf_new(void)
 {
     cf_t *cf;
-    buf_t text;
     cf = malloc(sizeof *cf);
     if (!cf) return cf;
     cf->sections = NULL;
-    buf_init(&text, 0);
-    buf_addstr(&text, string);
-    if (!cf_parse_text(cf, &text)) {
-        buf_release(&text);
-        cf_free(cf);
-        return NULL;
-    }
-    buf_release(&text);
     return cf;
 }
 
@@ -83,6 +74,19 @@ cf_free(cf_t *cf)
     list_foreach(cf->sections, (list_traversal_t *) cf_section_free, NULL);
     list_free(cf->sections);
     free(cf);
+}
+
+int
+cf_add_from_string(cf_t *cf, const char *string)
+{
+    buf_t text;
+    int rc;
+    assert(cf);
+    buf_init(&text, 0);
+    buf_addstr(&text, string);
+    rc = cf_parse_text(cf, &text);
+    buf_release(&text);
+    return rc;
 }
 
 static int

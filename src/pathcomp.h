@@ -13,7 +13,7 @@
  */
 typedef struct pathcomp_t pathcomp_t;
 
-extern void        pathcomp_use_config_from(const char *);
+extern void        pathcomp_add_config_from_string(const char *);
 extern void        pathcomp_cleanup(void);
 extern pathcomp_t *pathcomp_new(const char *);
 extern void        pathcomp_free(pathcomp_t *);
