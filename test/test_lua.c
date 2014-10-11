@@ -21,9 +21,9 @@ const char *config = "\
     mmdd       = lua { return string.sub(self.slot,  5,  8) }\n\
     hhmm       = lua { return string.sub(self.slot,  9, 12) }\n\
     ss         = lua { local ss = string.sub(self.slot, 13, 14); return #ss > 0 and ss or '00' }\n\
-    hms        = lua { return self.hhmm .. self.ss }\n\
+    hhmmss     = lua { return self.hhmm .. self.ss }\n\
     prefix     = lua { return string.format('%s_%s_L%s_%s_%s', self.instrument, self.imager, self.level, self.resolution, self.product) }\n\
-    filename   = lua { return self.prefix .. '_' .. self.yyyy .. self.mmdd .. '_' .. self.hms .. '_' .. self.version .. self.extension }\n\
+    filename   = lua { return self.prefix .. '_' .. self.yyyy .. self.mmdd .. '_' .. self.hhmmss .. '_' .. self.version .. self.extension }\n\
 \n\
 [test.args]\n\
     sum    = lua { ? }\n\
@@ -56,7 +56,7 @@ test_callbacks(void)
     is(pathcomp_eval_nocopy(c, "mmdd"), "0301");   /* leading 0 not stripped! */
     is(pathcomp_eval_nocopy(c, "hhmm"), "1130");
     is(pathcomp_eval_nocopy(c, "ss"), "00");
-    is(pathcomp_eval_nocopy(c, "hms"), "113000");
+    is(pathcomp_eval_nocopy(c, "hhmmss"), "113000");
     is(pathcomp_eval_nocopy(c, "prefix"), "G2_SEV1_L20_BARG_SOL_M15_R50");
     is(pathcomp_eval_nocopy(c, "filename"), "G2_SEV1_L20_BARG_SOL_M15_R50_20040301_113000_V003.hdf.gz");
     pathcomp_free(c);
