@@ -102,7 +102,7 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
     void      **p;
     int         nargs = 0;
     assert(val);
-    log = log_get_logger("pathcomp");
+    log = log_get_logger("libpathcomp");
     if (luaL_loadstring(L, val->source) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
         log_error(log, "cannot parse Lua code: %s", error);

@@ -98,7 +98,7 @@ cf_add_from_file(cf_t *cf, const char *filename)
     log_t *log;
     int rc;
     assert(cf);
-    log = log_get_logger("cf");
+    log = log_get_logger("libpathcomp");
     buf_init(&text, 0);
     rc = buf_read_file(&text, filename, 0);
     if (rc == -1) {

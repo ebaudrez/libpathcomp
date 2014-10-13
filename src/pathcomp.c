@@ -90,7 +90,7 @@ pathcomp_make_from_config(pathcomp_t *composer)
     log_t *log;
     assert(composer);
     if (!config) return;
-    log = log_get_logger("pathcomp");
+    log = log_get_logger("libpathcomp");
     psec = config->sections;
     while ((psec = list_find_first(psec, (list_traversal_t *) find_section_with_name, composer->name))) {
         cf_section_t *sec = psec->el;
@@ -325,7 +325,7 @@ pathcomp_mkdir(pathcomp_t *composer)
     char *path, *p;
     int success = 1;
     assert(composer);
-    log = log_get_logger("pathcomp");
+    log = log_get_logger("libpathcomp");
     path = pathcomp_yield(composer);
     p = path;
     for (;;) {
