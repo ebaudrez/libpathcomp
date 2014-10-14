@@ -8,4 +8,7 @@ include_HEADERS = pathcomp.h
 lib_LTLIBRARIES = libpathcomp.la
 libpathcomp_la_SOURCES = pathcomp.c
 libpathcomp_la_LIBADD = libutil.la $(LIBLUA)
+bin_PROGRAMS = pathcomp
+pathcomp_SOURCES = standalone.c
+pathcomp_LDADD = libpathcomp.la
 prove: check

@@ -24,9 +24,11 @@ ltmain.sh
 m4/
 missing
 obsolete/
+src/pathcomp
 stamp-h1
 test-driver
 test/test-suite.log
 test/test_*
 !test/test_*.c
+!test/test_*.pl
 todo/

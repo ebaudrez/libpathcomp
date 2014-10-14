@@ -87,18 +87,18 @@ static void
 pathcomp_make_from_config(pathcomp_t *composer)
 {
     list_t *psec;
-    log_t *log;
+    /*log_t *log;*/
     assert(composer);
     if (!config) return;
-    log = log_get_logger("libpathcomp");
+    /*log = log_get_logger("libpathcomp");*/
     psec = config->sections;
     while ((psec = list_find_first(psec, (list_traversal_t *) find_section_with_name, composer->name))) {
         cf_section_t *sec = psec->el;
         list_t       *pkv = sec->entries;
-        log_debug(log, "found section with name '%s'", sec->name);
+        /*log_debug(log, "found section with name '%s'", sec->name);*/
         while (pkv) {
             cf_kv_t *kv = pkv->el;
-            log_debug(log, "found key-value pair with name '%s'", kv->key);
+            /*log_debug(log, "found key-value pair with name '%s'", kv->key);*/
             pathcomp_add(composer, kv->key, kv->value);
             pkv = pkv->next;
         }
