@@ -4,6 +4,7 @@
 #include "tap.h"
 #include "pathcomp.h"
 #include "log.h"
+#include <string.h>
 
 const char *config = "\
 [test.basic]\n\
@@ -74,6 +75,19 @@ test_args(void)
     pathcomp_free(c);
 }
 
+static void
+test_env(void)
+{
+    pathcomp_t *c = NULL;
+    char *expected;
+    ok(c = pathcomp_new("test.env"));
+    pathcomp_set(c, "home", "lua { return os.getenv('HOME') }");
+    expected = strdup(getenv("HOME"));
+    is(pathcomp_eval_nocopy(c, "home"), expected, "matches what is retrieved with getenv()");
+    free(expected);
+    pathcomp_free(c);
+}
+
 int
 main(void)
 {
@@ -84,6 +98,7 @@ main(void)
     test_basic();
     test_callbacks();
     test_args();
+    test_env();
     pathcomp_cleanup();
     done_testing();
 }
