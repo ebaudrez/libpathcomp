@@ -3,6 +3,7 @@
 #include "config.h"
 #include "tap.h"
 #include "pathcomp.h"
+#include "log.h"
 
 const char *config = "\
 [test.basic]\n\
@@ -77,6 +78,8 @@ int
 main(void)
 {
     plan(NO_PLAN);
+    log_set_stream_global(stdout);
+    log_set_prefix_global("# ");
     pathcomp_add_config_from_string(config);
     test_basic();
     test_callbacks();
