@@ -20,7 +20,6 @@ test_file_LDADD = $(add_libraries)
 prove-TESTS: $(TESTS)
 	@srcdir=$(srcdir); export srcdir; \
 	test "$(PROVE)" && PATH=".:$$PATH" $(PROVE) -e '' $(TESTS)
-prove-am: all-am
+prove-local: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) prove-TESTS
-prove: prove-am

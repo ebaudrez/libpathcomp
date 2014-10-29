@@ -111,6 +111,6 @@ pc:
 	@echo "includedir=$(INSTALL_INC)"
 
 # list targets that do not create files (but not all makes understand .PHONY)
-.PHONY: all $(PLATS) clean distclean check test install local none dummy echo pecho lecho
+.PHONY: all $(PLATS) clean distclean check test install local none dummy echo pecho lecho prove
 
 # (end of Makefile)
