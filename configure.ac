@@ -3,6 +3,7 @@
 
 AC_PREREQ([2.68])
 AC_INIT([libpathcomp], [0.1], [edward.baudrez@gmail.com])
+AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 AM_SILENT_RULES
 AM_EXTRA_RECURSIVE_TARGETS([prove])
