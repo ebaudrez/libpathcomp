@@ -40,6 +40,7 @@
 
 
 /* thread status; 0 is OK */
+#define LUA_OK		0
 #define LUA_YIELD	1
 #define LUA_ERRRUN	2
 #define LUA_ERRSYNTAX	3
