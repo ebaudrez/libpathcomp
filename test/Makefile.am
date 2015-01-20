@@ -3,6 +3,7 @@ check_PROGRAMS = test_buf test_cf test_list test_value test_literal test_lua \
 TESTS = $(check_PROGRAMS) test_standalone.pl
 AM_CPPFLAGS = -I$(top_srcdir)/src $(LIBLUACPPFLAGS)
 LDADD = ../src/libpathcomp.la tap.o taputil.o
+EXTRA_DIST = tap.c tap.h taputil.c taputil.h
 ## prove cannot just depend on check, because that rule will run the tests!
 ## therefore, we have to imitate it
 prove-TESTS: $(TESTS)
