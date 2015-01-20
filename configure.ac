@@ -35,10 +35,9 @@ AC_FUNC_MMAP
 AC_CHECK_FUNCS([regcomp])
 
 # Lua support: use Lua 5.1.4 shipped with this distribution
-lua_dir="$srcdir/liblua"
-abs_lua_dir=`(cd "$lua_dir"; pwd)`
-AC_SUBST([LIBLUACPPFLAGS], ["-I$abs_lua_dir/src"])
-AC_SUBST([LIBLUALDFLAGS], ["-L$abs_lua_dir/src"])
+# must add -I$(top_builddir)/liblua/src because luaconf.h is generated there!
+AC_SUBST([LIBLUACPPFLAGS], ['-I$(top_srcdir)/liblua/src -I$(top_builddir)/liblua/src'])
+AC_SUBST([LIBLUALDFLAGS], ['-L$(top_builddir)/liblua/src'])
 AC_SUBST([LIBLUA], ["-llua"])
 
 AC_CONFIG_FILES([Makefile
