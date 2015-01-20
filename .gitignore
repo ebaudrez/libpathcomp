@@ -21,6 +21,8 @@ configure
 depcomp
 design
 install-sh
+libpathcomp-*.*.tar.gz
+libpathcomp-*.*/
 libtool
 ltmain.sh
 m4/
