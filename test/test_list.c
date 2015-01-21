@@ -1,6 +1,6 @@
 /* test list.c */
 
-#include "config.h"
+#include <config.h>
 #include "tap.h"
 #include "list.h"
 #include <string.h>

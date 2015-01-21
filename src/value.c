@@ -1,4 +1,4 @@
-#include "config.h"
+#include <config.h>
 #include "value.h"
 #include "interpreter.h"
 #include "log.h"

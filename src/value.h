@@ -1,7 +1,6 @@
 #ifndef VALUE_INCLUDED
 #define VALUE_INCLUDED
 
-#include "config.h"
 #include "list.h"
 
 typedef enum { VALUE_LITERAL, VALUE_LUA, VALUE_ALT } value_type_t;

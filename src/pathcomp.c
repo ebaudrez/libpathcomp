@@ -3,7 +3,7 @@
  * \brief Path name composition (implementation)
  */
 
-#include "config.h"
+#include <config.h>
 #include "pathcomp.h"
 #include "list.h"
 #include "cf.h"

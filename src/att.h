@@ -1,8 +1,6 @@
 #ifndef ATT_INCLUDED
 #define ATT_INCLUDED
 
-#include "config.h"
-
 typedef struct att_t att_t;
 
 extern att_t      *att_new(const char *, const char *);

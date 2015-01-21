@@ -6,8 +6,6 @@
 #ifndef LIST_INCLUDED
 #define LIST_INCLUDED
 
-#include "config.h"
-
 typedef struct list_t {
     struct list_t *next;
     void          *el;

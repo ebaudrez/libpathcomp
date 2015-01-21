@@ -6,8 +6,6 @@
 #ifndef PATHCOMP_INCLUDED
 #define PATHCOMP_INCLUDED
 
-#include "config.h"
-
 /**
  * \brief Main structure (abstract data type)
  */

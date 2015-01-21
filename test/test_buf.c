@@ -1,6 +1,6 @@
 /* test buf.c */
 
-#include "config.h"
+#include <config.h>
 #include "tap.h"
 #include "buf.h"
 #include <string.h>

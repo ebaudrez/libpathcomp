@@ -3,7 +3,7 @@
  * \brief Configuration file parsing
  */
 
-#include "config.h"
+#include <config.h>
 #include "cf.h"
 #include "list.h"
 #include "buf.h"

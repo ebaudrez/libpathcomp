@@ -1,4 +1,4 @@
-#include "config.h"
+#include <config.h>
 #include "taputil.h"
 #include "tap.h"
 #include "list.h"

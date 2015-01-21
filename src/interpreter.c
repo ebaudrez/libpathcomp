@@ -1,4 +1,4 @@
-#include "config.h"
+#include <config.h>
 #include "interpreter.h"
 #include <lua.h>
 #include <lauxlib.h>

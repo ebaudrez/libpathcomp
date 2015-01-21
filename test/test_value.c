@@ -1,6 +1,6 @@
 /* test value.c */
 
-#include "config.h"
+#include <config.h>
 #include "tap.h"
 #include "value.h"
 #include "interpreter.h"

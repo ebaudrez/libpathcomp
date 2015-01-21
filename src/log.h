@@ -6,8 +6,6 @@
 #ifndef LOG_INCLUDED
 #define LOG_INCLUDED
 
-#include "config.h"
-
 typedef struct log_t log_t;
 
 extern log_t *log_get_logger(char *);

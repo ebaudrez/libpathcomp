@@ -1,6 +1,6 @@
 /* test pathcomp_set() and pathcomp_add() */
 
-#include "config.h"
+#include <config.h>
 #include "tap.h"
 #include "pathcomp.h"
 

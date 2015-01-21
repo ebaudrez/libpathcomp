@@ -1,4 +1,4 @@
-#include "config.h"
+#include <config.h>
 #include "att.h"
 #include "value.h"
 #include <assert.h>

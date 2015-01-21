@@ -1,4 +1,4 @@
-#include "config.h"
+#include <config.h>
 #include "pathcomp.h"
 #include <stdlib.h>
 #include <unistd.h>

@@ -3,7 +3,7 @@
  * \brief Linked lists (implementation)
  */
 
-#include "config.h"
+#include <config.h>
 #include "list.h"
 #include <stddef.h>
 #include <stdlib.h>

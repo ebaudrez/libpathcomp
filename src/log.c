@@ -3,7 +3,7 @@
  * \brief Logging (implementation)
  */
 
-#include "config.h"
+#include <config.h>
 #include "log.h"
 #include <stddef.h>
 #include <stdio.h>

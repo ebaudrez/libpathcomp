@@ -1,6 +1,6 @@
 /* test empty config */
 
-#include "config.h"
+#include <config.h>
 #include "tap.h"
 #include "pathcomp.h"
 

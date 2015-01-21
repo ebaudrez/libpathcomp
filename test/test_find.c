@@ -1,6 +1,6 @@
 /* test pathcomp_find() */
 
-#include "config.h"
+#include <config.h>
 #include "tap.h"
 #include "pathcomp.h"
 #include "taputil.h"

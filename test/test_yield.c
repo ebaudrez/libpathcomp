@@ -1,6 +1,6 @@
 /* test pathcomp_yield() */
 
-#include "config.h"
+#include <config.h>
 #include "tap.h"
 #include "taputil.h"
 #include "pathcomp.h"

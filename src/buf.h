@@ -6,7 +6,6 @@
 #ifndef BUF_INCLUDED
 #define BUF_INCLUDED
 
-#include "config.h"
 #include <stddef.h>
 #include <stdio.h>
 

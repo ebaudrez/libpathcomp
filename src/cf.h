@@ -6,7 +6,6 @@
 #ifndef CF_INCLUDED
 #define CF_INCLUDED
 
-#include "config.h"
 #include "list.h"
 
 /**

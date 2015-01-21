@@ -3,7 +3,7 @@
  * \brief String buffers
  */
 
-#include "config.h"
+#include <config.h>
 #include "buf.h"
 #include <stdlib.h>
 #include <assert.h>
