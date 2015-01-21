@@ -11,6 +11,10 @@
  */
 typedef struct pathcomp_t pathcomp_t;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void        pathcomp_add_config_from_string(const char *);
 extern void        pathcomp_add_config_from_file(const char *);
 extern void        pathcomp_cleanup(void);
@@ -26,5 +30,9 @@ extern int         pathcomp_done(pathcomp_t *);
 extern int         pathcomp_next(pathcomp_t *);
 extern char       *pathcomp_find(pathcomp_t *);
 extern int         pathcomp_mkdir(pathcomp_t *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* PATHCOMP_INCLUDED */
