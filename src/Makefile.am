@@ -7,6 +7,7 @@ include_HEADERS = pathcomp.h
 lib_LTLIBRARIES = libpathcomp.la
 libpathcomp_la_SOURCES = pathcomp.c
 libpathcomp_la_LIBADD = libutil.la $(LIBLUA)
+libpathcomp_la_LDFLAGS = -version-info 0:0:0
 bin_PROGRAMS = pathcomp
 pathcomp_SOURCES = standalone.c
 pathcomp_LDADD = libpathcomp.la
