@@ -1,0 +1,15 @@
+pathcomp_add
+pathcomp_add_config_from_file
+pathcomp_add_config_from_string
+pathcomp_cleanup
+pathcomp_done
+pathcomp_eval
+pathcomp_eval_nocopy
+pathcomp_find
+pathcomp_free
+pathcomp_mkdir
+pathcomp_new
+pathcomp_next
+pathcomp_reset
+pathcomp_set
+pathcomp_yield
