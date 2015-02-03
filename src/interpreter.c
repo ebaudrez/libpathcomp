@@ -27,6 +27,7 @@ void
 interpreter_cleanup(void)
 {
     if (!state) return;
+    assert(!lua_gettop(state));
     lua_close(state);
     state = NULL;
 }

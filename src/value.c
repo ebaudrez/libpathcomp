@@ -106,6 +106,7 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
     if (luaL_loadstring(L, val->source) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
         log_error(log, "cannot parse Lua code: %s", error);
+        lua_pop(L, 1);
         return NULL;
     }
     if (composer && metatable) {
@@ -118,11 +119,14 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
     if (lua_pcall(L, nargs, 1, 0) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
         log_error(log, "cannot execute Lua code: %s", error);
+        lua_pop(L, 1);
         free(val->result);
         return val->result = NULL;
     }
     free(val->result);
-    return val->result = strdup(lua_tostring(L, -1));
+    val->result = strdup(lua_tostring(L, -1));
+    lua_pop(L, 1);
+    return val->result;
 }
 
 /**
