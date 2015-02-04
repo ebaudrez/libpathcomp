@@ -9,7 +9,7 @@
 #include <stdarg.h>
 
 static void
-log_emit(char *fmt, va_list ap)
+log_emit(const char *fmt, va_list ap)
 {
     fprintf(stderr, "pathcomp: ");
     vfprintf(stderr, fmt, ap);
@@ -17,7 +17,7 @@ log_emit(char *fmt, va_list ap)
 }
 
 void
-log_debug(char *fmt, ...)
+log_debug(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
@@ -26,7 +26,7 @@ log_debug(char *fmt, ...)
 }
 
 void
-log_warning(char *fmt, ...)
+log_warning(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
@@ -35,7 +35,7 @@ log_warning(char *fmt, ...)
 }
 
 void
-log_error(char *fmt, ...)
+log_error(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
