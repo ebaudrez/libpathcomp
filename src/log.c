@@ -78,6 +78,15 @@ log_debug(log_t *log, char *fmt, ...)
 }
 
 void
+log_warning(log_t *log, char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    log_emit(log, LOG_LEVEL_WARNING, fmt, ap);
+    va_end(ap);
+}
+
+void
 log_error(log_t *log, char *fmt, ...)
 {
     va_list ap;
