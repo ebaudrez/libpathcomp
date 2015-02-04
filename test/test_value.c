@@ -5,7 +5,6 @@
 #include "value.h"
 #include "interpreter.h"
 #include <string.h>
-#include "log.h"
 
 static void
 test_literal(void)
@@ -97,13 +96,10 @@ int
 main(void)
 {
     plan(NO_PLAN);
-    log_set_stream_global(stdout);
-    log_set_prefix_global("# ");
     test_literal();
     test_lua();
     test_alt_2elements();
     test_alt_4elements();
     interpreter_cleanup();
-    log_cleanup();
     done_testing();
 }

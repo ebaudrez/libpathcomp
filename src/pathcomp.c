@@ -56,7 +56,6 @@ pathcomp_cleanup(void)
     cf_free(config);
     config = NULL;
     interpreter_cleanup();
-    log_cleanup();
 }
 
 static int
@@ -87,18 +86,16 @@ static void
 pathcomp_make_from_config(pathcomp_t *composer)
 {
     list_t *psec;
-    /*log_t *log;*/
     assert(composer);
     if (!config) return;
-    /*log = log_get_logger("libpathcomp");*/
     psec = config->sections;
     while ((psec = list_find_first(psec, (list_traversal_t *) find_section_with_name, composer->name))) {
         cf_section_t *sec = psec->el;
         list_t       *pkv = sec->entries;
-        /*log_debug(log, "found section with name '%s'", sec->name);*/
+        /*log_debug("found section with name '%s'", sec->name);*/
         while (pkv) {
             cf_kv_t *kv = pkv->el;
-            /*log_debug(log, "found key-value pair with name '%s'", kv->key);*/
+            /*log_debug("found key-value pair with name '%s'", kv->key);*/
             pathcomp_add(composer, kv->key, kv->value);
             pkv = pkv->next;
         }
@@ -321,11 +318,9 @@ pathcomp_find(pathcomp_t *composer)
 int
 pathcomp_mkdir(pathcomp_t *composer)
 {
-    log_t *log;
     char *path, *p;
     int success = 1;
     assert(composer);
-    log = log_get_logger("libpathcomp");
     path = pathcomp_yield(composer);
     p = path;
     for (;;) {
@@ -336,7 +331,7 @@ pathcomp_mkdir(pathcomp_t *composer)
         if (mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
             int sv = errno;
             if (sv != EEXIST) {
-                log_error(log, "mkdir '%s': %s", path, strerror(sv));
+                log_error("mkdir '%s': %s", path, strerror(sv));
                 success = 0;
             }
         }

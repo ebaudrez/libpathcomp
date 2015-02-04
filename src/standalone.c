@@ -43,9 +43,7 @@ kv_new(const char *text)
 {
     kv_t *kv;
     char *key, *val, *p;
-    log_t *log;
 
-    log = log_get_logger("pathcomp");
     assert(text);
     kv = malloc(sizeof *kv);
     if (!kv) return kv;
@@ -53,7 +51,7 @@ kv_new(const char *text)
     assert(val = strchr(key, '='));
     *val++ = '\0';
     if (strlen(key) < 1) {
-        log_error(log, "empty key specified on command line");
+        log_error("empty key specified on command line");
         free(key);
         free(kv);
         return NULL;
@@ -93,9 +91,7 @@ opt_new(int argc, char **argv)
 {
     int opt;
     opt_t *options;
-    log_t *log;
 
-    log = log_get_logger("pathcomp");
     options = malloc(sizeof *options);
     if (!options) return options;
     options->class = NULL;
@@ -122,12 +118,12 @@ opt_new(int argc, char **argv)
                 break;
 
             default:
-                log_error(log, "invalid usage");
+                log_error("invalid usage");
                 exit(EXIT_FAILURE);
         }
     }
     if (!options->class) {
-        log_error(log, "class name (argument -c) is mandatory");
+        log_error("class name (argument -c) is mandatory");
         exit(EXIT_FAILURE);
     }
     while (optind < argc) {

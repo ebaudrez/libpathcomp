@@ -97,15 +97,13 @@ value_lua_free(value_lua_t *val)
 static const char *
 value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
 {
-    log_t      *log;
     lua_State  *L = interpreter_get_state();
     void      **p;
     int         nargs = 0;
     assert(val);
-    log = log_get_logger("libpathcomp");
     if (luaL_loadstring(L, val->source) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
-        log_error(log, "cannot parse Lua code: %s", error);
+        log_error("cannot parse Lua code: %s", error);
         lua_pop(L, 1);
         return NULL;
     }
@@ -118,7 +116,7 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
     }
     if (lua_pcall(L, nargs, 1, 0) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
-        log_error(log, "cannot execute Lua code: %s", error);
+        log_error("cannot execute Lua code: %s", error);
         lua_pop(L, 1);
         free(val->result);
         return val->result = NULL;

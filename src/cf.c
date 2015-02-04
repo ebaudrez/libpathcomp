@@ -95,15 +95,13 @@ int
 cf_add_from_file(cf_t *cf, const char *filename)
 {
     buf_t text;
-    log_t *log;
     int rc;
     assert(cf);
-    log = log_get_logger("libpathcomp");
     buf_init(&text, 0);
     rc = buf_read_file(&text, filename, 0);
     if (rc == -1) {
         int sv = errno;
-        log_error(log, "cannot read file %s: %s", filename, strerror(sv));
+        log_error("cannot read file %s: %s", filename, strerror(sv));
         return 0;
     }
     rc = cf_parse_text(cf, &text);
