@@ -9,7 +9,7 @@ AM_SILENT_RULES
 AM_EXTRA_RECURSIVE_TARGETS([prove])
 LT_PREREQ([2.2])
 LT_INIT
-AC_CONFIG_SRCDIR([src/pathcomp.h])
+AC_CONFIG_SRCDIR([include/pathcomp.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -40,8 +40,9 @@ AC_SUBST([LIBLUACPPFLAGS], ['-I$(top_builddir)/liblua/src -I$(top_srcdir)/liblua
 AC_SUBST([LIBLUALDFLAGS], [])
 AC_SUBST([LIBLUA], ['$(top_builddir)/liblua/src/liblua.la'])
 
+AC_CONFIG_SUBDIRS([liblua])
 AC_CONFIG_FILES([Makefile
+                 include/Makefile
                  src/Makefile
                  test/Makefile])
-AC_CONFIG_SUBDIRS([liblua])
 AC_OUTPUT

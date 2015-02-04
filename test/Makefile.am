@@ -1,7 +1,8 @@
 check_PROGRAMS = test_buf test_cf test_list test_value test_literal test_lua \
                  test_yield test_set test_find test_mkdir test_empty test_file
 TESTS = $(check_PROGRAMS) test_standalone.pl
-AM_CPPFLAGS = -I$(top_srcdir)/src $(LIBLUACPPFLAGS)
+## need to include src/ because we are also testing internals
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src $(LIBLUACPPFLAGS)
 AM_LDFLAGS = $(LIBLUALDFLAGS)
 ## since we are testing internals of the library, we need to add in libutil and
 ## the Lua library manually
