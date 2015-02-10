@@ -87,6 +87,16 @@ test_env(void)
     pathcomp_free(c);
 }
 
+static void
+test_incomplete(void)
+{
+    pathcomp_t *c = NULL;
+    ok(c = pathcomp_new("test.incomplete"));
+    pathcomp_set(c, "abc", "lua { return self.def }");
+    is(pathcomp_eval_nocopy(c, "abc"), NULL, "eval() of incomplete composer returns NULL (but does not crash)");
+    pathcomp_free(c);
+}
+
 int
 main(void)
 {
@@ -96,6 +106,7 @@ main(void)
     test_callbacks();
     test_args();
     test_env();
+    test_incomplete();
     pathcomp_cleanup();
     done_testing();
 }

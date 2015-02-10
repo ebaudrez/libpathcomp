@@ -100,6 +100,7 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
     lua_State  *L = interpreter_get_state();
     void      **p;
     int         nargs = 0;
+    const char *s;
     assert(val);
     if (luaL_loadstring(L, val->source) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
@@ -122,7 +123,8 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
         return val->result = NULL;
     }
     free(val->result);
-    val->result = strdup(lua_tostring(L, -1));
+    s = lua_tostring(L, -1);
+    val->result = s ? strdup(s) : NULL;
     lua_pop(L, 1);
     return val->result;
 }
