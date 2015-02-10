@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "list.h"
-#include "log.h"
+#include "pathcomp/log.h"
 
 /* usage:
  *
@@ -51,7 +51,7 @@ kv_new(const char *text)
     assert(val = strchr(key, '='));
     *val++ = '\0';
     if (strlen(key) < 1) {
-        log_error("empty key specified on command line");
+        pathcomp_log_error("empty key specified on command line");
         free(key);
         free(kv);
         return NULL;
@@ -118,12 +118,12 @@ opt_new(int argc, char **argv)
                 break;
 
             default:
-                log_error("invalid usage");
+                pathcomp_log_error("invalid usage");
                 exit(EXIT_FAILURE);
         }
     }
     if (!options->class) {
-        log_error("class name (argument -c) is mandatory");
+        pathcomp_log_error("class name (argument -c) is mandatory");
         exit(EXIT_FAILURE);
     }
     while (optind < argc) {

@@ -7,7 +7,7 @@
 #include "cf.h"
 #include "list.h"
 #include "buf.h"
-#include "log.h"
+#include "pathcomp/log.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -101,7 +101,7 @@ cf_add_from_file(cf_t *cf, const char *filename)
     rc = buf_read_file(&text, filename, 0);
     if (rc == -1) {
         int sv = errno;
-        log_error("cannot read file %s: %s", filename, strerror(sv));
+        pathcomp_log_error("cannot read file %s: %s", filename, strerror(sv));
         return 0;
     }
     rc = cf_parse_text(cf, &text);

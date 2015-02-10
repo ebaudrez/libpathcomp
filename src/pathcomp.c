@@ -8,7 +8,7 @@
 #include "list.h"
 #include "cf.h"
 #include "att.h"
-#include "log.h"
+#include "pathcomp/log.h"
 #include "interpreter.h"
 #include "buf.h"
 #include <stddef.h>
@@ -92,10 +92,10 @@ pathcomp_make_from_config(pathcomp_t *composer)
     while ((psec = list_find_first(psec, (list_traversal_t *) find_section_with_name, composer->name))) {
         cf_section_t *sec = psec->el;
         list_t       *pkv = sec->entries;
-        /*log_debug("found section with name '%s'", sec->name);*/
+        /*pathcomp_log_debug("found section with name '%s'", sec->name);*/
         while (pkv) {
             cf_kv_t *kv = pkv->el;
-            /*log_debug("found key-value pair with name '%s'", kv->key);*/
+            /*pathcomp_log_debug("found key-value pair with name '%s'", kv->key);*/
             pathcomp_add(composer, kv->key, kv->value);
             pkv = pkv->next;
         }
@@ -331,7 +331,7 @@ pathcomp_mkdir(pathcomp_t *composer)
         if (mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
             int sv = errno;
             if (sv != EEXIST) {
-                log_error("mkdir '%s': %s", path, strerror(sv));
+                pathcomp_log_error("mkdir '%s': %s", path, strerror(sv));
                 success = 0;
             }
         }

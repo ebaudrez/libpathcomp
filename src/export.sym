@@ -7,6 +7,9 @@ pathcomp_eval
 pathcomp_eval_nocopy
 pathcomp_find
 pathcomp_free
+pathcomp_log_debug
+pathcomp_log_error
+pathcomp_log_warning
 pathcomp_mkdir
 pathcomp_new
 pathcomp_next

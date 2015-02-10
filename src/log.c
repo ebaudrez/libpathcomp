@@ -4,12 +4,12 @@
  */
 
 #include <config.h>
-#include "log.h"
+#include "pathcomp/log.h"
 #include <stdio.h>
 #include <stdarg.h>
 
 static void
-log_emit(const char *fmt, va_list ap)
+pathcomp_log_emit(const char *fmt, va_list ap)
 {
     fprintf(stderr, "pathcomp: ");
     vfprintf(stderr, fmt, ap);
@@ -17,24 +17,24 @@ log_emit(const char *fmt, va_list ap)
 }
 
 void
-log_debug(const char *fmt, ...)
+pathcomp_log_debug(const char *fmt, ...)
 {
 }
 
 void
-log_warning(const char *fmt, ...)
+pathcomp_log_warning(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    log_emit(fmt, ap);
+    pathcomp_log_emit(fmt, ap);
     va_end(ap);
 }
 
 void
-log_error(const char *fmt, ...)
+pathcomp_log_error(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    log_emit(fmt, ap);
+    pathcomp_log_emit(fmt, ap);
     va_end(ap);
 }
