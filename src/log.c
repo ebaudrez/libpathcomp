@@ -19,10 +19,6 @@ log_emit(const char *fmt, va_list ap)
 void
 log_debug(const char *fmt, ...)
 {
-    va_list ap;
-    va_start(ap, fmt);
-    log_emit(fmt, ap);
-    va_end(ap);
 }
 
 void
