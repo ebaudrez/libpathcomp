@@ -6,8 +6,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src $(LIBLUACPPFLAGS)
 AM_LDFLAGS = $(LIBLUALDFLAGS)
 ## since we are testing internals of the library, we need to add in libutil and
 ## the Lua library manually
-LDADD = ../src/libpathcomp.la ../src/libutil.la $(LIBLUA) tap.o taputil.o
-EXTRA_DIST = tap.c tap.h taputil.c taputil.h
+LDADD = routelog.o ../src/libpathcomp.la ../src/libutil.la $(LIBLUA) tap.o taputil.o
+EXTRA_DIST = routelog.c tap.c tap.h taputil.c taputil.h
 ## prove cannot just depend on check, because that rule will run the tests!
 ## therefore, we have to imitate it
 prove-TESTS: $(TESTS)
