@@ -53,6 +53,7 @@ is_lua_code(const char *text)
     ++p;
     buf_splicestr(&buf, 0, p - buf.buf, preamble);
     p = strrchr(buf.buf, '}');
+    if (!p) goto fail;
     buf_setlen(&buf, p - buf.buf);
     return buf_detach(&buf, NULL);
 fail:
