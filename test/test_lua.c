@@ -106,6 +106,8 @@ test_failing_parse(void)
     todo("bad Lua expressions pass through as-is but should yield NULL");
     is(pathcomp_eval_nocopy(c, "abc"), NULL, "test bad syntax: missing closing brace");
     end_todo;
+    pathcomp_set(c, "def", "lua { return 123 + }");
+    is(pathcomp_eval_nocopy(c, "def"), NULL, "test failing luaL_loadstring()");
     pathcomp_free(c);
 }
 
