@@ -108,6 +108,10 @@ test_failing_parse(void)
     end_todo;
     pathcomp_set(c, "def", "lua { return 123 + }");
     is(pathcomp_eval_nocopy(c, "def"), NULL, "test failing luaL_loadstring()");
+    pathcomp_set(c, "ghi", "lua { return 'ghi' }");
+    is(pathcomp_eval_nocopy(c, "ghi"), "ghi");
+    pathcomp_set(c, "ghi", "lua { return ' }");
+    is(pathcomp_eval_nocopy(c, "ghi"), NULL, "test failing parse after successful evaluation");
     pathcomp_free(c);
 }
 

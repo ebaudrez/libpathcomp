@@ -107,7 +107,8 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
         const char *error = lua_tostring(L, -1);
         pathcomp_log_error("cannot parse Lua code: %s", error);
         lua_pop(L, 1);
-        return NULL;
+        free(val->result);
+        return val->result = NULL;
     }
     if (composer && metatable) {
         p = lua_newuserdata(L, sizeof(*p));
