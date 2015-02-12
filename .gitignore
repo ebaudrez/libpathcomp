@@ -21,6 +21,7 @@ depcomp
 install-sh
 libpathcomp-*.*.tar.gz
 libpathcomp-*.*/
+libpathcomp.pc
 libtool
 ltmain.sh
 m4/

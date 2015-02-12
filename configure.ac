@@ -44,5 +44,6 @@ AC_CONFIG_SUBDIRS([liblua])
 AC_CONFIG_FILES([Makefile
                  include/Makefile
                  src/Makefile
-                 test/Makefile])
+                 test/Makefile
+                 libpathcomp.pc])
 AC_OUTPUT
