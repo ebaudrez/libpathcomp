@@ -1,8 +1,3 @@
-/**
- * \file
- * \brief Logging (implementation)
- */
-
 #include <config.h>
 #include "pathcomp/log.h"
 #include <stdio.h>

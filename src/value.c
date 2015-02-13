@@ -11,7 +11,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-/**
+/*
  * \name Routines specific to literal values
  * \{
  */
@@ -28,7 +28,7 @@ value_literal_new(const char *text)
     return val;
 }
 
-/**
+/*
  * \}
  * \name Routines specific to Lua values
  * \{
@@ -83,7 +83,7 @@ value_lua_free(value_lua_t *val)
     free(val);
 }
 
-/**
+/*
  * \param composer Pointer to composer object
  * \param metatable Name of the Lua metatable
  *
@@ -131,7 +131,7 @@ value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
     return val->result;
 }
 
-/**
+/*
  * \}
  * \name Routines specific to alternatives
  * \{
@@ -159,7 +159,7 @@ value_alt_free(value_alt_t *val)
     free(val);
 }
 
-/**
+/*
  * \}
  * \name Generic \a value_t routines
  * \{
@@ -200,7 +200,7 @@ value_free(value_t *val)
     }
 }
 
-/**
+/*
  * \a composer and \a metatable may be null if the Lua code to be evaluated
  * does not need access to other attributes in the composer object via 'self'.
  * \note Beware: this function may return a pointer to internal storage. There
@@ -223,7 +223,7 @@ value_eval(value_t *val, void *composer, const char *metatable)
     }
 }
 
-/**
+/*
  * \brief Upgrade any \a value_t to \a value_alt_t in place
  */
 static void
@@ -264,6 +264,6 @@ value_next(value_t *val)
     return alt->current != NULL;
 }
 
-/**
+/*
  * \}
  */

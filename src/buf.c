@@ -1,8 +1,3 @@
-/**
- * \file
- * \brief String buffers
- */
-
 #include <config.h>
 #include "buf.h"
 #include <stdlib.h>
@@ -57,7 +52,7 @@ buf_release(buf_t *buf)
     }
 }
 
-/**
+/*
  * \param len Pointer to store length of buffer (terminating null not included)
  */
 char *
@@ -72,12 +67,12 @@ buf_detach(buf_t *buf, size_t *len)
     return s;
 }
 
-/**
+/*
  * \param n Number of elements currently allocated
  */
 #define GROW_N(n) (((n) + 16)*3/2)
 
-/**
+/*
  * \param p    Pointer to allocated variable
  * \param want Number of elements desired
  * \param cur  Number of elements currently allocated (must be an lvalue)
@@ -195,7 +190,7 @@ buf_read(buf_t *buf, int fd, size_t hint)
     return buf->len - oldlen;
 }
 
-/**
+/*
  * \bug close(2) may overwrite \a errno if it was previously set by read(2).
  */
 int
@@ -237,7 +232,7 @@ buf_rtrim(buf_t *buf)
     buf_setlen(buf, len);
 }
 
-/**
+/*
  * \note The value of buf->pos is unspecified after calling this function!
  */
 void
@@ -255,7 +250,7 @@ buf_splice(buf_t *buf, int off, size_t len, const void *data, size_t data_len)
     buf_setlen(buf, buf->len + delta);
 }
 
-/**
+/*
  * \note The value of buf->pos is unspecified after calling this function!
  */
 void

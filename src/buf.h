@@ -1,8 +1,3 @@
-/**
- * \file
- * \brief String buffers
- */
-
 #ifndef BUF_INCLUDED
 #define BUF_INCLUDED
 

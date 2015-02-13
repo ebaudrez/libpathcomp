@@ -1,16 +1,8 @@
-/**
- * \file
- * \brief Configuration file parsing
- */
-
 #ifndef CF_INCLUDED
 #define CF_INCLUDED
 
 #include "list.h"
 
-/**
- * \brief Key-value pair
- */
 typedef struct cf_kv_t {
     char *key;
     char *value;

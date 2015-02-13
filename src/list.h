@@ -1,8 +1,3 @@
-/**
- * \file
- * \brief Linked lists (header)
- */
-
 #ifndef LIST_INCLUDED
 #define LIST_INCLUDED
 

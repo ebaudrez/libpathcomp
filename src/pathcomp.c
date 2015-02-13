@@ -1,8 +1,3 @@
-/**
- * \file
- * \brief Path name composition (implementation)
- */
-
 #include <config.h>
 #include "pathcomp.h"
 #include "list.h"
@@ -21,15 +16,12 @@
 #include <sys/types.h>
 #include <errno.h>
 
-/**
- * \brief Main data type
- */
 struct pathcomp_t {
     char   *name;
     list_t *attributes;
-    char   *metatable; /**< \brief Name of the Lua metatable */
-    int     done;      /**< \brief Iterator state */
-    int     started;   /**< \brief pathcomp_find() has been called at least once */
+    char   *metatable;  /* Name of the Lua metatable */
+    int     done;       /* Iterator state */
+    int     started;    /* pathcomp_find() has been called at least once */
 };
 
 static cf_t *config;

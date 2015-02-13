@@ -1,8 +1,3 @@
-/**
- * \file
- * \brief Configuration file parsing
- */
-
 #include <config.h>
 #include "cf.h"
 #include "list.h"
