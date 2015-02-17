@@ -15,11 +15,11 @@ typedef struct pathcomp_t pathcomp_t;
 extern "C" {
 #endif
 
-extern void        pathcomp_add_config_from_string(const char *string);
-extern void        pathcomp_add_config_from_file(const char *filename);
-extern void        pathcomp_cleanup(void);
+extern void pathcomp_add_config_from_string(const char *string);
+extern void pathcomp_add_config_from_file(const char *filename);
+extern void pathcomp_cleanup(void);
 extern pathcomp_t *pathcomp_new(const char *name);
-extern void        pathcomp_free(pathcomp_t *composer);
+extern void pathcomp_free(pathcomp_t *composer);
 
 /**
  * \note The string returned by this function must not be deallocated by the user.
@@ -34,12 +34,12 @@ extern const char *pathcomp_eval_nocopy(pathcomp_t *composer, const char *name);
 /**
  * \note The string returned by this function must be deallocated by the user.
  */
-extern char       *pathcomp_eval(pathcomp_t *composer, const char *name);
+extern char *pathcomp_eval(pathcomp_t *composer, const char *name);
 
 /**
  * \note The string returned by this function must be deallocated by the user.
  */
-extern char       *pathcomp_yield(pathcomp_t *composer);
+extern char *pathcomp_yield(pathcomp_t *composer);
 
 /**
  * pathcomp_set() will reset all alternatives to their first value. This is
@@ -65,23 +65,23 @@ extern char       *pathcomp_yield(pathcomp_t *composer);
  * alternatives, and pathcomp_find() will not rewind it! Therefore,
  * pathcomp_reset() must be called to rewind all the alternatives.
  */
-extern void        pathcomp_set(pathcomp_t *composer, const char *name, const char *value);
+extern void pathcomp_set(pathcomp_t *composer, const char *name, const char *value);
 
 /**
  * All alternatives are rewound after calling this function, so that a failed
  * search with pathcomp_find() can be retried using the newly added
  * alternative.
  */
-extern void        pathcomp_add(pathcomp_t *composer, const char *name, const char *value);
-extern void        pathcomp_reset(pathcomp_t *composer);
-extern int         pathcomp_done(pathcomp_t *composer);
-extern int         pathcomp_next(pathcomp_t *composer);
+extern void pathcomp_add(pathcomp_t *composer, const char *name, const char *value);
+extern void pathcomp_reset(pathcomp_t *composer);
+extern int pathcomp_done(pathcomp_t *composer);
+extern int pathcomp_next(pathcomp_t *composer);
 
 /**
  * \note The string returned by this function must be deallocated by the user.
  */
-extern char       *pathcomp_find(pathcomp_t *composer);
-extern int         pathcomp_mkdir(pathcomp_t *composer);
+extern char *pathcomp_find(pathcomp_t *composer);
+extern int pathcomp_mkdir(pathcomp_t *composer);
 
 #ifdef __cplusplus
 }
