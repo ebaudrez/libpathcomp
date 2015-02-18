@@ -18,28 +18,9 @@ extern "C" {
 extern void pathcomp_add_config_from_string(const char *string);
 extern void pathcomp_add_config_from_file(const char *filename);
 extern void pathcomp_cleanup(void);
+
 extern pathcomp_t *pathcomp_new(const char *name);
 extern void pathcomp_free(pathcomp_t *composer);
-
-/**
- * \note The string returned by this function must not be deallocated by the user.
- * \note Beware: this function may return a pointer to internal storage. There
- * are no guarantees on the lifetime of the object pointed to by the return
- * value of this function. Therefore, this function should probably only be
- * used for debugging. Prefer pathcomp_eval().
- * \seealso pathcomp_eval()
- */
-extern const char *pathcomp_eval_nocopy(pathcomp_t *composer, const char *name);
-
-/**
- * \note The string returned by this function must be deallocated by the user.
- */
-extern char *pathcomp_eval(pathcomp_t *composer, const char *name);
-
-/**
- * \note The string returned by this function must be deallocated by the user.
- */
-extern char *pathcomp_yield(pathcomp_t *composer);
 
 /**
  * pathcomp_set() will reset all alternatives to their first value. This is
@@ -73,14 +54,36 @@ extern void pathcomp_set(pathcomp_t *composer, const char *name, const char *val
  * alternative.
  */
 extern void pathcomp_add(pathcomp_t *composer, const char *name, const char *value);
-extern void pathcomp_reset(pathcomp_t *composer);
-extern int pathcomp_done(pathcomp_t *composer);
+
+/**
+ * \note The string returned by this function must be deallocated by the user.
+ */
+extern char *pathcomp_eval(pathcomp_t *composer, const char *name);
+
+/**
+ * \note The string returned by this function must not be deallocated by the user.
+ * \note Beware: this function may return a pointer to internal storage. There
+ * are no guarantees on the lifetime of the object pointed to by the return
+ * value of this function. Therefore, this function should probably only be
+ * used for debugging. Prefer pathcomp_eval().
+ * \seealso pathcomp_eval()
+ */
+extern const char *pathcomp_eval_nocopy(pathcomp_t *composer, const char *name);
+
 extern int pathcomp_next(pathcomp_t *composer);
+extern int pathcomp_done(pathcomp_t *composer);
+extern void pathcomp_reset(pathcomp_t *composer);
+
+/**
+ * \note The string returned by this function must be deallocated by the user.
+ */
+extern char *pathcomp_yield(pathcomp_t *composer);
 
 /**
  * \note The string returned by this function must be deallocated by the user.
  */
 extern char *pathcomp_find(pathcomp_t *composer);
+
 extern int pathcomp_mkdir(pathcomp_t *composer);
 
 #ifdef __cplusplus
