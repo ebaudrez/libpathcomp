@@ -5,6 +5,7 @@
 *~
 .deps
 .libs
+Doxyfile
 Makefile
 Makefile.in
 aclocal.m4

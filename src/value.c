@@ -203,9 +203,10 @@ value_free(value_t *val)
 /*
  * \a composer and \a metatable may be null if the Lua code to be evaluated
  * does not need access to other attributes in the composer object via 'self'.
- * \note Beware: this function may return a pointer to internal storage. There
- * are no guarantees on the lifetime of the object pointed to by the return
- * value of this function.
+ *
+ * This function returns a pointer to internal storage. There are no guarantees
+ * on the lifetime of the object pointed to by the return value of this
+ * function.
  */
 const char *
 value_eval(value_t *val, void *composer, const char *metatable)
