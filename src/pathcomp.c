@@ -161,7 +161,9 @@ pathcomp_eval_nocopy(pathcomp_t *composer, const char *name)
 char *
 pathcomp_eval(pathcomp_t *composer, const char *name)
 {
-    return strdup(pathcomp_eval_nocopy(composer, name));
+    const char *s;
+    s = pathcomp_eval_nocopy(composer, name);
+    return s ? strdup(s) : NULL;
 }
 
 char *

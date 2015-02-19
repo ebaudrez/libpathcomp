@@ -11,6 +11,7 @@ test_empty(void)
     char *s;
 
     ok(c = pathcomp_new("test.new"));
+    is(pathcomp_eval(c, "abcdef"), NULL, "returns NULL but doesn't crash when evaluating missing attribute");
     pathcomp_set(c, "root", "lib/scratch/G2/SEV1");
     pathcomp_set(c, "compose", "my_filename");
     is(s = pathcomp_yield(c), "lib/scratch/G2/SEV1/my_filename");
