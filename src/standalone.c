@@ -18,8 +18,8 @@
  *
  * options:
  *
- *   -a: print all matching paths (by default prints first path)
- *   -e: print only existing paths [[perform _find()]]
+ *   -a: print all matching pathnames (by default prints first pathname)
+ *   -e: print only existing pathnames [[perform _find()]]
  *   -m: create parent directory [[perform _mkdir()]] (doesn't make sense with -e and will be ignored)
  *   -x attr: evaluate attribute 'attr' [[perform _eval()]] (not yet implemented)
  */

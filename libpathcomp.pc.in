@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: libpathcomp
 URL: https://github.com/ebaudrez/libpathcomp
-Description: A path composer library
+Description: A library for pathname composition
 Version: @PACKAGE_VERSION@
 Cflags: -I${includedir}
 Libs: -L${libdir} -lpathcomp

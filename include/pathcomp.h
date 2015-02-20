@@ -1,12 +1,12 @@
 /**
  * \file
- * \brief A library for path composition
+ * \brief A library for pathname composition
  */
 
 #ifndef PATHCOMP_INCLUDED
 #define PATHCOMP_INCLUDED
 
-/** Abstract data type for path composer object */
+/** Abstract data type for pathname composer object */
 typedef struct pathcomp_t pathcomp_t;
 
 #ifdef __cplusplus
@@ -113,12 +113,12 @@ extern int pathcomp_done(pathcomp_t *composer);
 extern void pathcomp_reset(pathcomp_t *composer);
 
 /**
- * Evaluate and return the path represented by the current alternative
+ * Evaluate and return the pathname represented by the current alternative
  *
- * The path represented by the current alternative is constructed by evaluating
- * the attributes \a root and \a compose, and joining them with an intervening
- * directory separator. Note that the directory separator is hardcoded to a
- * slash (<tt>/</tt>).
+ * The pathname represented by the current alternative is constructed by
+ * evaluating the attributes \a root and \a compose, and joining them with an
+ * intervening directory separator. Note that the directory separator is
+ * hardcoded to a slash (<tt>/</tt>).
  *
  * If the attribute \a root cannot be evaluated, the value of the \a compose
  * attribute is returned. If the attribute \a compose cannot be evaluated, the
@@ -130,13 +130,14 @@ extern void pathcomp_reset(pathcomp_t *composer);
 extern char *pathcomp_yield(pathcomp_t *composer);
 
 /**
- * Advance alternatives until an existing path is found, and return this path
+ * Advance alternatives until an existing pathname is found, and return this
+ * pathname
  *
  * This function will call pathcomp_yield() and pathcomp_next() repeatedly,
  * until an alternative is found that happens to exist on the file system. This
- * path is returned to the caller. Subsequent calls to pathcomp_find() will
- * start from the \e next alternative. If no existing path is found, \null is
- * returned.
+ * pathname is returned to the caller. Subsequent calls to pathcomp_find() will
+ * start from the \e next alternative. If no existing pathname is found, \null
+ * is returned.
  *
  * The string returned by this function must be deallocated by the user.
  */
@@ -144,7 +145,7 @@ extern char *pathcomp_find(pathcomp_t *composer);
 
 /**
  * Recursively create directories up to the last directory separator of the
- * path represented by the current alternative
+ * pathname represented by the current alternative
  *
  * This function operates like <tt>mkdir -p</tt>. Notably, it is not an error
  * if a directory component exists already. Note that the directory separator
