@@ -26,6 +26,18 @@ test_lua(void)
     cmp_ok(val->type, "==", VALUE_LUA);
     is(value_eval(val, NULL, NULL), "3");
     value_free(val);
+    ok(val = value_new("lua [ return 1+2+3 ]"));
+    cmp_ok(val->type, "==", VALUE_LITERAL);
+    is(value_eval(val, NULL, NULL), "lua [ return 1+2+3 ]", "invalid Lua function syntax leads to interpretation as literal string");
+    value_free(val);
+    ok(val = value_new("lua { return 1+2+3"));
+    cmp_ok(val->type, "==", VALUE_LITERAL);
+    is(value_eval(val, NULL, NULL), "lua { return 1+2+3", "missing closing brace leads to interpretation as literal string");
+    value_free(val);
+    ok(val = value_new("lua{ return 1+2+3+4 }"));
+    cmp_ok(val->type, "==", VALUE_LUA);
+    is(value_eval(val, NULL, NULL), "10", "allows open brace immediately following Lua keyword");
+    value_free(val);
     ok(val = value_new("lua { return some_weird_name + 2 }"));
     cmp_ok(val->type, "==", VALUE_LUA);
     ok(!value_eval(val, NULL, NULL), "use of undefined variables raises an error");

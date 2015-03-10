@@ -156,6 +156,17 @@ test_find()
     got = NULL;
     list_free(expected);
     pathcomp_free(c);
+
+    ok(c = pathcomp_new("test.find.42"));
+    pathcomp_set(c, "dir", "G5");
+    pathcomp_set(c, "file", "one");
+    is(s = pathcomp_find(c), "lib/basic/cache/G5/one.hdf");
+    free(s);
+    is(pathcomp_eval_nocopy(c, "extension"), ".hdf", "composer object left in state corresponding to matched path");
+    is(s = pathcomp_find(c), "lib/basic/storage/G5/one.hdf.gz");
+    free(s);
+    is(pathcomp_eval_nocopy(c, "extension"), ".hdf.gz", "composer object left in state corresponding to matched path");
+    pathcomp_free(c);
 }
 
 static void
