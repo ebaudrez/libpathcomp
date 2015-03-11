@@ -1,5 +1,6 @@
 check_PROGRAMS = test_buf test_cf test_list test_value test_literal test_lua \
-                 test_yield test_set test_find test_mkdir test_empty test_file
+                 test_yield test_set test_find test_mkdir test_empty \
+                 test_file test_glob
 TESTS = $(check_PROGRAMS) test_standalone.pl
 ## need to include src/ because we are also testing internals
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src $(LIBLUACPPFLAGS)

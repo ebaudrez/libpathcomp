@@ -25,6 +25,7 @@ AC_CHECK_LIB([m], [pow])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h sys/param.h unistd.h])
+AC_CHECK_HEADERS([glob.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
@@ -33,6 +34,7 @@ AC_FUNC_FORK
 AC_FUNC_MALLOC
 AC_FUNC_MMAP
 AC_CHECK_FUNCS([regcomp])
+AC_CHECK_FUNCS([glob globfree])
 
 # Lua support: use Lua 5.1.4 shipped with this distribution
 # must add -I$(top_builddir)/liblua/src because luaconf.h is generated there!
