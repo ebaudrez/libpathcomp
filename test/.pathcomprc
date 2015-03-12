@@ -29,4 +29,11 @@
 [test.mkdir]
     compose    = lua { return string.format('%s/%s/%s', self.one, self.two, self.three ) }
 
+[test.backslash]
+    value = some \
+            value on several lines \
+            which should be concatenated
+    other = lua { local val = 'whatever' \
+                  return 'something from ' .. val }
+
 ; vim:set filetype=cfg:
