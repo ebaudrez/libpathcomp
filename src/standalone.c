@@ -8,21 +8,26 @@
 #include "list.h"
 #include "pathcomp/log.h"
 
-/* usage:
- *
- *   pathcomp  -c class  [ -aem -x attr ]  key=value key=value key+=value ...
- *
- * mandatory command-line arguments:
- *
- *   -c class: use this locator class
- *
- * options:
- *
- *   -a: print all matching pathnames (by default prints first pathname)
- *   -e: print only existing pathnames [[perform _find()]]
- *   -m: create parent directory [[perform _mkdir()]] (doesn't make sense with -e and will be ignored)
- *   -x attr: evaluate attribute 'attr' [[perform _eval()]] (not yet implemented)
- */
+static void
+print_usage(void)
+{
+    puts("Usage\n"
+         "    pathcomp -c class [ -aehm -x attr ] key=value key=value key+=value ...\n"
+         "\n"
+         "Mandatory command-line arguments\n"
+         "    -c class: use this locator class\n"
+         "\n"
+         "Options\n"
+         "    -a: print all pathnames (default: print first)\n"
+         "    -e: print only existing pathnames (default: print any pathname)\n"
+         "    -h: display this information\n"
+         "    -m: create parent directory recursively (ignored when -e is in effect)\n"
+         "    -x attr: evaluate attribute 'attr' (not yet implemented)\n"
+         "\n"
+         "Attributes\n"
+         "    key=value: set attribute 'key' to 'value'\n"
+         "    key+=value: add value 'value' to attribute 'key'\n");
+}
 
 typedef struct {
     char *key;
@@ -99,7 +104,8 @@ opt_new(int argc, char **argv)
     options->print_all = 0;
     options->only_existing = 0;
     options->do_mkdir = 0;
-    while ((opt = getopt(argc, argv, "ac:em")) != -1) {
+    opterr = 0; /* prevent getopt() from printing error messages */
+    while ((opt = getopt(argc, argv, ":ac:ehm")) != -1) {
         switch (opt) {
             case 'a':
                 options->print_all = 1;
@@ -113,17 +119,32 @@ opt_new(int argc, char **argv)
                 options->only_existing = 1;
                 break;
 
+            case 'h':
+                print_usage();
+                exit(EXIT_SUCCESS);
+                break;
+
             case 'm':
                 options->do_mkdir = 1;
                 break;
 
-            default:
-                pathcomp_log_error("invalid usage");
+            case '?':
+                pathcomp_log_error("invalid option '%c'", optopt);
+                print_usage();
                 exit(EXIT_FAILURE);
+
+            case ':':
+                pathcomp_log_error("missing argument for option '%c'", optopt);
+                print_usage();
+                exit(EXIT_FAILURE);
+
+            default:
+                assert(0);
         }
     }
     if (!options->class) {
-        pathcomp_log_error("class name (argument -c) is mandatory");
+        pathcomp_log_error("class name (argument to option '-c') is mandatory");
+        print_usage();
         exit(EXIT_FAILURE);
     }
     while (optind < argc) {
