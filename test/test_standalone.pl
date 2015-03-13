@@ -73,6 +73,12 @@ ok -d 'lib/scratch/abc', 'directory has been created';
 ok -d 'lib/scratch/abc/def', 'directory has been created';
 rmtree 'lib/scratch';
 
+# test -f
+perform_test(
+    command => [ $prefix, qw(-f .pathcomprc root=lib/archive instrument=G1 imager=SEV2 product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V006) ],
+    returns => [ 'lib/archive/G1/SEV2/G1_SEV2_L20_HR_SOL_TH/2007/0502/G1_SEV2_L20_HR_SOL_TH_20070502_084500_V006.hdf.gz' ],
+);
+
 done_testing;
 
 sub perform_test

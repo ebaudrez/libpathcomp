@@ -12,7 +12,7 @@ static void
 print_usage(void)
 {
     puts("Usage\n"
-         "    pathcomp -c class [ -aehm -x attr ] key=value key=value key+=value ...\n"
+         "    pathcomp -c class [ -f config -aehm -x attr ] key=value key=value key+=value ...\n"
          "\n"
          "Mandatory command-line arguments\n"
          "    -c class: use this locator class\n"
@@ -20,6 +20,7 @@ print_usage(void)
          "Options\n"
          "    -a: print all pathnames (default: print first)\n"
          "    -e: print only existing pathnames (default: print any pathname)\n"
+         "    -f config: use config file 'config' (default: .pathcomprc)\n"
          "    -h: display this information\n"
          "    -m: create parent directory recursively (ignored when -e is in effect)\n"
          "    -x attr: evaluate attribute 'attr' (not yet implemented)\n"
@@ -40,6 +41,7 @@ typedef struct {
     list_t *attributes;
     int print_all;
     int only_existing;
+    char *config_file;
     int do_mkdir;
 } opt_t;
 
@@ -103,9 +105,10 @@ opt_new(int argc, char **argv)
     options->attributes = NULL;
     options->print_all = 0;
     options->only_existing = 0;
+    options->config_file = NULL;
     options->do_mkdir = 0;
     opterr = 0; /* prevent getopt() from printing error messages */
-    while ((opt = getopt(argc, argv, ":ac:ehm")) != -1) {
+    while ((opt = getopt(argc, argv, ":ac:ef:hm")) != -1) {
         switch (opt) {
             case 'a':
                 options->print_all = 1;
@@ -117,6 +120,10 @@ opt_new(int argc, char **argv)
 
             case 'e':
                 options->only_existing = 1;
+                break;
+
+            case 'f':
+                options->config_file = strdup(optarg);
                 break;
 
             case 'h':
@@ -147,6 +154,9 @@ opt_new(int argc, char **argv)
         print_usage();
         exit(EXIT_FAILURE);
     }
+    if (!options->config_file) {
+        options->config_file = strdup(".pathcomprc");
+    }
     while (optind < argc) {
         kv_t *kv;
         assert(kv = kv_new(argv[optind++]));
@@ -162,6 +172,7 @@ opt_free(opt_t *options)
     free(options->class);
     list_foreach(options->attributes, (list_traversal_t *) kv_free, NULL);
     list_free(options->attributes);
+    free(options->config_file);
     free(options);
 }
 
@@ -173,7 +184,7 @@ main(int argc, char **argv)
     pathcomp_t *composer;
 
     options = opt_new(argc, argv);
-    pathcomp_add_config_from_file(".pathcomprc");
+    pathcomp_add_config_from_file(options->config_file);
     assert(composer = pathcomp_new(options->class));
     list_foreach(options->attributes, (list_traversal_t *) kv_add_to_composer, composer);
     for (;;) {
