@@ -14,21 +14,21 @@ const char *config = "\
 \n\
 [test.find.1]\n\
     ; one root\n\
-    root    = lib/basic/storage\n\
+    root    = lib/find/storage\n\
     compose = lua { return self.dir .. '/' .. self.file }\n\
 \n\
 [test.find.2]\n\
     ; two roots\n\
-    root    = lib/basic/cache\n\
-    root    = lib/basic/storage\n\
+    root    = lib/find/cache\n\
+    root    = lib/find/storage\n\
     compose = lua { return self.dir .. '/' .. self.file }\n\
 \n\
 [test.find.42]\n\
     ;\n\
-    root      = lib/basic/cache\n\
-    root      = lib/basic/storage\n\
-    root      = lib/basic/ftp\n\
-    root      = lib/basic/remote\n\
+    root      = lib/find/cache\n\
+    root      = lib/find/storage\n\
+    root      = lib/find/ftp\n\
+    root      = lib/find/remote\n\
     extension = .hdf\n\
     extension = .hdf.gz\n\
     compose   = lua { return self.dir .. '/' .. self.file .. self.extension }\n\
@@ -56,13 +56,13 @@ test_find()
     ok(c = pathcomp_new("test.find.1"));
     pathcomp_set(c, "dir", "G1");
     pathcomp_set(c, "file", "abc");
-    is(s = pathcomp_yield(c), "lib/basic/storage/G1/abc");
+    is(s = pathcomp_yield(c), "lib/find/storage/G1/abc");
     path_exists_ok(s);
     free(s);
-    is(s = pathcomp_find(c), "lib/basic/storage/G1/abc");
+    is(s = pathcomp_find(c), "lib/find/storage/G1/abc");
     path_exists_ok(s);
     free(s);
-    is(s = pathcomp_yield(c), "lib/basic/storage/G1/abc");
+    is(s = pathcomp_yield(c), "lib/find/storage/G1/abc");
     free(s);
     is(s = pathcomp_find(c), NULL);
     pathcomp_free(c);
@@ -70,7 +70,7 @@ test_find()
     ok(c = pathcomp_new("test.find.1"));
     pathcomp_set(c, "dir", "G1");
     pathcomp_set(c, "file", "def");
-    is(s = pathcomp_yield(c), "lib/basic/storage/G1/def");
+    is(s = pathcomp_yield(c), "lib/find/storage/G1/def");
     path_not_exists_ok(s);
     free(s);
     is(s = pathcomp_find(c), NULL);
@@ -79,7 +79,7 @@ test_find()
     ok(c = pathcomp_new("test.find.2"));
     pathcomp_set(c, "dir", "G1");
     pathcomp_set(c, "file", "abc");
-    is(s = pathcomp_yield(c), "lib/basic/cache/G1/abc");
+    is(s = pathcomp_yield(c), "lib/find/cache/G1/abc");
     path_exists_ok(s);
     free(s);
     while ((s = pathcomp_find(c))) {
@@ -90,8 +90,8 @@ test_find()
         is(tmp, s, "yield() after find() yields same result");
         free(tmp);
     }
-    expected = list_from("lib/basic/cache/G1/abc",
-        "lib/basic/storage/G1/abc",
+    expected = list_from("lib/find/cache/G1/abc",
+        "lib/find/storage/G1/abc",
         NULL);
     cmp_bag(got, expected);
     list_foreach(got, (list_traversal_t *) free, NULL);
@@ -103,7 +103,7 @@ test_find()
     ok(c = pathcomp_new("test.find.2"));
     pathcomp_set(c, "dir", "G2");
     pathcomp_set(c, "file", "def");
-    is(s = pathcomp_yield(c), "lib/basic/cache/G2/def");
+    is(s = pathcomp_yield(c), "lib/find/cache/G2/def");
     path_not_exists_ok(s);
     free(s);
     while ((s = pathcomp_find(c))) {
@@ -114,7 +114,7 @@ test_find()
         is(tmp, s, "yield() after find() yields same result");
         free(tmp);
     }
-    expected = list_from("lib/basic/storage/G2/def", NULL);
+    expected = list_from("lib/find/storage/G2/def", NULL);
     cmp_bag(got, expected);
     list_foreach(got, (list_traversal_t *) free, NULL);
     list_free(got);
@@ -125,7 +125,7 @@ test_find()
     ok(c = pathcomp_new("test.find.2"));
     pathcomp_set(c, "dir", "G3");
     pathcomp_set(c, "file", "ghi");
-    is(s = pathcomp_yield(c), "lib/basic/cache/G3/ghi");
+    is(s = pathcomp_yield(c), "lib/find/cache/G3/ghi");
     path_not_exists_ok(s);
     free(s);
     is(s = pathcomp_find(c), NULL);
@@ -134,7 +134,7 @@ test_find()
     ok(c = pathcomp_new("test.find.42"));
     pathcomp_set(c, "dir", "G5");
     pathcomp_set(c, "file", "one");
-    is(s = pathcomp_yield(c), "lib/basic/cache/G5/one.hdf");
+    is(s = pathcomp_yield(c), "lib/find/cache/G5/one.hdf");
     path_exists_ok(s);
     free(s);
     while ((s = pathcomp_find(c))) {
@@ -145,10 +145,10 @@ test_find()
         is(tmp, s, "yield() after find() yields same result");
         free(tmp);
     }
-    expected = list_from("lib/basic/cache/G5/one.hdf",
-        "lib/basic/storage/G5/one.hdf.gz",
-        "lib/basic/ftp/G5/one.hdf.gz",
-        "lib/basic/remote/G5/one.hdf.gz",
+    expected = list_from("lib/find/cache/G5/one.hdf",
+        "lib/find/storage/G5/one.hdf.gz",
+        "lib/find/ftp/G5/one.hdf.gz",
+        "lib/find/remote/G5/one.hdf.gz",
         NULL);
     cmp_bag(got, expected);
     list_foreach(got, (list_traversal_t *) free, NULL);
@@ -160,10 +160,10 @@ test_find()
     ok(c = pathcomp_new("test.find.42"));
     pathcomp_set(c, "dir", "G5");
     pathcomp_set(c, "file", "one");
-    is(s = pathcomp_find(c), "lib/basic/cache/G5/one.hdf");
+    is(s = pathcomp_find(c), "lib/find/cache/G5/one.hdf");
     free(s);
     is(pathcomp_eval_nocopy(c, "extension"), ".hdf", "composer object left in state corresponding to matched path");
-    is(s = pathcomp_find(c), "lib/basic/storage/G5/one.hdf.gz");
+    is(s = pathcomp_find(c), "lib/find/storage/G5/one.hdf.gz");
     free(s);
     is(pathcomp_eval_nocopy(c, "extension"), ".hdf.gz", "composer object left in state corresponding to matched path");
     pathcomp_free(c);
