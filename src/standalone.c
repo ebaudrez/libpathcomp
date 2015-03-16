@@ -106,7 +106,7 @@ opt_new(int argc, char **argv)
     options->attributes = NULL;
     options->print_all = 0;
     options->only_existing = 0;
-    options->config_file = NULL;
+    options->config_file = strdup(".pathcomprc");
     options->do_mkdir = 0;
     options->eval_att = NULL;
     opterr = 0; /* prevent getopt() from printing error messages */
@@ -125,6 +125,7 @@ opt_new(int argc, char **argv)
                 break;
 
             case 'f':
+                free(options->config_file);
                 options->config_file = strdup(optarg);
                 break;
 
@@ -159,9 +160,6 @@ opt_new(int argc, char **argv)
         pathcomp_log_error("class name (argument to option '-c') is mandatory");
         print_usage();
         exit(EXIT_FAILURE);
-    }
-    if (!options->config_file) {
-        options->config_file = strdup(".pathcomprc");
     }
     while (optind < argc) {
         kv_t *kv;
