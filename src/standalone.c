@@ -203,6 +203,7 @@ main(int argc, char **argv)
             puts(path);
             free(path);
         }
+        if (!options->print_all) break;
     }
     pathcomp_free(composer);
     pathcomp_cleanup();

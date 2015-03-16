@@ -39,7 +39,7 @@ perform_test(
 # test -a
 perform_test(
     command => [ $prefix, '-a', qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
-        qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
     returns => [ 'lib/archive/G1/SEV1/G1_SEV1_L20_HR_SOL_TH/2007/0502/G1_SEV1_L20_HR_SOL_TH_20070502_084500_V003.hdf.gz',
                  'lib/archive/G1/SEV1/G1_SEV1_L20_HR_SOL_TH/2007/0502/G1_SEV1_L20_HR_SOL_TH_20070502_084500_V006.hdf.gz',
                  'lib/archive/G1/SEV2/G1_SEV2_L20_HR_SOL_TH/2007/0502/G1_SEV2_L20_HR_SOL_TH_20070502_084500_V003.hdf.gz',
@@ -51,12 +51,28 @@ perform_test(
 );
 
 perform_test(
+    command => [ $prefix, qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    returns => [ 'lib/archive/G1/SEV1/G1_SEV1_L20_HR_SOL_TH/2007/0502/G1_SEV1_L20_HR_SOL_TH_20070502_084500_V003.hdf.gz' ],
+);
+
+perform_test(
     command => [ $prefix, '-ae', qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
-        qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
     returns => [ 'lib/archive/G1/SEV2/G1_SEV2_L20_HR_SOL_TH/2007/0502/G1_SEV2_L20_HR_SOL_TH_20070502_084500_V006.hdf.gz',
                  'lib/archive/G2/SEV1/G2_SEV1_L20_HR_SOL_TH/2007/0502/G2_SEV1_L20_HR_SOL_TH_20070502_084500_V003.hdf.gz' ],
     test_exists => 1,
 );
+
+my @returns = perform_test(
+    command => [ $prefix, '-e', qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    test_exists => 1,
+);
+cmp_ok @returns, '==', 1;
+ok($returns[0] eq 'lib/archive/G1/SEV2/G1_SEV2_L20_HR_SOL_TH/2007/0502/G1_SEV2_L20_HR_SOL_TH_20070502_084500_V006.hdf.gz' ||
+   $returns[0] eq 'lib/archive/G2/SEV1/G2_SEV1_L20_HR_SOL_TH/2007/0502/G2_SEV1_L20_HR_SOL_TH_20070502_084500_V003.hdf.gz');
+ok -e $returns[0];
 
 # test -m
 rmtree 'lib/scratch';
@@ -91,16 +107,19 @@ sub perform_test
     note "running @cmd";
     chomp (my @got = `@cmd`);
     #note "got $_" for @got;
-    my @expected = @{ $o{returns} };
-    is_deeply( [sort @got], [sort @expected] );
-    if ($o{test_exists}) {
-        for my $f (@expected) {
-            ok -e $f, "$f exists";
+    if ($o{returns}) {
+        my @expected = @{ $o{returns} };
+        is_deeply( [sort @got], [sort @expected] );
+        if ($o{test_exists}) {
+            for my $f (@expected) {
+                ok -e $f, "$f exists";
+            }
+        }
+        if ($o{test_not_exists}) {
+            for my $f (@expected) {
+                ok ! -e $f, "$f does not exist";
+            }
         }
     }
-    if ($o{test_not_exists}) {
-        for my $f (@expected) {
-            ok ! -e $f, "$f does not exist";
-        }
-    }
+    return @got;
 }
