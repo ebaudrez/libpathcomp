@@ -95,6 +95,88 @@ perform_test(
     returns => [ 'lib/archive/G1/SEV2/G1_SEV2_L20_HR_SOL_TH/2007/0502/G1_SEV2_L20_HR_SOL_TH_20070502_084500_V006.hdf.gz' ],
 );
 
+# test -x
+perform_test(
+    command => [ $prefix, '-a', qw(-x instrument), qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    returns => [ 'G1',
+                 'G1',
+                 'G1',
+                 'G1',
+                 'G2',
+                 'G2',
+                 'G2',
+                 'G2' ],
+);
+
+perform_test(
+    command => [ $prefix, '-a', qw(-x imager), qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    returns => [ 'SEV1',
+                 'SEV1',
+                 'SEV2',
+                 'SEV2',
+                 'SEV1',
+                 'SEV1',
+                 'SEV2',
+                 'SEV2' ],
+);
+
+perform_test(
+    command => [ $prefix, qw(-x instrument), qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    returns => [ 'G1' ],
+);
+
+perform_test(
+    command => [ $prefix, qw(-x version), qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    returns => [ 'V003' ],
+);
+
+perform_test(
+    command => [ $prefix, '-ae', qw(-x instrument), qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    returns => [ 'G1',
+                 'G2' ],
+);
+
+perform_test(
+    command => [ $prefix, '-ae', qw(-x imager), qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    returns => [ 'SEV2',
+                 'SEV1' ],
+);
+
+perform_test(
+    command => [ $prefix, '-ae', qw(-x version), qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    returns => [ 'V006',
+                 'V003' ],
+);
+
+my @returns = perform_test(
+    command => [ $prefix, '-e', qw(-x version), qw(root=lib/archive instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
+    test_exists => 1,
+);
+cmp_ok @returns, '==', 1;
+ok($returns[0] eq 'V006' || $returns[0] eq 'V003');
+
+perform_test(
+    command => [ $prefix, '-e', qw(-x extension), qw(root=lib/archive instrument=G2 imager=SEV1),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006),
+                 qw(extension=.hdf extension+=.hdf.gz) ],
+    returns => [ '.hdf.gz' ], # GERB (used to be) gzip-compressed
+);
+
+perform_test(
+    command => [ $prefix, '-e', qw(-x extension), qw(root=lib/archive instrument=GL imager=SEV1),
+                 qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006),
+                 qw(extension=.hdf extension+=.hdf.gz) ],
+    returns => [ '.hdf' ], # GERB-like not gzip-compressed, at least not externally ;-)
+);
+
 done_testing;
 
 sub perform_test

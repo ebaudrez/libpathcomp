@@ -12,7 +12,7 @@ static void
 print_usage(void)
 {
     puts("Usage\n"
-         "    pathcomp -c class [ -f config -aehm -x attr ] key=value key=value key+=value ...\n"
+         "    pathcomp -c class [ -f config -aehm -x att ] key=value key=value key+=value ...\n"
          "\n"
          "Mandatory command-line arguments\n"
          "    -c class: use this locator class\n"
@@ -23,7 +23,7 @@ print_usage(void)
          "    -f config: use config file 'config' (default: .pathcomprc)\n"
          "    -h: display this information\n"
          "    -m: create parent directory recursively (ignored when -e is in effect)\n"
-         "    -x attr: evaluate attribute 'attr' (not yet implemented)\n"
+         "    -x att: evaluate and print attribute 'att' instead of pathname\n"
          "\n"
          "Attributes\n"
          "    key=value: set attribute 'key' to 'value'\n"
@@ -43,6 +43,7 @@ typedef struct {
     int only_existing;
     char *config_file;
     int do_mkdir;
+    char *eval_att;
 } opt_t;
 
 static kv_t *
@@ -107,8 +108,9 @@ opt_new(int argc, char **argv)
     options->only_existing = 0;
     options->config_file = NULL;
     options->do_mkdir = 0;
+    options->eval_att = NULL;
     opterr = 0; /* prevent getopt() from printing error messages */
-    while ((opt = getopt(argc, argv, ":ac:ef:hm")) != -1) {
+    while ((opt = getopt(argc, argv, ":ac:ef:hmx:")) != -1) {
         switch (opt) {
             case 'a':
                 options->print_all = 1;
@@ -133,6 +135,10 @@ opt_new(int argc, char **argv)
 
             case 'm':
                 options->do_mkdir = 1;
+                break;
+
+            case 'x':
+                options->eval_att = strdup(optarg);
                 break;
 
             case '?':
@@ -173,6 +179,7 @@ opt_free(opt_t *options)
     list_foreach(options->attributes, (list_traversal_t *) kv_free, NULL);
     list_free(options->attributes);
     free(options->config_file);
+    free(options->eval_att);
     free(options);
 }
 
@@ -189,21 +196,26 @@ main(int argc, char **argv)
     list_foreach(options->attributes, (list_traversal_t *) kv_add_to_composer, composer);
     for (;;) {
         if (pathcomp_done(composer)) break;
-        if (options->only_existing) {
-            path = pathcomp_find(composer);
-            /* pathcomp_find() automatically advances to the next alternative
-             * when called repeatedly */
-        }
+        if (options->only_existing) path = pathcomp_find(composer);
         else {
             path = pathcomp_yield(composer);
             if (options->do_mkdir) pathcomp_mkdir(composer);
-            pathcomp_next(composer);
         }
         if (path) {
-            puts(path);
+            if (options->eval_att) {
+                char *att;
+                if ((att = pathcomp_eval(composer, options->eval_att))) {
+                    puts(att);
+                    free(att);
+                }
+            }
+            else puts(path);
             free(path);
         }
         if (!options->print_all) break;
+        /* pathcomp_find() automatically advances to the next alternative when
+         * called repeatedly */
+        if (!options->only_existing) pathcomp_next(composer);
     }
     pathcomp_free(composer);
     pathcomp_cleanup();
