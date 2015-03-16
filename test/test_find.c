@@ -178,6 +178,40 @@ test_find_empty(void)
     pathcomp_free(c);
 }
 
+static void
+test_with_dirs(void)
+{
+    pathcomp_t *c;
+    char *s;
+    list_t *got = NULL, *expected;
+
+    pathcomp_add_config_from_string(
+        "[test.with.dirs]\n"
+        "    root    = lib/find/cache\n"
+        "    root    = lib/find/storage\n"
+        "    compose = G1\n"
+        "    compose = G2/\n"
+        "    compose = G3\n"
+        "    compose = G4\n");
+    ok(c = pathcomp_new("test.with.dirs"));
+    while (s = pathcomp_find(c)) {
+        /* pathcomp_find() should not discriminate between files and dirs */
+        path_exists_ok(s);
+        got = list_push(got, s);
+    }
+    expected = list_from("lib/find/cache/G1",
+        "lib/find/cache/G2/",
+        "lib/find/cache/G4",
+        "lib/find/storage/G1",
+        "lib/find/storage/G2/",
+        NULL);
+    cmp_bag(got, expected);
+    list_foreach(got, (list_traversal_t *) free, NULL);
+    list_free(got);
+    list_free(expected);
+    pathcomp_free(c);
+}
+
 int
 main(void)
 {
@@ -185,6 +219,7 @@ main(void)
     pathcomp_add_config_from_string(config);
     test_find();
     test_find_empty();
+    test_with_dirs();
     pathcomp_cleanup();
     done_testing();
 }
