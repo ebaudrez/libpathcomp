@@ -22,7 +22,7 @@ print_usage(void)
          "    -e: print only existing pathnames (default: print any pathname)\n"
          "    -f config: use config file 'config' (default: .pathcomprc)\n"
          "    -h: display this information\n"
-         "    -m: create parent directory recursively (ignored when -e is in effect)\n"
+         "    -m: create parent directory recursively\n"
          "    -x att: evaluate and print attribute 'att' instead of pathname\n"
          "\n"
          "Attributes\n"
@@ -185,7 +185,7 @@ int
 main(int argc, char **argv)
 {
     opt_t *options;
-    char *path;
+    char *path, *att;
     pathcomp_t *composer;
 
     options = opt_new(argc, argv);
@@ -195,13 +195,10 @@ main(int argc, char **argv)
     for (;;) {
         if (pathcomp_done(composer)) break;
         if (options->only_existing) path = pathcomp_find(composer);
-        else {
-            path = pathcomp_yield(composer);
-            if (options->do_mkdir) pathcomp_mkdir(composer);
-        }
+        else path = pathcomp_yield(composer);
         if (path) {
+            if (options->do_mkdir) pathcomp_mkdir(composer);
             if (options->eval_att) {
-                char *att;
                 if ((att = pathcomp_eval(composer, options->eval_att))) {
                     puts(att);
                     free(att);
