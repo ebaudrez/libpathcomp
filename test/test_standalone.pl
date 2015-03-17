@@ -9,6 +9,10 @@ my $exe = '../src/pathcomp';
 my $srcdir = $ENV{srcdir} || '.';
 my $prefix = "$exe -c test.archive";
 
+if (! -d "$srcdir/lib/archive") {
+    plan skip_all => "lib/archive not available in $srcdir";
+}
+
 if ($srcdir ne '.') {
     copy("$srcdir/.pathcomprc", ".pathcomprc") or die "copy failed: $!";
 }
