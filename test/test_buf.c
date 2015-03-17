@@ -13,24 +13,6 @@ const char *string = "This is a test string.\n\
 
 char testdata[8192];
 
-static char *
-mk_filename(char *relative)
-{
-    char *s, *srcdir = "";
-    buf_t buf;
-    assert(relative);
-    buf_init(&buf, 0);
-    srcdir = getenv("srcdir");
-    if (srcdir && *srcdir != '\0') {
-        buf_addstr(&buf, srcdir);
-        buf_addch(&buf, '/');
-    }
-    buf_addstr(&buf, relative);
-    s = buf_detach(&buf, NULL);
-    buf_release(&buf);
-    return s;
-}
-
 static void
 test_buf(void)
 {
@@ -71,7 +53,7 @@ test_buf(void)
     cmp_ok(buf.len, "==", 1+sizeof testdata);
     cmp_ok(buf.buf[buf.len-1], "==", 'a', "buf_addch()");
     /* reading */
-    filename = mk_filename("data/test_buf");
+    filename = strdup(SRCDIR "/data/test_buf");
     ok(filename, "got a filename for data/test_buf");
     buf_release(&buf);
     cmp_ok(buf.len, "==", 0, "buf empty");

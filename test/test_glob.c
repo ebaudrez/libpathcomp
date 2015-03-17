@@ -23,7 +23,7 @@ test_glob()
 #endif
 
     pathcomp_add_config_from_string("[class]\n\
-            root       = lib/glob\n\
+            root       = " SRCDIR "/lib/glob\n\
             instrument = *\n\
             imager     = SEV?\n\
             prefix     = lua { return string.format('%s_%s_L20_HR_SOL_TH', self.instrument, self.imager) }\n\
@@ -31,7 +31,7 @@ test_glob()
             ");
     ok(c = pathcomp_new("class"));
     is(pathcomp_find(c), NULL, "regular find should not find anything");
-    is(pattern = pathcomp_yield(c), "lib/glob/*/SEV?/*_SEV?_L20_HR_SOL_TH/README", "wildcard characters correctly substitute for instrument and imager");
+    is(pattern = pathcomp_yield(c), SRCDIR "/lib/glob/*/SEV?/*_SEV?_L20_HR_SOL_TH/README", "wildcard characters correctly substitute for instrument and imager");
 #if HAVE_GLOB
     cmp_ok(glob(pattern, 0, NULL, &buf), "==", 0, "glob()");
     cmp_ok(buf.gl_pathc, "==", 4, "returns 4 results");
@@ -41,10 +41,10 @@ test_glob()
     }
     globfree(&buf);
     expected = list_from(
-        "lib/glob/G2/SEV1/G2_SEV1_L20_HR_SOL_TH/README",
-        "lib/glob/G3/SEV3/G3_SEV3_L20_HR_SOL_TH/README",
-        "lib/glob/G1/SEV3/G1_SEV3_L20_HR_SOL_TH/README",
-        "lib/glob/G1/SEV2/G1_SEV2_L20_HR_SOL_TH/README",
+        SRCDIR "/lib/glob/G2/SEV1/G2_SEV1_L20_HR_SOL_TH/README",
+        SRCDIR "/lib/glob/G3/SEV3/G3_SEV3_L20_HR_SOL_TH/README",
+        SRCDIR "/lib/glob/G1/SEV3/G1_SEV3_L20_HR_SOL_TH/README",
+        SRCDIR "/lib/glob/G1/SEV2/G1_SEV2_L20_HR_SOL_TH/README",
         NULL);
     cmp_bag(got, expected, "glob() returns all expected files");
     list_foreach(got, (list_traversal_t *) free, NULL);

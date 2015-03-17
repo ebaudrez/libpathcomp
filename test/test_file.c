@@ -50,7 +50,7 @@ int
 main(void)
 {
     plan(NO_PLAN);
-    pathcomp_add_config_from_file(".pathcomprc");
+    pathcomp_add_config_from_file(SRCDIR "/.pathcomprc");
     test_file();
     pathcomp_add_config_from_string("[test.file]\nto_be_created = ABC");
     test_file_and_string();
