@@ -19,9 +19,6 @@ test_basic(void)
     pathcomp_set(c, "compose", "my_filename");
     is(s = pathcomp_yield(c), "lib/scratch/G2/SEV1/my_filename");
     free(s);
-    if (!dir_exists_ok("lib")) {
-        bail_out(0, "cannot find directory 'lib' - are you testing in subdirectory 'test'?");
-    }
     path_not_exists_ok("lib/scratch");
     path_not_exists_ok("lib/scratch/G2");
     path_not_exists_ok("lib/scratch/G2/SEV1");
@@ -51,9 +48,6 @@ test_basic_dir_only(void)
     pathcomp_set(c, "compose", "lib/scratch/G2/SEV1/");
     is(s = pathcomp_yield(c), "lib/scratch/G2/SEV1/");
     free(s);
-    if (!dir_exists_ok("lib")) {
-        bail_out(0, "cannot find directory 'lib' - are you testing in subdirectory 'test'?");
-    }
     path_not_exists_ok("lib/scratch");
     path_not_exists_ok("lib/scratch/G2");
     path_not_exists_ok("lib/scratch/G2/SEV1");
