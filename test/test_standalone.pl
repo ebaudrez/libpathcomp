@@ -17,6 +17,8 @@ if ($srcdir ne '.') {
     copy("$srcdir/.pathcomprc", ".pathcomprc") or die "copy failed: $!";
 }
 
+my @returns;
+
 perform_test(
     command => [ $prefix, "root=$srcdir/lib/archive", qw(instrument=G1 imager=SEV2 product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V006) ],
     returns => [ "$srcdir/lib/archive/G1/SEV2/G1_SEV2_L20_HR_SOL_TH/2007/0502/G1_SEV2_L20_HR_SOL_TH_20070502_084500_V006.hdf.gz" ],
@@ -74,7 +76,7 @@ perform_test(
     test_exists => 1,
 );
 
-my @returns = perform_test(
+@returns = perform_test(
     command => [ $prefix, '-e', "root=$srcdir/lib/archive", qw(instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
                  qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
     test_exists => 1,
@@ -165,7 +167,7 @@ perform_test(
                  'V003' ],
 );
 
-my @returns = perform_test(
+@returns = perform_test(
     command => [ $prefix, '-e', qw(-x version), "root=$srcdir/lib/archive", qw(instrument=G1 instrument+=G2 imager=SEV1 imager+=SEV2 ),
                  qw(product=SOL_TH resolution=HR level=20 slot=20070502084500 version=V003 version+=V006) ],
     test_exists => 1,
