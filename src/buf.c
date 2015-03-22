@@ -1,3 +1,37 @@
+/*
+ * Copyright (C) 2015 Edward Baudrez <edward.baudrez@gmail.com>
+ * This file is part of Libpathcomp.
+ *
+ * Libpathcomp is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Libpathcomp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with Libpathcomp; if not, see <http://www.gnu.org/licenses/>.
+ *
+ * This implementation is derived from strbuf.c, which is a part of Git
+ * (http://git-scm.com). That code is covered by the following copyright and
+ * permission notice:
+ *
+ *      Copyright (C) 2005-2015 Git contributors (Linus Torvalds, Junio Hamano,
+ *      and many others, see https://github.com/git/git/contributors).
+ *
+ *      Git is free software; you can redistribute it and/or modify it under
+ *      the terms of the GNU General Public License, version 2, as published by
+ *      the Free Software Foundation.
+ *
+ *      Git is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *      GNU General Public License for more details.
+ */
+
 #include <config.h>
 #include "buf.h"
 #include <stdlib.h>
