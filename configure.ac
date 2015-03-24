@@ -6,7 +6,6 @@ AC_INIT([libpathcomp], [0.1], [edward.baudrez@gmail.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 AM_SILENT_RULES
-AM_EXTRA_RECURSIVE_TARGETS([prove])
 LT_PREREQ([2.2])
 LT_INIT
 AC_CONFIG_SRCDIR([include/pathcomp.h])
@@ -16,9 +15,6 @@ AC_CONFIG_MACRO_DIR([m4])
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_RANLIB
-
-#
-AC_PATH_PROG([PROVE], [prove])
 
 # Checks for libraries.
 AC_CHECK_LIB([dl], [dlopen])

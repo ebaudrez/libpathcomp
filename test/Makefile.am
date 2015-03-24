@@ -10,11 +10,3 @@ AM_LDFLAGS = $(LIBLUALDFLAGS)
 LDADD = routelog.o ../src/libpathcomp.la ../src/libutil.la $(LIBLUA) tap.o taputil.o
 EXTRA_DIST = routelog.c tap.c tap.h taputil.c taputil.h test_standalone.pl \
              .pathcomprc data lib/find lib/glob
-## prove cannot just depend on check, because that rule will run the tests!
-## therefore, we have to imitate it
-prove-TESTS: $(TESTS)
-	@srcdir=$(srcdir); export srcdir; \
-	test "$(PROVE)" && PATH=".:$$PATH" $(PROVE) -e '' $(TESTS)
-prove-local: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
-	$(MAKE) $(AM_MAKEFLAGS) prove-TESTS
