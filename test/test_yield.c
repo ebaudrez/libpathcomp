@@ -16,7 +16,7 @@
  * with Libpathcomp; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* test pathcomp_yield() */
+/* test pathcomp_yield() and iterator interface */
 
 #include <config.h>
 #include "tap.h"
@@ -46,6 +46,11 @@ const char *config = "\
     root = nosync/cache\n\
     compose = lua { return 'def' }\n\
     compose = abc\n\
+\n\
+[test.basic.8]\n\
+    compose = value\n\
+\n\
+[test.basic.9]\n\
 ";
 
 static void
@@ -116,6 +121,31 @@ test_basic(void)
     pathcomp_reset(c);
     is(s = pathcomp_yield(c), "def", "all alternatives rewound after pathcomp_reset()");
     free(s);
+    pathcomp_free(c);
+
+    ok(c = pathcomp_new("test.basic.8"), "composer object with only one attribute and no alternatives");
+    is(s = pathcomp_yield(c), "value");
+    free(s);
+    ok(!pathcomp_done(c), "we aren't 'done' until we have at least tried to advance");
+    ok(!pathcomp_next(c), "there is no 'next' combination of alternatives when there aren't any alternatives");
+    ok(!pathcomp_next(c), "not even if we insist");
+    ok(pathcomp_done(c), "now we are done");
+    pathcomp_reset(c);
+    ok(!pathcomp_done(c), "reset works, and we aren't officially 'done' yet once again");
+    ok(!pathcomp_next(c), "done for real now");
+    ok(pathcomp_done(c));
+    pathcomp_free(c);
+
+    ok(c = pathcomp_new("test.basic.9"), "composer object with no attributes");
+    is(s = pathcomp_yield(c), NULL);
+    ok(!pathcomp_done(c), "we aren't 'done' until we have at least tried to advance");
+    ok(!pathcomp_next(c), "there is no 'next' combination of alternatives when there aren't any attributes");
+    ok(!pathcomp_next(c), "not even if we insist");
+    ok(pathcomp_done(c), "now we are done");
+    pathcomp_reset(c);
+    ok(!pathcomp_done(c), "reset works, and we aren't officially 'done' yet once again");
+    ok(!pathcomp_next(c), "done for real now");
+    ok(pathcomp_done(c));
     pathcomp_free(c);
 }
 
