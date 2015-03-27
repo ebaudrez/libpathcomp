@@ -44,6 +44,9 @@ struct pathcomp_t {
 
 static cf_t *config;
 
+#define PATHCOMP_ACTION_ADD 0
+#define PATHCOMP_ACTION_REPLACE 1
+
 void
 pathcomp_add_config_from_string(const char *string)
 {
@@ -211,7 +214,7 @@ pathcomp_set(pathcomp_t *composer, const char *name, const char *value)
     assert(composer);
     assert(name);
     assert(value);
-    pathcomp_add_or_replace(composer, name, value, 1);
+    pathcomp_add_or_replace(composer, name, value, PATHCOMP_ACTION_REPLACE);
     pathcomp_reset(composer);
 }
 
@@ -221,7 +224,7 @@ pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
     assert(composer);
     assert(name);
     assert(value);
-    pathcomp_add_or_replace(composer, name, value, 0);
+    pathcomp_add_or_replace(composer, name, value, PATHCOMP_ACTION_ADD);
     pathcomp_reset(composer);
 }
 
