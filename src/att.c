@@ -32,6 +32,7 @@ att_t *
 att_new(const char *name, const char *value)
 {
     att_t *att;
+    assert(name);
     att = malloc(sizeof *att);
     if (!att) return att;
     att->name = strdup(name);
