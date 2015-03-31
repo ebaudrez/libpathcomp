@@ -48,6 +48,8 @@ static cf_t *config;
 #define PATHCOMP_ACTION_REPLACE 1
 #define PATHCOMP_ACTION_ADD_IF 2
 #define PATHCOMP_ORIGIN_RUNTIME NULL
+#define PATHCOMP_ATT_ROOT "root"
+#define PATHCOMP_ATT_COMPOSE "compose"
 #define PATHCOMP_ATT_COPY "copy-from"
 
 void
@@ -230,8 +232,8 @@ pathcomp_yield(pathcomp_t *composer)
     const char *root, *compose;
     assert(composer);
     buf_init(&path, 0);
-    root = pathcomp_eval_nocopy(composer, "root");
-    compose = pathcomp_eval_nocopy(composer, "compose");
+    root = pathcomp_eval_nocopy(composer, PATHCOMP_ATT_ROOT);
+    compose = pathcomp_eval_nocopy(composer, PATHCOMP_ATT_COMPOSE);
     if (root && strlen(root)) {
         buf_addstr(&path, root);
         buf_addch(&path, '/');
