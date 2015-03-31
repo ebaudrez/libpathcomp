@@ -26,10 +26,11 @@
 struct att_t {
     char    *name;
     value_t *value;
+    char    *origin; /* not used by att_*() functions */
 };
 
 att_t *
-att_new(const char *name, const char *value)
+att_new(const char *name, const char *value, const char *origin)
 {
     att_t *att;
     assert(name);
@@ -37,15 +38,18 @@ att_new(const char *name, const char *value)
     if (!att) return att;
     att->name = strdup(name);
     att->value = value_new(value);
+    att->origin = origin ? strdup(origin) : NULL;
     return att;
 }
 
 void
-att_replace_value(att_t *att, const char *value)
+att_replace_value(att_t *att, const char *value, const char *origin)
 {
     assert(att);
     value_free(att->value);
     att->value = value_new(value);
+    free(att->origin);
+    att->origin = origin ? strdup(origin) : NULL;
 }
 
 void
@@ -61,6 +65,7 @@ att_free(att_t *att)
     if (!att) return;
     free(att->name);
     value_free(att->value);
+    free(att->origin);
     free(att);
 }
 
@@ -70,6 +75,13 @@ att_name_equal_to(att_t *att, char *name)
     assert(att);
     assert(name);
     return !strcmp(att->name, name);
+}
+
+const char *
+att_get_origin(att_t *att)
+{
+    assert(att);
+    return att->origin;
 }
 
 /*

@@ -10,20 +10,13 @@
     compose    = lua { return string.format('%s/%s/%s/%s/%s/%s', self.instrument, self.imager, self.prefix, self.yyyy, self.mmdd, self.filename) }
 
 [test.file]
+    copy-from  = test.archive
     instrument = G2
     imager     = SEV1
     level      = 20
     resolution = BARG
     product    = SOL_M15_R50
     version    = V003
-    extension  = .hdf.gz
-    yyyy       = lua { return string.sub(self.slot,  1,  4) }
-    mmdd       = lua { return string.sub(self.slot,  5,  8) }
-    hhmm       = lua { return string.sub(self.slot,  9, 12) }
-    ss         = lua { local ss = string.sub(self.slot, 13, 14); return #ss > 0 and ss or '00' }
-    hhmmss     = lua { return self.hhmm .. self.ss }
-    prefix     = lua { return string.format('%s_%s_L%s_%s_%s', self.instrument, self.imager, self.level, self.resolution, self.product) }
-    filename   = lua { return self.prefix .. '_' .. self.yyyy .. self.mmdd .. '_' .. self.hhmmss .. '_' .. self.version .. self.extension }
     compose    = lua { return self.filename }
 
 [test.mkdir]

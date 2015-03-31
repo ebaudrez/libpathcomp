@@ -165,7 +165,7 @@ followed by a newline character.
 
 ## Special attributes
 
-Two (and only two) attributes are interpreted specially by Libpathcomp:
+The following attributes are interpreted specially by Libpathcomp:
 
   * **compose**  
     This attribute will be evaluated by pathcomp_yield(). It need not be
@@ -174,6 +174,9 @@ Two (and only two) attributes are interpreted specially by Libpathcomp:
     This attribute will be prepended to the result of the evaluation of
     _compose_ in order to yield the full pathname returned by pathcomp_yield().
     It need not be an absolute path, and it need not be present.
+  * **copy-from**  
+    This attribute allows you to inherit attributes from another section; see
+    below for more information. This attribute need not be present.
 
 Other attributes have no special interpretation.
 
@@ -204,6 +207,17 @@ Notes:
     the attribute is evaluated.
 
 The standard Lua libraries (`os`, `string`, ...) are available in Lua functions.
+
+## Inheriting attributes
+
+Libpathcomp allows a class to inherit attributes from another class. To do this,
+declare an attribute with the special name _copy-from_ in your class. Its value
+should be the name of the section you want to inherit from.
+
+Please note that a class' attribute always _overrides_ an inherited attribute
+with the same name. A class' attribute is never combined with an inherited
+attribute of the same name to add alternatives to the values inherited from the
+parent class.
 
 # USER'S GUIDE
 
@@ -764,6 +778,41 @@ combine shell-style wildcards with a call to _glob(3)_ or _wordexp(3)_. See
 above for an example where two components of the pathname are specified with
 shell wildcard characters. Since the instrument and imager occur more than once
 in the full pathname, Libpathcomp repeats the wildcard characters as needed.
+
+## Using inherited attributes to avoid code duplication
+
+    ; config file
+    [gerb]
+        instrument = G1
+        imager     = SEV2
+        level      = 20
+        prefix     = lua { return string.format('%s_%s_L%s_%s_%s', self.instrument, self.imager, self.level, self.resolution, self.product) }
+        compose    = lua { return string.format('%s/%s/%s/README', self.instrument, self.imager, self.prefix) }
+
+    [gerb.barg]
+        copy-from  = gerb
+        resolution = BARG
+        product    = SOL_M15_R50
+
+    [gerb.hr]
+        copy-from  = gerb
+        resolution = HR
+        product    = SOL_TH
+
+    /* C */
+    pathcomp_t *barg, *hr;
+    barg = pathcomp_new("gerb.barg");
+    path = pathcomp_yield(barg); /* returns "G1/SEV2/G1_SEV2_L20_BARG_SOL_M15_R50/README" */
+    free(path);
+    hr = pathcomp_new("gerb.hr");
+    path = pathcomp_yield(hr); /* returns "G1/SEV2/G1_SEV2_L20_HR_SOL_TH/README" */
+    free(path);
+
+This example shows how you could construct two very similar pathnames for two
+different data products (actually, their README file) without code duplication.
+By writing a common ancestor section (which is not actually used in the C code),
+and having the two sections `gerb.barg` and `gerb.hr` inherit their attributes
+from it, only the differences between the data products need to be specified.
 
 # BUGS
 
