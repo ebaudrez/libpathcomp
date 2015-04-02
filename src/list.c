@@ -147,3 +147,15 @@ list_remove(list_t *list, list_t *link)
     }
     return list;
 }
+
+list_t *
+list_transform(list_t *src, list_transform_t *f, void *userdata)
+{
+    list_t *dst = NULL;
+    assert(f);
+    while (src) {
+        dst = list_push(dst, f(src->el, userdata));
+        src = src->next;
+    }
+    return dst;
+}

@@ -22,6 +22,7 @@
 #include "tap.h"
 #include "list.h"
 #include <string.h>
+#include <assert.h>
 
 static int
 strarray_len(const char **strings)
@@ -208,6 +209,76 @@ test_remove(void)
     list_free(list);
 }
 
+static void
+test_transform(void)
+{
+    list_t *src, *dst, *p;
+    src = NULL;
+    dst = list_transform(src, (list_transform_t *) strdup, NULL);
+    ok(!dst);
+
+    src = list_from("abc", "123", "defg", "4567", NULL);
+    ok(dst = list_transform(src, (list_transform_t *) strdup, NULL));
+    cmp_ok(list_length(dst), "==", 4);
+    p = dst;
+    is(p->el, "abc");
+    ok(p = p->next);
+    is(p->el, "123");
+    ok(p = p->next);
+    is(p->el, "defg");
+    ok(p = p->next);
+    is(p->el, "4567");
+    ok(!p->next);
+    list_free(src);
+    list_foreach(dst, (list_traversal_t *) free, NULL);
+    list_free(dst);
+}
+
+static void *
+concatenator(void *a, void *b)
+{
+    void *result;
+    char *s1 = a, *s2 = b;
+    assert(s1);
+    assert(s2);
+    result = malloc(strlen(s1) + strlen(s2) + 1);
+    if (!result) return result;
+    strcpy(result, s1);
+    strcat(result, s2);
+    return result;
+}
+
+static void
+test_transform2(void)
+{
+    list_t *src, *dst, *p;
+    src = list_from("abc", "123", "defg", "4567", NULL);
+    ok(dst = list_transform(src, concatenator, "XYZ"));
+    cmp_ok(list_length(dst), "==", 4);
+    p = dst;
+    is(p->el, "abcXYZ");
+    ok(p = p->next);
+    is(p->el, "123XYZ");
+    ok(p = p->next);
+    is(p->el, "defgXYZ");
+    ok(p = p->next);
+    is(p->el, "4567XYZ");
+    ok(!p->next);
+    p = src;
+    cmp_ok(list_length(p), "==", 4, "original list unmodified");
+    is(p->el, "abc", "original list unmodified");
+    ok(p = p->next);
+    is(p->el, "123");
+    ok(p = p->next);
+    is(p->el, "defg");
+    ok(p = p->next);
+    is(p->el, "4567");
+    ok(!p->next);
+    list_free(src);
+    list_foreach(dst, (list_traversal_t *) free, NULL);
+    list_free(dst);
+}
+
 int
 main(void)
 {
@@ -221,5 +292,7 @@ main(void)
     test_push2();
     test_from();
     test_remove();
+    test_transform();
+    test_transform2();
     done_testing();
 }
