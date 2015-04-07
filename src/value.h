@@ -41,6 +41,7 @@ typedef struct {
 } value_alt_t;
 
 extern value_t    *value_new(const char *);
+extern value_t    *value_clone(value_t *);
 extern void        value_free(value_t *);
 extern const char *value_eval(value_t *, void *, const char *);
 extern void        value_add(value_t **, value_t *);

@@ -42,6 +42,19 @@ att_new(const char *name, const char *value, const char *origin)
     return att;
 }
 
+att_t *
+att_clone(att_t *att)
+{
+    att_t *clone;
+    assert(att);
+    clone = malloc(sizeof *clone);
+    if (!clone) return clone;
+    clone->name = strdup(att->name);
+    clone->value = value_clone(att->value);
+    clone->origin = att->origin ? strdup(att->origin) : NULL;
+    return clone;
+}
+
 void
 att_replace_value(att_t *att, const char *value, const char *origin)
 {

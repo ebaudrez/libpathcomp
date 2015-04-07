@@ -194,6 +194,21 @@ pathcomp_new(const char *name)
     return composer;
 }
 
+pathcomp_t *
+pathcomp_clone(pathcomp_t *composer)
+{
+    pathcomp_t *clone;
+    assert(composer);
+    clone = malloc(sizeof *clone);
+    if (!clone) return clone;
+    clone->name = strdup(composer->name);
+    clone->attributes = list_transform(composer->attributes, (list_transform_t *) att_clone, NULL);
+    clone->metatable = strdup(composer->metatable);
+    clone->done = composer->done;
+    clone->started = composer->started;
+    return clone;
+}
+
 void
 pathcomp_free(pathcomp_t *composer)
 {

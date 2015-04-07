@@ -46,6 +46,18 @@ value_literal_new(const char *text)
     return val;
 }
 
+static value_t *
+value_literal_clone(value_t *val)
+{
+    value_t *clone;
+    assert(val);
+    clone = malloc(sizeof *clone);
+    if (!clone) return clone;
+    clone->type = VALUE_LITERAL;
+    clone->literal = strdup(val->literal);
+    return clone;
+}
+
 /*
  * \}
  * \name Routines specific to Lua values
@@ -90,6 +102,19 @@ value_lua_new(const char *source)
     val->source = strdup(source);
     val->result = NULL;
     return (value_t *) val;
+}
+
+static value_t *
+value_lua_clone(value_lua_t *val)
+{
+    value_lua_t *clone;
+    assert(val);
+    clone = malloc(sizeof *clone);
+    if (!clone) return (value_t *) clone;
+    clone->type = VALUE_LUA;
+    clone->source = strdup(val->source);
+    clone->result = val->result ? strdup(val->result) : NULL;
+    return (value_t *) clone;
 }
 
 static void
@@ -168,6 +193,27 @@ value_alt_new(value_t *orig)
     return (value_t *) val;
 }
 
+static value_t *
+value_alt_clone(value_alt_t *val)
+{
+    value_alt_t *clone;
+    list_t *p;
+    assert(val);
+    clone = malloc(sizeof *clone);
+    if (!clone) return (value_t *) clone;
+    clone->type = VALUE_ALT;
+    clone->alternatives = list_transform(val->alternatives, (list_transform_t *) value_clone, NULL);
+    clone->current = clone->alternatives;
+    /* val->current points to the n-th alternative; make clone->current point
+     * to the n-th alternative simply by counting */
+    for (p = val->alternatives; (p != val->current) && p; p = p->next) {
+        assert(clone->current);
+        clone->current = clone->current->next;
+    }
+    assert(p == val->current);
+    return (value_t *) clone;
+}
+
 static void
 value_alt_free(value_alt_t *val)
 {
@@ -195,6 +241,22 @@ value_new(const char *text)
     }
     else {
         return value_literal_new(text);
+    }
+}
+
+value_t *
+value_clone(value_t *val)
+{
+    assert(val);
+    switch (val->type) {
+        case VALUE_LITERAL:
+            return value_literal_clone(val);
+        case VALUE_LUA:
+            return value_lua_clone((value_lua_t *) val);
+        case VALUE_ALT:
+            return value_alt_clone((value_alt_t *) val);
+        default:
+            assert(0);
     }
 }
 

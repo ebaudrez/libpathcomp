@@ -46,6 +46,9 @@ extern void pathcomp_cleanup(void);
  */
 extern pathcomp_t *pathcomp_new(const char *name);
 
+/** Clone an existing composer object */
+extern pathcomp_t *pathcomp_clone(pathcomp_t *composer);
+
 /** Free a composer object */
 extern void pathcomp_free(pathcomp_t *composer);
 

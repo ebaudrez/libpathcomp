@@ -22,6 +22,7 @@
 typedef struct att_t att_t;
 
 extern att_t      *att_new(const char *, const char *, const char *);
+extern att_t      *att_clone(att_t *);
 extern void        att_replace_value(att_t *, const char *, const char *);
 extern void        att_add_value(att_t *, const char *);
 extern void        att_free(att_t *);
