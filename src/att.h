@@ -29,7 +29,7 @@ extern void        att_free(att_t *);
 extern int         att_name_equal_to(att_t *, char *);
 extern const char *att_get_origin(att_t *);
 extern const char *att_eval(att_t *, void *, const char *);
-extern void        att_reset(att_t *);
+extern void        att_rewind(att_t *);
 extern int         att_next(att_t *);
 
 #endif /* ATT_INCLUDED */

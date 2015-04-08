@@ -129,7 +129,7 @@ pathcomp_add_atts_from_entries(pathcomp_t *composer, char *section_name, list_t 
         entry = entry->next;
     }
     /* after setting or adding attributes, must rewind all attributes */
-    pathcomp_reset(composer);
+    pathcomp_rewind(composer);
 }
 
 static void
@@ -268,7 +268,7 @@ pathcomp_set(pathcomp_t *composer, const char *name, const char *value)
     assert(name);
     assert(value);
     pathcomp_add_or_replace(composer, name, value, PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_REPLACE);
-    pathcomp_reset(composer);
+    pathcomp_rewind(composer);
 }
 
 void
@@ -278,15 +278,15 @@ pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
     assert(name);
     assert(value);
     pathcomp_add_or_replace(composer, name, value, PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_ADD);
-    pathcomp_reset(composer);
+    pathcomp_rewind(composer);
 }
 
 void
-pathcomp_reset(pathcomp_t *composer)
+pathcomp_rewind(pathcomp_t *composer)
 {
     list_t *p;
     assert(composer);
-    for (p = composer->attributes; p; p = p->next) att_reset(p->el);
+    for (p = composer->attributes; p; p = p->next) att_rewind(p->el);
     composer->done = 0;
     composer->started = 0;
 }
@@ -306,8 +306,8 @@ pathcomp_next(pathcomp_t *composer)
     if (composer->done) return 0;
     for (p = composer->attributes; p; p = p->next) {
         if (att_next(p->el)) return 1;
-        /* alternative has wrapped around: reset and cycle next attribute */
-        att_reset(p->el);
+        /* alternative has wrapped around: rewind and cycle next attribute */
+        att_rewind(p->el);
     }
     composer->done = 1;
     return 0;

@@ -326,7 +326,7 @@ value_add(value_t **pdst, value_t *src)
 }
 
 void
-value_reset(value_t *val)
+value_rewind(value_t *val)
 {
     assert(val);
     if (val->type != VALUE_ALT) return;

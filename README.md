@@ -236,7 +236,7 @@ pathnames. When an attribute has multiple values, it is said to have
 _alternatives_. Every attribute has the notion of a _current alternative_: when
 an attribute is evaluated, the value corresponding to its current alternative is
 returned. Alternatives are stored in an ordered list, and we say the attribute
-is _rewound_ or _reset_ when the current alternative is set to the first
+is _rewound_ when the current alternative is set to the first
 alternative in the list. Several attributes may possess several attributes, and
 the composer object always corresponds to one possible _combination of
 alternatives_. Libpathcomp provides a means to step through all combinations,
@@ -368,7 +368,7 @@ testing. For more information about it, you should read the sources.
         free(val);
         pathcomp_next();
     }
-    pathcomp_reset(composer);
+    pathcomp_rewind(composer);
 
 It is not always sufficient to specify a single value for an attribute. For
 example, what if the data files in the example in the synopsis could be
@@ -407,8 +407,8 @@ the following way:
 
 At this point, all possibilities have been exhausted, and calling
 pathcomp_next() will not do anything. pathcomp_done() will return 1. If the
-state of the composer object is to be reset, in order to step through all
-combinations again, pathcomp_reset() must be called.
+composer object is to be rewound, in order to step through all combinations
+again, pathcomp_rewind() must be called.
 
 pathcomp_done() returns a boolean that indicates whether all combinations have
 been visited.
@@ -712,7 +712,7 @@ ordering the cache directory first.
     
     char *path;
     FILE *fp;
-    for (pathcomp_reset(composer); !pathcomp_done(composer); pathcomp_next(composer)) {
+    for (pathcomp_rewind(composer); !pathcomp_done(composer); pathcomp_next(composer)) {
         path = pathcomp_yield(composer);
         if (!pathcomp_mkdir(composer)) { continue; }
         fp = fopen(path, "w");

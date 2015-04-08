@@ -49,8 +49,8 @@ test_clone1(void)
     ok(pathcomp_done(clone));
     is(pathcomp_eval_nocopy(orig, "attribute"), "456", "original unaffected");
     ok(!pathcomp_done(orig));
-    pathcomp_reset(clone);
-    is(pathcomp_eval_nocopy(clone, "attribute"), "123", "reset clone");
+    pathcomp_rewind(clone);
+    is(pathcomp_eval_nocopy(clone, "attribute"), "123", "rewind clone");
     is(pathcomp_eval_nocopy(orig, "attribute"), "456", "original unaffected");
     pathcomp_set(orig, "attribute", "AAA---");
     pathcomp_set(orig, "other", "---ZZZ");
@@ -115,8 +115,8 @@ test_clone2(void)
     is(pathcomp_eval_nocopy(clone, "other"), "282930");
     ok(!pathcomp_next(clone));
     ok(pathcomp_done(clone));
-    pathcomp_reset(clone);
-    is(pathcomp_eval_nocopy(clone, "attribute"), "456", "reset clone");
+    pathcomp_rewind(clone);
+    is(pathcomp_eval_nocopy(clone, "attribute"), "456", "rewind clone");
     is(pathcomp_eval_nocopy(clone, "other"), "101112");
     pathcomp_free(clone);
     pathcomp_cleanup();
@@ -140,7 +140,7 @@ test_clone3(void)
     ok(pathcomp_next(clone));
     is(pathcomp_eval_nocopy(clone, "att"), "2");
     ok(!pathcomp_next(clone));
-    pathcomp_reset(clone);
+    pathcomp_rewind(clone);
     pathcomp_set(orig, "att", "0");
     is(pathcomp_eval_nocopy(orig, "att"), "0", "attribute of original set to single-value attribute");
     ok(!pathcomp_next(orig));
@@ -148,8 +148,8 @@ test_clone3(void)
     ok(pathcomp_next(clone));
     is(pathcomp_eval_nocopy(clone, "att"), "2", "... and it's still a multi-valued attribute");
     ok(!pathcomp_next(clone));
-    pathcomp_reset(orig);
-    pathcomp_reset(clone);
+    pathcomp_rewind(orig);
+    pathcomp_rewind(clone);
     pathcomp_add(clone, "att", "3");
     pathcomp_add(clone, "att", "4");
     pathcomp_add(clone, "att", "5");

@@ -110,10 +110,10 @@ att_eval(att_t *att, void *composer, const char *metatable)
 }
 
 void
-att_reset(att_t *att)
+att_rewind(att_t *att)
 {
     assert(att);
-    value_reset(att->value);
+    value_rewind(att->value);
 }
 
 int

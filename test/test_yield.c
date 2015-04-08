@@ -105,21 +105,21 @@ test_basic(void)
     list_free(expected);
 
     ok(pathcomp_done(c), "iteration done after loop");
-    is(s = pathcomp_yield(c), "def", "all alternatives have been reset");
+    is(s = pathcomp_yield(c), "def", "all alternatives have been rewound");
     free(s);
     ok(!pathcomp_next(c), "pathcomp_next() itself returns false when done");
     ok(pathcomp_done(c), "pathcomp_next() after iteration is done has no effect");
     is(s = pathcomp_yield(c), "def", "pathcomp_next() after iteration is done has no effect");
     free(s);
 
-    pathcomp_reset(c);
-    ok(!pathcomp_done(c), "pathcomp_reset()");
+    pathcomp_rewind(c);
+    ok(!pathcomp_done(c), "pathcomp_rewind()");
     ok(pathcomp_next(c), "pathcomp_next() returns true when there is a next alternative");
     ok(!pathcomp_done(c));
     isnt(s = pathcomp_yield(c), "def", "advance to next alternative");
     free(s);
-    pathcomp_reset(c);
-    is(s = pathcomp_yield(c), "def", "all alternatives rewound after pathcomp_reset()");
+    pathcomp_rewind(c);
+    is(s = pathcomp_yield(c), "def", "all alternatives rewound after pathcomp_rewind()");
     free(s);
     pathcomp_free(c);
 
@@ -130,8 +130,8 @@ test_basic(void)
     ok(!pathcomp_next(c), "there is no 'next' combination of alternatives when there aren't any alternatives");
     ok(!pathcomp_next(c), "not even if we insist");
     ok(pathcomp_done(c), "now we are done");
-    pathcomp_reset(c);
-    ok(!pathcomp_done(c), "reset works, and we aren't officially 'done' yet once again");
+    pathcomp_rewind(c);
+    ok(!pathcomp_done(c), "rewind works, and we aren't officially 'done' yet once again");
     ok(!pathcomp_next(c), "done for real now");
     ok(pathcomp_done(c));
     pathcomp_free(c);
@@ -142,8 +142,8 @@ test_basic(void)
     ok(!pathcomp_next(c), "there is no 'next' combination of alternatives when there aren't any attributes");
     ok(!pathcomp_next(c), "not even if we insist");
     ok(pathcomp_done(c), "now we are done");
-    pathcomp_reset(c);
-    ok(!pathcomp_done(c), "reset works, and we aren't officially 'done' yet once again");
+    pathcomp_rewind(c);
+    ok(!pathcomp_done(c), "rewind works, and we aren't officially 'done' yet once again");
     ok(!pathcomp_next(c), "done for real now");
     ok(pathcomp_done(c));
     pathcomp_free(c);

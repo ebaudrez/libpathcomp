@@ -106,7 +106,7 @@ extern int pathcomp_next(pathcomp_t *composer);
 extern int pathcomp_done(pathcomp_t *composer);
 
 /** Rewind all alternatives */
-extern void pathcomp_reset(pathcomp_t *composer);
+extern void pathcomp_rewind(pathcomp_t *composer);
 
 /**
  * Evaluate and return the pathname represented by the composer object
