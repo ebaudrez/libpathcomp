@@ -271,6 +271,24 @@ test_splice(void)
     buf_release(&buf);
 }
 
+static void
+test_addf(void)
+{
+    buf_t buf;
+    buf_init(&buf, 0);
+    buf_addf(&buf, "this is a %s", "test");
+    is(buf.buf, "this is a test");
+    buf_release(&buf);
+    buf_init(&buf, 0);
+    buf_addf(&buf, "twelve (%.1f) eggs in a box", 12.);
+    is(buf.buf, "twelve (12.0) eggs in a box");
+    buf_release(&buf);
+    buf_init(&buf, 100);
+    buf_addf(&buf, "there are %d letters in the string `%s`", (int) strlen("FOUR"), "FOUR");
+    is(buf.buf, "there are 4 letters in the string `FOUR`");
+    buf_release(&buf);
+}
+
 int
 main(void)
 {
@@ -279,5 +297,6 @@ main(void)
     test_trim();
     test_stream();
     test_splice();
+    test_addf();
     done_testing();
 }

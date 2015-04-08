@@ -42,6 +42,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 static char buf_initial[1] = { '\0' };
 
@@ -170,6 +171,33 @@ void
 buf_addstr(buf_t *buf, const char *s)
 {
     buf_add(buf, s, strlen(s));
+}
+
+static void
+buf_vaddf(buf_t *buf, const char *fmt, va_list ap)
+{
+    int n;
+    va_list copy;
+    if (!buf_avail(buf)) buf_grow(buf, 64); /* magic number taken from Git sources */
+    va_copy(copy, ap);
+    n = vsnprintf(buf->buf + buf->len, buf->alloc - buf->len, fmt, copy);
+    va_end(copy);
+    assert(n >= 0);
+    if (n > buf_avail(buf)) {
+        buf_grow(buf, n);
+        n = vsnprintf(buf->buf + buf->len, buf->alloc - buf->len, fmt, ap);
+        assert(n <= buf_avail(buf));
+    }
+    buf_setlen(buf, buf->len + n);
+}
+
+void
+buf_addf(buf_t *buf, const char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    buf_vaddf(buf, fmt, ap);
+    va_end(ap);
 }
 
 size_t

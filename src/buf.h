@@ -54,6 +54,7 @@ extern size_t  buf_avail(buf_t *);
 extern void    buf_addch(buf_t *, int);
 extern void    buf_add(buf_t *, const void *, size_t);
 extern void    buf_addstr(buf_t *, const char *);
+extern void    buf_addf(buf_t *, const char *, ...);
 extern size_t  buf_fread(buf_t *, size_t, FILE *);
 extern int     buf_read(buf_t *, int, size_t);
 extern int     buf_read_file(buf_t *, const char *, size_t);
