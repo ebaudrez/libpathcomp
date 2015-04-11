@@ -4,6 +4,7 @@ pathcomp_add_config_from_string
 pathcomp_cleanup
 pathcomp_clone
 pathcomp_done
+pathcomp_dump
 pathcomp_eval
 pathcomp_eval_nocopy
 pathcomp_find

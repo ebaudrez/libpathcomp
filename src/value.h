@@ -20,6 +20,7 @@
 #define VALUE_INCLUDED
 
 #include "list.h"
+#include "buf.h"
 
 typedef enum { VALUE_LITERAL, VALUE_LUA, VALUE_ALT } value_type_t;
 
@@ -47,5 +48,6 @@ extern const char *value_eval(value_t *, void *, const char *);
 extern void        value_add(value_t **, value_t *);
 extern void        value_rewind(value_t *);
 extern int         value_next(value_t *);
+extern void        value_dump(value_t *, buf_t *);
 
 #endif /* VALUE_INCLUDED */

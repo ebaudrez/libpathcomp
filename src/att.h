@@ -19,6 +19,8 @@
 #ifndef ATT_INCLUDED
 #define ATT_INCLUDED
 
+#include "buf.h"
+
 typedef struct att_t att_t;
 
 extern att_t      *att_new(const char *, const char *, const char *);
@@ -31,5 +33,6 @@ extern const char *att_get_origin(att_t *);
 extern const char *att_eval(att_t *, void *, const char *);
 extern void        att_rewind(att_t *);
 extern int         att_next(att_t *);
+extern void        att_dump(att_t *, buf_t *);
 
 #endif /* ATT_INCLUDED */

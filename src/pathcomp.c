@@ -362,3 +362,18 @@ pathcomp_mkdir(pathcomp_t *composer)
     free(path);
     return success;
 }
+
+char *
+pathcomp_dump(pathcomp_t *composer)
+{
+    buf_t buf;
+    buf_init(&buf, 0);
+    buf_addf(&buf, "composer object at 0x%x\n", composer);
+    buf_addf(&buf, "  class: %s\n", composer->name);
+    buf_addf(&buf, "  metatable: %s\n", composer->metatable);
+    buf_addf(&buf, "  done: %d\n", composer->done);
+    buf_addf(&buf, "  started: %d\n", composer->started);
+    buf_addf(&buf, "  attributes:\n");
+    list_foreach(composer->attributes, (list_traversal_t *) att_dump, &buf);
+    return buf_detach(&buf, NULL);
+}

@@ -29,6 +29,13 @@
 #include <lua.h>
 #include <lauxlib.h>
 
+typedef struct {
+    buf_t   *buf;
+    value_t *current;
+} value_dump_one_t;
+
+static void value_dump_one(value_t *val, value_dump_one_t *udata);
+
 /*
  * \name Routines specific to literal values
  * \{
@@ -223,6 +230,17 @@ value_alt_free(value_alt_t *val)
     free(val);
 }
 
+static void
+value_alt_dump(value_alt_t *val, buf_t *buf)
+{
+    value_dump_one_t udata;
+    assert(val);
+    assert(buf);
+    udata.buf = buf;
+    udata.current = val->current ? val->current->el : NULL;
+    list_foreach(val->alternatives, (list_traversal_t *) value_dump_one, &udata);
+}
+
 /*
  * \}
  * \name Generic \a value_t routines
@@ -343,6 +361,50 @@ value_next(value_t *val)
     if (!alt->current) return 0;
     alt->current = alt->current->next;
     return alt->current != NULL;
+}
+
+static void
+value_dump_one(value_t *val, value_dump_one_t *udata)
+{
+    buf_t *buf;
+    char marker[] = " ";
+    value_lua_t *lval = NULL;
+    assert(val);
+    assert(udata);
+    buf = udata->buf;
+    if (val == udata->current) strncpy(marker, "*", (sizeof marker) - 1);
+    switch (val->type) {
+        case VALUE_LITERAL:
+            buf_addf(buf, "         %sliteral(0x%x) | %s\n", marker, val, val->literal);
+            break;
+        case VALUE_LUA:
+            lval = (value_lua_t *) val;
+            buf_addf(buf, "         %slua(0x%x)     | %s | (source:) %s\n", marker, lval, lval->result ? lval->result : "(null)", lval->source);
+            break;
+        default:
+            assert(0);
+    }
+}
+
+void
+value_dump(value_t *val, buf_t *buf)
+{
+    static char *value_type_str[] = { "VALUE_LITERAL", "VALUE_LUA", "VALUE_ALT" };
+    value_dump_one_t udata = { buf, NULL };
+    assert(val);
+    assert(buf);
+    buf_addf(buf, "        %s at 0x%x\n", value_type_str[val->type], val);
+    switch (val->type) {
+        case VALUE_LITERAL:
+        case VALUE_LUA:
+            value_dump_one(val, &udata);
+            break;
+        case VALUE_ALT:
+            value_alt_dump((value_alt_t *) val, buf);
+            break;
+        default:
+            assert(0);
+    }
 }
 
 /*

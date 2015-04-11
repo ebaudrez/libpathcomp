@@ -122,3 +122,15 @@ att_next(att_t *att)
     assert(att);
     return value_next(att->value);
 }
+
+void
+att_dump(att_t *att, buf_t *buf)
+{
+    assert(att);
+    assert(buf);
+    buf_addf(buf, "    attribute at 0x%x\n", att);
+    buf_addf(buf, "      name: %s\n", att->name);
+    buf_addf(buf, "      origin: %s\n", att->origin ? att->origin : "(null)");
+    buf_addf(buf, "      value:\n");
+    value_dump(att->value, buf);
+}

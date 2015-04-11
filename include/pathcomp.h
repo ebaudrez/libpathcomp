@@ -96,6 +96,15 @@ extern char *pathcomp_eval(pathcomp_t *composer, const char *name);
 extern const char *pathcomp_eval_nocopy(pathcomp_t *composer, const char *name);
 
 /**
+ * Return a textual representation of the state of composer object
+ *
+ * The string returned by this function must be deallocated by the user. Format
+ * and contents of the string are subject to change. This function is to be
+ * used for debugging or testing only.
+ */
+extern char *pathcomp_dump(pathcomp_t *composer);
+
+/**
  * Advance to next combination of alternatives
  *
  * \return A true value if there is a next combination; a false value otherwise
