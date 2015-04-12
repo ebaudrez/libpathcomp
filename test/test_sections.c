@@ -175,8 +175,9 @@ test_copy3(void)
     ok(child = pathcomp_new("child"));
     is(pathcomp_eval_nocopy(child, "copy-from"), "parent", "directive");
     is(pathcomp_eval_nocopy(child, "att"), "value1", "inherited");
-    ok(!pathcomp_next(child));
-    pathcomp_add(child, "att", "value2");
+    ok(!pathcomp_next(child)); /* composer object is now in state 'done' */
+    pathcomp_add(child, "att", "value2"); /* composer object still in state 'done' */
+    pathcomp_rewind(child); /* must rewind to reset state to '!done' */
     is(pathcomp_eval_nocopy(child, "att"), "value1", "explicitly added to inherited attribute at run time");
     ok(pathcomp_next(child));
     is(pathcomp_eval_nocopy(child, "att"), "value2", "explicitly added to inherited attribute at run time");

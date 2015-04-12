@@ -128,8 +128,6 @@ pathcomp_add_atts_from_entries(pathcomp_t *composer, char *section_name, list_t 
         }
         entry = entry->next;
     }
-    /* after setting or adding attributes, must rewind all attributes */
-    pathcomp_rewind(composer);
 }
 
 static void
@@ -268,7 +266,6 @@ pathcomp_set(pathcomp_t *composer, const char *name, const char *value)
     assert(name);
     assert(value);
     pathcomp_add_or_replace(composer, name, value, PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_REPLACE);
-    pathcomp_rewind(composer);
 }
 
 void
@@ -278,7 +275,6 @@ pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
     assert(name);
     assert(value);
     pathcomp_add_or_replace(composer, name, value, PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_ADD);
-    pathcomp_rewind(composer);
 }
 
 void

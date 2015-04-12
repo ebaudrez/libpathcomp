@@ -42,6 +42,74 @@ test_set(void)
     pathcomp_free(c);
 }
 
+static void
+test_no_rewind_after_set(void)
+{
+    pathcomp_t *c;
+    pathcomp_add_config_from_string(
+            "[class]\n"
+            "root = cache\n"
+            "root = ftp\n"
+            "root = remote\n"
+            "root = storage\n"
+            "irrelevant = 0\n"
+            );
+    ok(c = pathcomp_new("class"));
+    is(pathcomp_eval_nocopy(c, "root"), "cache");
+    ok(pathcomp_next(c));
+    is(pathcomp_eval_nocopy(c, "root"), "ftp");
+    ok(pathcomp_next(c));
+    is(pathcomp_eval_nocopy(c, "root"), "remote");
+    is(pathcomp_eval_nocopy(c, "irrelevant"), "0");
+    pathcomp_set(c, "irrelevant", "1");
+    is(pathcomp_eval_nocopy(c, "irrelevant"), "1");
+    is(pathcomp_eval_nocopy(c, "root"), "remote", "do not rewind attributes after set()");
+    pathcomp_set(c, "root", "nodef");
+    is(pathcomp_eval_nocopy(c, "root"), "nodef", "changing multi-valued attribute to single-valued");
+    ok(!pathcomp_next(c));
+    pathcomp_free(c);
+    pathcomp_cleanup();
+}
+
+static void
+test_no_rewind_after_add(void)
+{
+    pathcomp_t *c;
+    pathcomp_add_config_from_string(
+            "[class]\n"
+            "root = cache\n"
+            "root = ftp\n"
+            "root = remote\n"
+            "root = storage\n"
+            "irrelevant = 0\n"
+            );
+    ok(c = pathcomp_new("class"));
+    is(pathcomp_eval_nocopy(c, "root"), "cache");
+    ok(pathcomp_next(c));
+    is(pathcomp_eval_nocopy(c, "root"), "ftp");
+    ok(pathcomp_next(c));
+    is(pathcomp_eval_nocopy(c, "root"), "remote");
+    pathcomp_add(c, "root", "nodef");
+    is(pathcomp_eval_nocopy(c, "root"), "remote", "do not rewind attribute after add() to same attribute");
+    ok(pathcomp_next(c));
+    is(pathcomp_eval_nocopy(c, "root"), "storage");
+    ok(pathcomp_next(c));
+    is(pathcomp_eval_nocopy(c, "root"), "nodef");
+    ok(!pathcomp_next(c));
+    pathcomp_rewind(c);
+    is(pathcomp_eval_nocopy(c, "root"), "cache");
+    ok(pathcomp_next(c));
+    is(pathcomp_eval_nocopy(c, "root"), "ftp");
+    ok(pathcomp_next(c));
+    is(pathcomp_eval_nocopy(c, "root"), "remote");
+    is(pathcomp_eval_nocopy(c, "irrelevant"), "0");
+    pathcomp_add(c, "irrelevant", "1");
+    is(pathcomp_eval_nocopy(c, "irrelevant"), "0");
+    is(pathcomp_eval_nocopy(c, "root"), "remote", "do not rewind attribute after add() to another attribute");
+    pathcomp_free(c);
+    pathcomp_cleanup();
+}
+
 int
 main(void)
 {
@@ -49,5 +117,7 @@ main(void)
     pathcomp_add_config_from_string(config);
     test_set();
     pathcomp_cleanup();
+    test_no_rewind_after_set();
+    test_no_rewind_after_add();
     done_testing();
 }
