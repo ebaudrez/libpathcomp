@@ -1,10 +1,18 @@
 # NAME
 
-libpathcomp - A library for pathname composition
+Libpathcomp - A library for pathname composition
 
 # SYNOPSIS
 
-In a file called `my-config`:
+Suppose you have to work with pathnames that are built up from components, for
+example,
+
+    /opt/data/${instrument}/${instrument}_${year}${month}.dat
+
+Libpathcomp is designed to make the construction of these pathnames as
+convenient as possible, and offers a few functions for working with the
+constructed pathnames. One of the ways to use Libpathcomp for pathnames as given
+above, is to create a file called `my-config` with the following contents:
 
     [data]
     root      = /opt/data
@@ -13,20 +21,32 @@ In a file called `my-config`:
     compose   = lua { return string.format('%s/%s_%s%s', self.instrument, \
                       self.instrument, self.yymm, self.extension) }
 
-In a C source file:
+This file should be used together with a C program whose source could look like:
 
     #include <pathcomp.h>
     
+    pathcomp_t *composer;
+    
     pathcomp_add_config_from_file("my-config");
-    pathcomp_t *composer = pathcomp_new("data");
+    composer = pathcomp_new("data");
     pathcomp_set(composer, "instrument", "N6");
     pathcomp_set(composer, "year", "1989");
     pathcomp_set(composer, "month", "3");
-    char *path = pathcomp_yield(composer); /* returns "/opt/data/N6/N6_8903.dat" */
-    /* ... */
+    char *path = pathcomp_yield(composer);
+    printf("path: %s\n", path); /* prints "path: /opt/data/N6/N6_8903.dat" */
     free(path);
     patcomp_free(composer);
     pathcomp_cleanup();
+
+Instead of, or in addition to, a C program, one could also use the stand-alone
+utility `pathcomp`:
+
+    $ pathcomp -f my-config -c data instrument=N6 year=1989 month=3
+    /opt/data/N6/N6_8903.dat
+
+Please have a look at the User Guide below for an overview of the features and
+usage of Libpathcomp. You may also want to have a look at the Cookbook for
+examples of usage.
 
 # DESCRIPTION
 
