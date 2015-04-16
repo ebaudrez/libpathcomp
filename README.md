@@ -303,7 +303,9 @@ If none are found, the composer object starts out without attributes. When a
 matching section is found, its attributes are added to the composer object as if
 pathcomp_add() had been called with the name and value of the attribute as it
 appears in the configuration. This is repeated for every matching section.
-Multiple assignments to the same attribute will create alternatives.
+Multiple assignments to the same attribute will create alternatives. Please note
+that an assignment to an attribute inherited from a parent class will _override_
+the inherited value, instead of adding an alternative.
 
 Note that it is not required to pass to pathcomp_new() a class name that matches
 a section name in the configuration, nor is it required to have any
@@ -341,7 +343,8 @@ for multi-valued attributes.
 
 Please note the following:
 
-  * An attribute needn't exist when you call pathcomp_set() or pathcomp_add().
+  * An attribute needn't exist before you call pathcomp_set() or pathcomp_add();
+    you can use them to create new attributes.
   * Attributes are always text, reflecting their use as components of pathnames.
     This makes it cumbersome to set or add attributes that have a numerical
     value in the calling function. This may change in a future version.
@@ -405,7 +408,7 @@ modelled like an iterator.
 
 Every attribute has the notion of the 'current alternative'. For single-value
 attributes, this is trivial. For multi-valued attributes, a hidden pointer is
-kept that identifies the current alternative among the ordered list of
+kept that identifies the current alternative in the ordered list of
 alternatives.
 
 The composer object always represents one possible combination of alternatives
@@ -433,19 +436,22 @@ again, pathcomp_rewind() must be called.
 pathcomp_done() returns a boolean that indicates whether all combinations have
 been visited.
 
-The example code shown above is admittedly a litle bit contrived. But in
+The example code shown above is admittedly somewhat contrived. But in
 combination with pathcomp_yield() (described below), alternatives can be very
 useful!
 
 ### Interaction with pathcomp_set() and pathcomp_add()
 
-pathcomp_set() and pathcomp_add() rewind all alternatives. This is necessary
-because combinations are tried in order, and there is no guarantee that a
-matching combination of alternatives comes later in the list of possible
-combinations.
+You should be aware that pathcomp_set() and pathcomp_add() do not automatically
+rewind all alternatives like they used to do in an early version. This may
+surprise you if invoke them while stepping through all combinations using
+pathcomp_next() (or another function that relies on it, such as
+pathcomp_find()). Remember that combinations are tried in an unspecified order;
+there is no guarantee that a matching combination of alternatives comes later in
+the list of possible combinations.
 
-Imagine the situation where you have successfully located a data file with the
-following attributes:
+For example, imagine the situation where you have successfully located a data
+file with the following attributes:
 
     instrument = G2
     extension  = .hdf
@@ -458,9 +464,15 @@ _not_ compressed:
 
     pathcomp_set(composer, "instrument", "GL")
 
-pathcomp_find() would fail if it didn't rewind all alternatives, because the
-alternative `.hdf` comes before `.hdf.gz` in the list of alternatives. For this
-reason, all alternatives are rewound when calling pathcomp_set().
+pathcomp_find() will now fail even if a matching file exists, because the
+alternative `.hdf` comes before `.hdf.gz` in the list of alternatives.
+
+The solution is the following: if you have invoked pathcomp_set() or
+pathcomp_add() after starting an iteration with pathcomp_next(), call
+pathcomp_rewind() to reset the state of the iterator. If you haven't started an
+iteration, there is no need to invoke pathcomp_rewind(). Hence, in the common
+case of setting or adding attributes at run time right after composer object
+creation, rewinding the attributes isn't necessary.
 
 ## Working with pathnames
 
