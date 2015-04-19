@@ -860,6 +860,40 @@ By writing a common ancestor section (which is not actually used in the C code),
 and having the two sections `gerb.barg` and `gerb.hr` inherit their attributes
 from it, only the differences between the data products need to be specified.
 
+## Locating the log file associated to a data file
+
+    ; config file
+    [hdf]
+        root       = /home/myuser/cache
+        root       = /opt/data
+        root       = /mnt/nfs/data
+        instrument = N6
+        extension  = .hdf
+        compose    = ...
+
+    /* C */
+    pathcomp_t *hdf, *log;
+    char *path;
+    hdf = pathcomp_new("hdf");
+    path = pathcomp_find(hdf);
+    free(path);
+    /* hdf composer now points to first matching (existing) .hdf file */
+    log = pathcomp_clone(hdf);
+    pathcomp_set(log, extension, ".log");
+    /* log composer now points to associated .log file */
+    pathcomp_free(hdf);
+    pathcomp_free(log);
+
+Suppose you have a data product that has a log file for every data file, and
+suppose further that the log file has the same basename as the data file, with
+extension `.log` instead of `.hdf`. This example shows how you would locate the
+log file for a data file. First, the data file is located with pathcomp_find().
+A clone of the composer object is created. The clone starts out with identical
+state, so it initially refers to the data file. By calling pathcomp_set(), we
+can change the extension to `.log`. Remember that pathcomp_set() doesn't rewind
+alternatives, so the `root` attribute continues to point to the same directory.
+The `log` composer now points to the log file associated to the data file.
+
 # BUGS
 
 None known. Please test Libpathcomp, and get back to me with bug reports and
