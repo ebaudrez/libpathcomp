@@ -314,6 +314,20 @@ configuration parsed before calling pathcomp_new(). An empty composer object
 
 The composer object must be deallocated by calling pathcomp_free().
 
+## Cloning composer objects
+
+    pathcomp_t *clone;
+    clone = pathcomp_clone(composer);
+    /* ... */
+    pathcomp_free(clone);
+
+It is also possible to create a composer object from another one.
+pathcomp_clone() creates a clone which starts out with identical attributes and
+state as the original, but which is otherwise independent. Changes to the clone
+do not affect the original, and neither do changes to the original affect the
+clone after the cloning. The clone must be deallocated with pathcomp_free(),
+just like the original.
+
 ## Setting and adding attribute values
 
     pathcomp_set(composer, "year", "2004");
