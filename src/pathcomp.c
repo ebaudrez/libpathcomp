@@ -337,7 +337,7 @@ int
 pathcomp_mkdir(pathcomp_t *composer)
 {
     char *path, *p;
-    int success = 1;
+    int rc = 0;
     assert(composer);
     path = pathcomp_yield(composer);
     p = path;
@@ -350,13 +350,14 @@ pathcomp_mkdir(pathcomp_t *composer)
             int sv = errno;
             if (sv != EEXIST) {
                 pathcomp_log_error("mkdir '%s': %s", path, strerror(sv));
-                success = 0;
+                rc = -1;
+                break;
             }
         }
         *p++ = '/';
     }
     free(path);
-    return success;
+    return rc;
 }
 
 char *

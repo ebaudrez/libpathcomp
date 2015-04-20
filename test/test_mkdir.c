@@ -41,7 +41,7 @@ test_basic(void)
     path_not_exists_ok("lib/scratch/G2");
     path_not_exists_ok("lib/scratch/G2/SEV1");
     path_not_exists_ok("lib/scratch/G2/SEV1/my_filename");
-    if (!ok(pathcomp_mkdir(c))) diag("pathcomp_mkdir: %s", strerror(errno));
+    if (!cmp_ok(pathcomp_mkdir(c), "==", 0)) diag("pathcomp_mkdir: %s", strerror(errno));
     dir_exists_ok("lib");
     dir_exists_ok("lib/scratch");
     dir_exists_ok("lib/scratch/G2");
@@ -69,7 +69,7 @@ test_basic_dir_only(void)
     path_not_exists_ok("lib/scratch");
     path_not_exists_ok("lib/scratch/G2");
     path_not_exists_ok("lib/scratch/G2/SEV1");
-    if (!ok(pathcomp_mkdir(c), "call pathcomp_mkdir()")) diag("pathcomp_mkdir: %s", strerror(errno));
+    if (!cmp_ok(pathcomp_mkdir(c), "==", 0, "call pathcomp_mkdir()")) diag("pathcomp_mkdir: %s", strerror(errno));
     dir_exists_ok("lib");
     dir_exists_ok("lib/scratch");
     dir_exists_ok("lib/scratch/G2");

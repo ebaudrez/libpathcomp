@@ -160,8 +160,8 @@ extern char *pathcomp_find(pathcomp_t *composer);
  * exists already. Note that the directory separator is hardcoded to a slash
  * (<tt>/</tt>).
  *
- * \return A true value if the directory has been made successfully; a false
- * value otherwise (\a errno will be set)
+ * \return 0 if the directory has been made successfully; -1 otherwise
+ * (\a errno will be set)
  */
 extern int pathcomp_mkdir(pathcomp_t *composer);
 

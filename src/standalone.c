@@ -25,6 +25,8 @@
 #include <assert.h>
 #include "list.h"
 #include "pathcomp/log.h"
+#include <string.h>
+#include <errno.h>
 
 static void
 print_usage(void)
@@ -215,7 +217,11 @@ main(int argc, char **argv)
         if (options->only_existing) path = pathcomp_find(composer);
         else path = pathcomp_yield(composer);
         if (path) {
-            if (options->do_mkdir) pathcomp_mkdir(composer);
+            if (options->do_mkdir) {
+                if (pathcomp_mkdir(composer) == -1) {
+                    pathcomp_log_error("cannot create directory: %s", strerror(errno));
+                }
+            }
             if (options->eval_att) {
                 if ((att = pathcomp_eval(composer, options->eval_att))) {
                     puts(att);

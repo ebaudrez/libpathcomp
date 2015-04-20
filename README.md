@@ -583,10 +583,15 @@ calls on the filesystem.
     pathcomp_set(composer, "root", "/opt/data");
     pathcomp_set(composer, "compose", "N6/N6_8903.log");
     /* full path is "/opt/data/N6/N6_8903.log" */
-    if (pathcomp_mkdir(composer)) {
+    if (pathcomp_mkdir(composer) == 0) {
         /* directory "/opt/data/N6" was created */
     }
-    else { /* error */ }
+    else {
+        /* errno contains error number */
+        perror("mkdir");
+        /* or: */
+        fprintf(stderr, "error creating directories: %s\n", strerror(error));
+    }
 
 With pathnames that represent potentially complex directory hierarchies comes
 the need to create directories recursively. If, as in the example, you want to
@@ -631,8 +636,9 @@ Note that, internally, pathcomp_mkdir() calls pathcomp_yield(), so the value of
 the `root` attribute is always used as the leading part of the directories to be
 created, if this attribute exists.
 
-pathcomp_mkdir() returns a true value if the directory was made successfully,
-and 0 otherwise.
+pathcomp_mkdir() returns 0 if the directory was made successfully, and -1
+otherwise. In the latter case, `errno` is set to the error number of the
+underlying system call.
 
 # COOKBOOK
 
@@ -755,12 +761,19 @@ ordering the cache directory first.
 
     /* C */
     #include <stdio.h>
+    #include <errno.h>
+    #include <string.h>
+    #include <stdlib.h>
     
     char *path;
     FILE *fp;
     for (pathcomp_rewind(composer); !pathcomp_done(composer); pathcomp_next(composer)) {
         path = pathcomp_yield(composer);
-        if (!pathcomp_mkdir(composer)) { continue; }
+        if (pathcomp_mkdir(composer) == -1) {
+            fprintf(stderr, "Error creating directories for path %s: %s\n",
+                path, strerror(errno));
+            exit(2);
+        }
         fp = fopen(path, "w");
         fprintf(fp, "done.\n");
         fclose(fp);
