@@ -1,3 +1,32 @@
+0.2	2015-04-20	Edward Baudrez <edward.baudrez@gmail.com>
+
+New features:
+
+	* Config file: Added feature to inherit attributes from another section
+	using the special attribute name 'copy-from'.
+
+	* pathcomp.h: Added new function pathcomp_clone() to clone an existing
+	composer object.
+
+Changes breaking backwards compatibility of API:
+
+	* pathcomp.h: Renamed function pathcomp_reset() to pathcomp_rewind().
+
+	* pathcomp.h: Attributes are no longer rewound automatically after calling
+	pathcomp_set() or pathcomp_add().
+
+	* pathcomp.h (pathcomp_mkdir): Inverted the return value. 0 now signifies
+	success, and -1 failure.
+
+Other changes:
+
+	* Build: The 'prove' utility is no longer needed to build Libpathcomp.
+
+	* Documentation: The SYNOPSIS has been elaborated a bit to give potential
+	users an idea of what the library is for.
+
 0.1	2015-03-22	Edward Baudrez <edward.baudrez@gmail.com>
 
-* First public release
+	* First public release
+
+# vim:set filetype=changelog tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab:
