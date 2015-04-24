@@ -1,4 +1,4 @@
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I config
 SUBDIRS = liblua include src test
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libpathcomp.pc

@@ -3,14 +3,14 @@
 
 AC_PREREQ([2.68])
 AC_INIT([libpathcomp], [0.2], [edward.baudrez@gmail.com])
-AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_AUX_DIR([config])
 AM_INIT_AUTOMAKE
 AM_SILENT_RULES
 LT_PREREQ([2.2])
 LT_INIT
 AC_CONFIG_SRCDIR([include/pathcomp.h])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([config])
 
 # Checks for programs.
 AC_PROG_CC

@@ -17,6 +17,7 @@ config.h.in
 config.log
 config.status
 config.sub
+config/
 configure
 depcomp
 install-sh
@@ -25,7 +26,6 @@ libpathcomp-*.*/
 libpathcomp.pc
 libtool
 ltmain.sh
-m4/
 missing
 src/pathcomp
 stamp-h1
