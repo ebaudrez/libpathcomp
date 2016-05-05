@@ -55,18 +55,12 @@ extern void pathcomp_free(pathcomp_t *composer);
 /**
  * Set the value of attribute \a name to \a value, replacing its former
  * value(s), if any
- *
- * This function will rewind all alternatives. See the user manual for more
- * information.
  */
 extern void pathcomp_set(pathcomp_t *composer, const char *name, const char *value);
 
 /**
  * Add value \a value to the values already present for attribute \a name,
  * instead of replacing them
- *
- * This function will rewind all alternatives. See the user manual for more
- * information.
  */
 extern void pathcomp_add(pathcomp_t *composer, const char *name, const char *value);
 
