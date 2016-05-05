@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Edward Baudrez <edward.baudrez@gmail.com>
+ * Copyright (C) 2015, 2016 Edward Baudrez <edward.baudrez@gmail.com>
  * This file is part of Libpathcomp.
  *
  * Libpathcomp is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * with Libpathcomp; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* test value.c */
+/* test value.h */
 
 #include <config.h>
 #include "tap.h"
@@ -65,61 +65,7 @@ test_lua(void)
     ok(!value_eval(val, NULL, NULL), "inadvertent use of value_eval() with NULL composer raises an error");
     value_free(val);
     /* can't test value_lua_t more thoroughly without a composer object and a
-     * metatable, but this functionality is tested in lua.c */
-}
-
-static void
-test_alt_2elements(void)
-{
-    value_t *val, *val2;
-
-    ok(val = value_new("abc"));
-    cmp_ok(val->type, "==", VALUE_LITERAL);
-    is(value_eval(val, NULL, NULL), "abc");
-    ok(val2 = value_new("def"));
-    cmp_ok(val2->type, "==", VALUE_LITERAL);
-    value_add(&val, val2);
-    cmp_ok(val->type, "==", VALUE_ALT);
-
-    is(value_eval(val, NULL, NULL), "abc");
-    ok(value_next(val));
-    is(value_eval(val, NULL, NULL), "def");
-    ok(!value_next(val));
-    ok(!value_next(val), "value_next() doesn't recycle");
-    value_free(val);
-}
-
-static void
-test_alt_4elements(void)
-{
-    value_t *val, *val2;
-
-    ok(val = value_new("abc"));
-    cmp_ok(val->type, "==", VALUE_LITERAL);
-    is(value_eval(val, NULL, NULL), "abc");
-    ok(val2 = value_new("def"));
-    cmp_ok(val2->type, "==", VALUE_LITERAL);
-    value_add(&val, val2);
-    cmp_ok(val->type, "==", VALUE_ALT);
-    ok(val2 = value_new("lua { return 'g' .. 'h' .. 'i' }"));
-    cmp_ok(val2->type, "==", VALUE_LUA);
-    value_add(&val, val2);
-    cmp_ok(val->type, "==", VALUE_ALT);
-    ok(val2 = value_new("jkl"));
-    cmp_ok(val2->type, "==", VALUE_LITERAL);
-    value_add(&val, val2);
-    cmp_ok(val->type, "==", VALUE_ALT);
-
-    is(value_eval(val, NULL, NULL), "abc");
-    ok(value_next(val));
-    is(value_eval(val, NULL, NULL), "def");
-    ok(value_next(val));
-    is(value_eval(val, NULL, NULL), "ghi");
-    ok(value_next(val));
-    is(value_eval(val, NULL, NULL), "jkl");
-    ok(!value_next(val));
-    ok(!value_next(val), "value_next() doesn't recycle");
-    value_free(val);
+     * metatable, but this functionality is tested in test_lua.c */
 }
 
 int
@@ -128,8 +74,6 @@ main(void)
     plan(NO_PLAN);
     test_literal();
     test_lua();
-    test_alt_2elements();
-    test_alt_4elements();
     interpreter_cleanup();
     done_testing();
 }
