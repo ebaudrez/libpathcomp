@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Edward Baudrez <edward.baudrez@gmail.com>
+ * Copyright (C) 2015, 2016 Edward Baudrez <edward.baudrez@gmail.com>
  * This file is part of Libpathcomp.
  *
  * Libpathcomp is free software; you can redistribute it and/or modify
@@ -20,13 +20,14 @@
 #define ATT_INCLUDED
 
 #include "buf.h"
+#include "value.h"
 
 typedef struct att_t att_t;
 
-extern att_t      *att_new(const char *, const char *, const char *);
+extern att_t      *att_new(const char *, value_t *, const char *);
 extern att_t      *att_clone(att_t *);
-extern void        att_replace_value(att_t *, const char *, const char *);
-extern void        att_add_value(att_t *, const char *);
+extern void        att_replace_value(att_t *, value_t *, const char *);
+extern void        att_add_value(att_t *, value_t *);
 extern void        att_free(att_t *);
 extern int         att_name_equal_to(att_t *, char *);
 extern const char *att_get_origin(att_t *);

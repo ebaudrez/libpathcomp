@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Edward Baudrez <edward.baudrez@gmail.com>
+ * Copyright (C) 2015, 2016 Edward Baudrez <edward.baudrez@gmail.com>
  * This file is part of Libpathcomp.
  *
  * Libpathcomp is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 #include "pathcomp.h"
 #include "list.h"
 #include "cf.h"
+#include "value.h"
 #include "att.h"
 #include "pathcomp/log.h"
 #include "interpreter.h"
@@ -83,7 +84,7 @@ find_section_with_name(cf_section_t *sec, char *name)
 }
 
 static void
-pathcomp_add_or_replace(pathcomp_t *composer, const char *name, const char *value, const char *origin, int action)
+pathcomp_add_or_replace(pathcomp_t *composer, const char *name, value_t *value, const char *origin, int action)
 {
     list_t *patt;
     assert(name);
@@ -121,7 +122,7 @@ pathcomp_add_atts_from_entries(pathcomp_t *composer, char *section_name, list_t 
     while (entry) {
         cf_kv_t *kv = entry->el;
         assert(kv);
-        pathcomp_add_or_replace(composer, kv->key, kv->value, section_name, PATHCOMP_ACTION_ADD_IF);
+        pathcomp_add_or_replace(composer, kv->key, value_new(kv->value), section_name, PATHCOMP_ACTION_ADD_IF);
         if (strcmp(kv->key, PATHCOMP_ATT_COPY) == 0) {
             char *parent_section_name = kv->value;
             pathcomp_add_atts_from_sections(composer, parent_section_name);
@@ -265,7 +266,7 @@ pathcomp_set(pathcomp_t *composer, const char *name, const char *value)
     assert(composer);
     assert(name);
     assert(value);
-    pathcomp_add_or_replace(composer, name, value, PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_REPLACE);
+    pathcomp_add_or_replace(composer, name, value_new(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_REPLACE);
 }
 
 void
@@ -274,7 +275,7 @@ pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
     assert(composer);
     assert(name);
     assert(value);
-    pathcomp_add_or_replace(composer, name, value, PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_ADD);
+    pathcomp_add_or_replace(composer, name, value_new(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_ADD);
 }
 
 void

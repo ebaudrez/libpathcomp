@@ -31,19 +31,20 @@ struct att_t {
     char   *origin; /* not used by att_*() functions */
 };
 
+/**
+ * \note att_new() assumes ownership of \a value. Callers must never free the
+ * value they pass into att_new().
+ */
 att_t *
-att_new(const char *name, const char *value, const char *origin)
+att_new(const char *name, value_t *value, const char *origin)
 {
     att_t *att;
-    value_t *val;
     assert(name);
     assert(value);
     att = malloc(sizeof *att);
     if (!att) return att;
     att->name = strdup(name);
-    val = value_new(value);
-    assert(val);
-    att->alternatives = list_new(val);
+    att->alternatives = list_new(value);
     att->current = att->alternatives;
     att->origin = origin ? strdup(origin) : NULL;
     return att;
@@ -71,28 +72,33 @@ att_clone(att_t *att)
     return clone;
 }
 
+/**
+ * \note att_replace_value() assumes ownership of \a value. Callers must never
+ * free the value they pass into att_replace_value().
+ */
 void
-att_replace_value(att_t *att, const char *value, const char *origin)
+att_replace_value(att_t *att, value_t *value, const char *origin)
 {
-    value_t *val;
     assert(att);
     assert(value);
     list_foreach(att->alternatives, (list_traversal_t *) value_free, NULL);
     list_free(att->alternatives);
-    val = value_new(value);
-    assert(val);
-    att->alternatives = list_new(val);
+    att->alternatives = list_new(value);
     att->current = att->alternatives;
     free(att->origin);
     att->origin = origin ? strdup(origin) : NULL;
 }
 
+/**
+ * \note att_add_value() assumes ownership of \a value. Callers must never free
+ * the value they pass into att_add_value().
+ */
 void
-att_add_value(att_t *att, const char *value)
+att_add_value(att_t *att, value_t *value)
 {
     assert(att);
     assert(value);
-    list_push(att->alternatives, value_new(value));
+    list_push(att->alternatives, value);
 }
 
 void

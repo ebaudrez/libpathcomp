@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include "tap.h"
+#include "value.h"
 #include "att.h"
 #include "interpreter.h"
 #include <string.h>
@@ -28,7 +29,7 @@ static void
 test_1element(void)
 {
     att_t *att;
-    ok(att = att_new("key", "value", "origin"), "att_new()");
+    ok(att = att_new("key", value_new("value"), "origin"), "att_new()");
     is(att_eval(att, NULL, NULL), "value", "att_eval()");
     ok(att_name_equal_to(att, "key"), "att_name_equal_to()");
     ok(!att_name_equal_to(att, "clef"));
@@ -36,7 +37,7 @@ test_1element(void)
     ok(!att_next(att), "att_next() on single element");
     att_rewind(att);
     ok(!att_next(att), "rewind single element");
-    att_replace_value(att, "some_other", "somewhere_else");
+    att_replace_value(att, value_new("some_other"), "somewhere_else");
     is(att_eval(att, NULL, NULL), "some_other", "replace value");
     is(att_get_origin(att), "somewhere_else");
     att_free(att);
@@ -46,9 +47,9 @@ static void
 test_2elements(void)
 {
     att_t *att;
-    ok(att = att_new("key1", "value1", NULL));
+    ok(att = att_new("key1", value_new("value1"), NULL));
     is(att_eval(att, NULL, NULL), "value1");
-    att_add_value(att, "value2");
+    att_add_value(att, value_new("value2"));
     is(att_eval(att, NULL, NULL), "value1", "add_value() doesn't advance current alternative");
     ok(att_next(att));
     is(att_eval(att, NULL, NULL), "value2", "att_next()");
@@ -66,10 +67,10 @@ static void
 test_4elements(void)
 {
     att_t *att;
-    ok(att = att_new("key", "value1", "Orig"));
-    att_add_value(att, "value2");
-    att_add_value(att, "lua { return 'value' .. 3 }");
-    att_add_value(att, "value4");
+    ok(att = att_new("key", value_new("value1"), "Orig"));
+    att_add_value(att, value_new("value2"));
+    att_add_value(att, value_new("lua { return 'value' .. 3 }"));
+    att_add_value(att, value_new("value4"));
     is(att_eval(att, NULL, NULL), "value1");
     ok(att_next(att));
     is(att_eval(att, NULL, NULL), "value2");
@@ -80,12 +81,12 @@ test_4elements(void)
     ok(!att_next(att));
     ok(!att_next(att));
     is(att_get_origin(att), "Orig");
-    att_replace_value(att, "value_99", "Air");
+    att_replace_value(att, value_new("value_99"), "Air");
     is(att_eval(att, NULL, NULL), "value_99");
     ok(!att_next(att), "at end of list (all alternatives exhausted)");
     ok(!att_next(att));
     is(att_get_origin(att), "Air");
-    att_add_value(att, "XYZ");
+    att_add_value(att, value_new("XYZ"));
     ok(!att_next(att), "att_add_value() doesn't rewind");
     is(att_eval(att, NULL, NULL), NULL);
     att_rewind(att);
