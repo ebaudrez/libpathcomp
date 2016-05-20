@@ -212,7 +212,7 @@ test_with_dirs(void)
         "    compose = G3\n"
         "    compose = G4\n");
     ok(c = pathcomp_new("test.with.dirs"));
-    while (s = pathcomp_find(c)) {
+    while ((s = pathcomp_find(c))) {
         /* pathcomp_find() should not discriminate between files and dirs */
         path_exists_ok(s);
         got = list_push(got, s);
