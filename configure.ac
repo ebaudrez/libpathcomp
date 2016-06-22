@@ -35,6 +35,8 @@ AC_FUNC_MMAP
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memmove mkdir regcomp rmdir strchr strdup strerror strrchr])
 AC_CHECK_FUNCS([glob globfree])
+AC_CHECK_FUNCS([getopt])
+AC_CHECK_FUNCS([strstr])
 
 # Lua support: use Lua 5.1.4 shipped with this distribution
 # must add -I$(top_builddir)/liblua/src because luaconf.h is generated there!
