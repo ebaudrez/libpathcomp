@@ -64,7 +64,7 @@ test_lua(void)
     cmp_ok(val->type, "==", VALUE_LUA);
     ok(!value_eval(val, NULL, NULL), "inadvertent use of value_eval() with NULL composer raises an error");
     value_free(val);
-    /* can't test value_lua_t more thoroughly without a composer object and a
+    /* can't test "Lua values" more thoroughly without a composer object and a
      * metatable, but this functionality is tested in test_lua.c */
 }
 

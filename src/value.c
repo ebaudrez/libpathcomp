@@ -35,7 +35,7 @@
  */
 
 static value_t *
-value_literal_new(const char *text)
+value_new_literal(const char *text)
 {
     value_t *val;
     assert(text);
@@ -47,7 +47,7 @@ value_literal_new(const char *text)
 }
 
 static value_t *
-value_literal_clone(value_t *val)
+value_clone_literal(value_t *val)
 {
     value_t *clone;
     assert(val);
@@ -92,33 +92,33 @@ fail:
 }
 
 static value_t *
-value_lua_new(const char *source)
+value_new_lua(const char *source)
 {
-    value_lua_t *val;
+    value_t *val;
     assert(source);
     val = malloc(sizeof *val);
-    if (!val) return (value_t *) val;
+    if (!val) return val;
     val->type = VALUE_LUA;
     val->source = strdup(source);
     val->result = NULL;
-    return (value_t *) val;
+    return val;
 }
 
 static value_t *
-value_lua_clone(value_lua_t *val)
+value_clone_lua(value_t *val)
 {
-    value_lua_t *clone;
+    value_t *clone;
     assert(val);
     clone = malloc(sizeof *clone);
-    if (!clone) return (value_t *) clone;
+    if (!clone) return clone;
     clone->type = VALUE_LUA;
     clone->source = strdup(val->source);
     clone->result = val->result ? strdup(val->result) : NULL;
-    return (value_t *) clone;
+    return clone;
 }
 
 static void
-value_lua_free(value_lua_t *val)
+value_free_lua(value_t *val)
 {
     assert(val);
     free(val->source);
@@ -134,12 +134,12 @@ value_lua_free(value_lua_t *val)
  * does not need access to other attributes in the composer object via 'self'.
  * This is mainly useful for testing. Otherwise, it is probably a mistake.
  * Fortunately, the user does not normally have access to value_eval() and
- * value_lua_eval(). It will be called for him by pathcomp_eval(), and the
+ * value_eval_lua(). It will be called for him by pathcomp_eval(), and the
  * composer and metatable arguments will be properly set. Hence, the user will
  * always have access to 'self' in the Lua code.
  */
 static const char *
-value_lua_eval(value_lua_t *val, void *composer, const char *metatable)
+value_eval_lua(value_t *val, void *composer, const char *metatable)
 {
     lua_State  *L = interpreter_get_state();
     void      **p;
@@ -186,12 +186,12 @@ value_new(const char *text)
     char *source;
     assert(text);
     if ((source = is_lua_code(text))) {
-        value_t *val = value_lua_new(source);
+        value_t *val = value_new_lua(source);
         free(source);
         return val;
     }
     else {
-        return value_literal_new(text);
+        return value_new_literal(text);
     }
 }
 
@@ -201,9 +201,9 @@ value_clone(value_t *val)
     assert(val);
     switch (val->type) {
         case VALUE_LITERAL:
-            return value_literal_clone(val);
+            return value_clone_literal(val);
         case VALUE_LUA:
-            return value_lua_clone((value_lua_t *) val);
+            return value_clone_lua(val);
         default:
             assert(0);
     }
@@ -219,7 +219,7 @@ value_free(value_t *val)
             free(val);
             break;
         case VALUE_LUA:
-            value_lua_free((value_lua_t *) val);
+            value_free_lua(val);
             break;
         default:
             assert(0);
@@ -242,7 +242,7 @@ value_eval(value_t *val, void *composer, const char *metatable)
         case VALUE_LITERAL:
             return val->literal;
         case VALUE_LUA:
-            return value_lua_eval((value_lua_t *) val, composer, metatable);
+            return value_eval_lua(val, composer, metatable);
         default:
             assert(0);
     }
@@ -253,7 +253,6 @@ value_dump(value_t *val, value_dump_info_t *info)
 {
     buf_t *buf;
     char marker[] = " ";
-    value_lua_t *lval = NULL;
     assert(val);
     assert(info);
     buf = info->buf;
@@ -263,8 +262,7 @@ value_dump(value_t *val, value_dump_info_t *info)
             buf_addf(buf, "       %sliteral(0x%x) | %s\n", marker, val, val->literal);
             break;
         case VALUE_LUA:
-            lval = (value_lua_t *) val;
-            buf_addf(buf, "       %slua(0x%x)     | %s | (source:) %s\n", marker, lval, lval->result ? lval->result : "(null)", lval->source);
+            buf_addf(buf, "       %slua(0x%x)     | %s | (source:) %s\n", marker, val, val->result ? val->result : "(null)", val->source);
             break;
         default:
             assert(0);

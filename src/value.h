@@ -21,18 +21,18 @@
 
 #include "buf.h"
 
-typedef enum { VALUE_LITERAL, VALUE_LUA } value_type_t;
-
 typedef struct {
-    value_type_t  type;
-    char         *literal;
+    enum { VALUE_LITERAL, VALUE_LUA } type;
+    union {
+        struct {
+            char *literal;
+        };
+        struct {
+            char *source;
+            char *result;
+        };
+    };
 } value_t;
-
-typedef struct {
-    value_type_t  type;
-    char         *source;
-    char         *result;
-} value_lua_t;
 
 typedef struct {
     buf_t   *buf;
