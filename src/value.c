@@ -117,15 +117,6 @@ value_clone_lua(value_t *val)
     return clone;
 }
 
-static void
-value_free_lua(value_t *val)
-{
-    assert(val);
-    free(val->source);
-    free(val->result);
-    free(val);
-}
-
 /*
  * \param composer Pointer to composer object
  * \param metatable Name of the Lua metatable
@@ -219,7 +210,9 @@ value_free(value_t *val)
             free(val);
             break;
         case VALUE_LUA:
-            value_free_lua(val);
+            free(val->source);
+            free(val->result);
+            free(val);
             break;
         default:
             assert(0);
