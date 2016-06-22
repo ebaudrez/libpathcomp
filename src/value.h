@@ -22,10 +22,10 @@
 #include "buf.h"
 
 typedef struct {
-    enum { VALUE_LITERAL, VALUE_LUA } type;
+    enum { VALUE_STRING, VALUE_LUA } type;
     union {
         struct {
-            char *literal;
+            char *string;
         };
         struct {
             char *source;

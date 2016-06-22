@@ -25,12 +25,12 @@
 #include <string.h>
 
 static void
-test_literal(void)
+test_string(void)
 {
     value_t *val;
 
     ok(val = value_new("abc"));
-    cmp_ok(val->type, "==", VALUE_LITERAL);
+    cmp_ok(val->type, "==", VALUE_STRING);
     is(value_eval(val, NULL, NULL), "abc");
     value_free(val);
 }
@@ -45,12 +45,12 @@ test_lua(void)
     is(value_eval(val, NULL, NULL), "3");
     value_free(val);
     ok(val = value_new("lua [ return 1+2+3 ]"));
-    cmp_ok(val->type, "==", VALUE_LITERAL);
-    is(value_eval(val, NULL, NULL), "lua [ return 1+2+3 ]", "invalid Lua function syntax leads to interpretation as literal string");
+    cmp_ok(val->type, "==", VALUE_STRING);
+    is(value_eval(val, NULL, NULL), "lua [ return 1+2+3 ]", "invalid Lua function syntax leads to interpretation as string");
     value_free(val);
     ok(val = value_new("lua { return 1+2+3"));
-    cmp_ok(val->type, "==", VALUE_LITERAL);
-    is(value_eval(val, NULL, NULL), "lua { return 1+2+3", "missing closing brace leads to interpretation as literal string");
+    cmp_ok(val->type, "==", VALUE_STRING);
+    is(value_eval(val, NULL, NULL), "lua { return 1+2+3", "missing closing brace leads to interpretation as string");
     value_free(val);
     ok(val = value_new("lua{ return 1+2+3+4 }"));
     cmp_ok(val->type, "==", VALUE_LUA);
@@ -72,7 +72,7 @@ int
 main(void)
 {
     plan(NO_PLAN);
-    test_literal();
+    test_string();
     test_lua();
     interpreter_cleanup();
     done_testing();

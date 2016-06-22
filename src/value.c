@@ -30,31 +30,31 @@
 #include <lauxlib.h>
 
 /*
- * \name Routines specific to literal values
+ * \name Routines specific to string values
  * \{
  */
 
 static value_t *
-value_new_literal(const char *text)
+value_new_string(const char *text)
 {
     value_t *val;
     assert(text);
     val = malloc(sizeof *val);
     if (!val) return val;
-    val->type = VALUE_LITERAL;
-    val->literal = strdup(text);
+    val->type = VALUE_STRING;
+    val->string = strdup(text);
     return val;
 }
 
 static value_t *
-value_clone_literal(value_t *val)
+value_clone_string(value_t *val)
 {
     value_t *clone;
     assert(val);
     clone = malloc(sizeof *clone);
     if (!clone) return clone;
-    clone->type = VALUE_LITERAL;
-    clone->literal = strdup(val->literal);
+    clone->type = VALUE_STRING;
+    clone->string = strdup(val->string);
     return clone;
 }
 
@@ -182,7 +182,7 @@ value_new(const char *text)
         return val;
     }
     else {
-        return value_new_literal(text);
+        return value_new_string(text);
     }
 }
 
@@ -191,8 +191,8 @@ value_clone(value_t *val)
 {
     assert(val);
     switch (val->type) {
-        case VALUE_LITERAL:
-            return value_clone_literal(val);
+        case VALUE_STRING:
+            return value_clone_string(val);
         case VALUE_LUA:
             return value_clone_lua(val);
         default:
@@ -205,8 +205,8 @@ value_free(value_t *val)
 {
     if (!val) return;
     switch (val->type) {
-        case VALUE_LITERAL:
-            free(val->literal);
+        case VALUE_STRING:
+            free(val->string);
             free(val);
             break;
         case VALUE_LUA:
@@ -232,8 +232,8 @@ value_eval(value_t *val, void *composer, const char *metatable)
 {
     assert(val);
     switch (val->type) {
-        case VALUE_LITERAL:
-            return val->literal;
+        case VALUE_STRING:
+            return val->string;
         case VALUE_LUA:
             return value_eval_lua(val, composer, metatable);
         default:
@@ -251,8 +251,8 @@ value_dump(value_t *val, value_dump_info_t *info)
     buf = info->buf;
     if (val == info->current) strncpy(marker, "*", (sizeof marker) - 1);
     switch (val->type) {
-        case VALUE_LITERAL:
-            buf_addf(buf, "       %sliteral(0x%x) | %s\n", marker, val, val->literal);
+        case VALUE_STRING:
+            buf_addf(buf, "       %sstring(0x%x) | %s\n", marker, val, val->string);
             break;
         case VALUE_LUA:
             buf_addf(buf, "       %slua(0x%x)     | %s | (source:) %s\n", marker, val, val->result ? val->result : "(null)", val->source);

@@ -16,17 +16,17 @@
  * with Libpathcomp; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* test literals in config */
+/* test strings in config */
 
 #include <config.h>
 #include "tap.h"
 #include "pathcomp.h"
 
 const char *config = "\
-[test.literal1]\n\
+[test.string1]\n\
     key = value\n\
 \n\
-[test.literal2]\n\
+[test.string2]\n\
     instrument = G2\n\
     imager     = SEV1\n\
     level      = 20\n\
@@ -35,10 +35,10 @@ const char *config = "\
 ";
 
 static void
-test_literal1()
+test_string1()
 {
     pathcomp_t *composer = NULL;
-    ok(composer = pathcomp_new("test.literal1"));
+    ok(composer = pathcomp_new("test.string1"));
     const char *val = pathcomp_eval_nocopy(composer, "key");
     is(val, "value");
     char *s = pathcomp_eval(composer, "key");
@@ -48,10 +48,10 @@ test_literal1()
 }
 
 static void
-test_literal2()
+test_string2()
 {
     pathcomp_t *c = NULL;
-    ok(c = pathcomp_new("test.literal2"));
+    ok(c = pathcomp_new("test.string2"));
     is(pathcomp_eval_nocopy(c, "instrument"), "G2");
     is(pathcomp_eval_nocopy(c, "imager"), "SEV1");
     is(pathcomp_eval_nocopy(c, "level"), "20");   /* everything evaluates as strings */
@@ -65,8 +65,8 @@ main(void)
 {
     plan(NO_PLAN);
     pathcomp_add_config_from_string(config);
-    test_literal1();
-    test_literal2();
+    test_string1();
+    test_string2();
     pathcomp_cleanup();
     done_testing();
 }

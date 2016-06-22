@@ -152,8 +152,7 @@ attribute-value pairs, one per line. Attributes and their values are separated
 by an equals sign. Whitespace surrounding the equals sign is stripped. Leading
 and trailing whitespace on any line is also stripped.
 
-Values can either be literal strings, or Lua functions (see below for the
-syntax).
+Values can either be strings, or Lua functions (see below for the syntax).
 
 Multiple values can be specified for an attribute, by listing multiple
 `attribute = value` assignments for the same `attribute`. This is the primary
@@ -202,7 +201,7 @@ Other attributes have no special interpretation.
 
 ## Lua functions
 
-It is possible to use Lua functions instead of string literals for the value of
+It is possible to use Lua functions instead of strings for the value of
 attributes. When such an attribute is evaluated, the Lua function is called, and
 its value is returned. To specify a Lua function, format the value as follows:
 write the word `lua`, followed by the function body enclosed in braces (`{` and
@@ -212,8 +211,8 @@ write the word `lua`, followed by the function body enclosed in braces (`{` and
 
 The whitespace following the word `lua` is optional. If the attribute is not
 formatted correctly (e.g., one of the braces is missing), the value will not be
-recognized as a Lua function, but will be parsed as a literal string instead.
-The code seen by the Lua parser is equivalent to
+recognized as a Lua function, but will be parsed as a string instead. The code
+seen by the Lua parser is equivalent to
 
     local self = ...; <function body>
 
@@ -378,8 +377,8 @@ Please note the following:
     /* ... */
     free(val);
 
-To evaluate an attribute, use pathcomp_eval(). If the attribute is a single,
-literal value, that value is returned. Otherwise, if it's a Lua function, this
+To evaluate an attribute, use pathcomp_eval(). If the attribute is a single
+string value, that value is returned. Otherwise, if it's a Lua function, this
 function is called, and the result is returned. Otherwise, if it's a
 multi-valued attribute, the result corresponding to the current alternative is
 returned. (More on the 'current alternative' later.)

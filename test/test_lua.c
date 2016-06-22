@@ -121,7 +121,7 @@ test_failing_parse(void)
     pathcomp_t *c = NULL;
     ok(c = pathcomp_new("test.incomplete"));
     pathcomp_set(c, "abc", "lua { return 'abc' ");
-    todo("bad Lua expressions pass through as-is but should yield NULL");
+    todo("bad Lua function definitions pass through as-is but should yield NULL");
     is(pathcomp_eval_nocopy(c, "abc"), NULL, "test bad syntax: missing closing brace");
     end_todo;
     pathcomp_set(c, "def", "lua { return 123 + }");
