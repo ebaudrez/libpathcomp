@@ -42,7 +42,7 @@ value_new_string(const char *text)
     val = malloc(sizeof *val);
     if (!val) return val;
     val->type = VALUE_STRING;
-    val->string = strdup(text);
+    val->u.string = strdup(text);
     return val;
 }
 
@@ -54,7 +54,7 @@ value_clone_string(value_t *val)
     clone = malloc(sizeof *clone);
     if (!clone) return clone;
     clone->type = VALUE_STRING;
-    clone->string = strdup(val->string);
+    clone->u.string = strdup(val->u.string);
     return clone;
 }
 
@@ -99,8 +99,8 @@ value_new_lua(const char *source)
     val = malloc(sizeof *val);
     if (!val) return val;
     val->type = VALUE_LUA;
-    val->source = strdup(source);
-    val->result = NULL;
+    val->u.lua.source = strdup(source);
+    val->u.lua.result = NULL;
     return val;
 }
 
@@ -112,8 +112,8 @@ value_clone_lua(value_t *val)
     clone = malloc(sizeof *clone);
     if (!clone) return clone;
     clone->type = VALUE_LUA;
-    clone->source = strdup(val->source);
-    clone->result = val->result ? strdup(val->result) : NULL;
+    clone->u.lua.source = strdup(val->u.lua.source);
+    clone->u.lua.result = val->u.lua.result ? strdup(val->u.lua.result) : NULL;
     return clone;
 }
 
@@ -137,12 +137,12 @@ value_eval_lua(value_t *val, void *composer, const char *metatable)
     int         nargs = 0;
     const char *s;
     assert(val);
-    if (luaL_loadstring(L, val->source) != LUA_OK) {
+    if (luaL_loadstring(L, val->u.lua.source) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
         pathcomp_log_error("cannot parse Lua code: %s", error);
         lua_pop(L, 1);
-        free(val->result);
-        return val->result = NULL;
+        free(val->u.lua.result);
+        return val->u.lua.result = NULL;
     }
     if (composer && metatable) {
         p = lua_newuserdata(L, sizeof(*p));
@@ -155,14 +155,14 @@ value_eval_lua(value_t *val, void *composer, const char *metatable)
         const char *error = lua_tostring(L, -1);
         pathcomp_log_error("cannot execute Lua code: %s", error);
         lua_pop(L, 1);
-        free(val->result);
-        return val->result = NULL;
+        free(val->u.lua.result);
+        return val->u.lua.result = NULL;
     }
-    free(val->result);
+    free(val->u.lua.result);
     s = lua_tostring(L, -1);
-    val->result = s ? strdup(s) : NULL;
+    val->u.lua.result = s ? strdup(s) : NULL;
     lua_pop(L, 1);
-    return val->result;
+    return val->u.lua.result;
 }
 
 /*
@@ -206,12 +206,12 @@ value_free(value_t *val)
     if (!val) return;
     switch (val->type) {
         case VALUE_STRING:
-            free(val->string);
+            free(val->u.string);
             free(val);
             break;
         case VALUE_LUA:
-            free(val->source);
-            free(val->result);
+            free(val->u.lua.source);
+            free(val->u.lua.result);
             free(val);
             break;
         default:
@@ -233,7 +233,7 @@ value_eval(value_t *val, void *composer, const char *metatable)
     assert(val);
     switch (val->type) {
         case VALUE_STRING:
-            return val->string;
+            return val->u.string;
         case VALUE_LUA:
             return value_eval_lua(val, composer, metatable);
         default:
@@ -252,10 +252,10 @@ value_dump(value_t *val, value_dump_info_t *info)
     if (val == info->current) strncpy(marker, "*", (sizeof marker) - 1);
     switch (val->type) {
         case VALUE_STRING:
-            buf_addf(buf, "       %sstring(0x%x) | %s\n", marker, val, val->string);
+            buf_addf(buf, "       %sstring(0x%x) | %s\n", marker, val, val->u.string);
             break;
         case VALUE_LUA:
-            buf_addf(buf, "       %slua(0x%x)     | %s | (source:) %s\n", marker, val, val->result ? val->result : "(null)", val->source);
+            buf_addf(buf, "       %slua(0x%x)     | %s | (source:) %s\n", marker, val, val->u.lua.result ? val->u.lua.result : "(null)", val->u.lua.source);
             break;
         default:
             assert(0);
