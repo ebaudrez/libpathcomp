@@ -48,6 +48,7 @@ static cf_t *config;
 #define PATHCOMP_ACTION_ADD 0
 #define PATHCOMP_ACTION_REPLACE 1
 #define PATHCOMP_ACTION_ADD_IF 2
+#define PATHCOMP_ACTION_NONE 3
 #define PATHCOMP_ORIGIN_RUNTIME NULL
 #define PATHCOMP_ATT_ROOT "root"
 #define PATHCOMP_ATT_COMPOSE "compose"
@@ -103,12 +104,13 @@ pathcomp_add_or_replace(pathcomp_t *composer, const char *name, value_t *value, 
         old_origin = att_get_origin(patt->el);
         old_inherited = old_origin && (strcmp(old_origin, composer->name) != 0);
         new_inherited = origin && (strcmp(origin, composer->name) != 0);
-        if (new_inherited && !old_inherited) return;
+        if (new_inherited && !old_inherited) action = PATHCOMP_ACTION_NONE;
         else if (!new_inherited && old_inherited) action = PATHCOMP_ACTION_REPLACE;
         else action = PATHCOMP_ACTION_ADD;
     }
     if (action == PATHCOMP_ACTION_REPLACE) att_replace_value(patt->el, value, origin);
     else if (action == PATHCOMP_ACTION_ADD) att_add_value(patt->el, value);
+    else if (action == PATHCOMP_ACTION_NONE) value_free(value);
     else assert(0);
 }
 
