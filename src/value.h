@@ -37,7 +37,9 @@ typedef struct {
     value_t *current;
 } value_dump_info_t;
 
-extern value_t    *value_new(const char *);
+extern value_t    *value_new_string(const char *);
+extern value_t    *value_new_lua(const char *);
+extern value_t    *value_new_auto(const char *);
 extern value_t    *value_clone(value_t *);
 extern void        value_free(value_t *);
 extern const char *value_eval(value_t *, void *, const char *);

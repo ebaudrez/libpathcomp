@@ -122,7 +122,7 @@ pathcomp_add_atts_from_entries(pathcomp_t *composer, char *section_name, list_t 
     while (entry) {
         cf_kv_t *kv = entry->el;
         assert(kv);
-        pathcomp_add_or_replace(composer, kv->key, value_new(kv->value), section_name, PATHCOMP_ACTION_ADD_IF);
+        pathcomp_add_or_replace(composer, kv->key, value_new_auto(kv->value), section_name, PATHCOMP_ACTION_ADD_IF);
         if (strcmp(kv->key, PATHCOMP_ATT_COPY) == 0) {
             char *parent_section_name = kv->value;
             pathcomp_add_atts_from_sections(composer, parent_section_name);
@@ -266,7 +266,7 @@ pathcomp_set(pathcomp_t *composer, const char *name, const char *value)
     assert(composer);
     assert(name);
     assert(value);
-    pathcomp_add_or_replace(composer, name, value_new(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_REPLACE);
+    pathcomp_add_or_replace(composer, name, value_new_auto(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_REPLACE);
 }
 
 void
@@ -275,7 +275,7 @@ pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
     assert(composer);
     assert(name);
     assert(value);
-    pathcomp_add_or_replace(composer, name, value_new(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_ADD);
+    pathcomp_add_or_replace(composer, name, value_new_auto(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_ADD);
 }
 
 void

@@ -29,12 +29,46 @@
 #include <lua.h>
 #include <lauxlib.h>
 
+/**
+ * \name Support routines
+ * \{
+ */
+
+/**
+ * Match and extract a brace-delimited block preceded by \a keyword, returning
+ * the text inside the braces
+ */
+static char *
+value_match_and_extract_block(const char *text, const char *keyword)
+{
+    buf_t buf;
+    char *p;
+    assert(text);
+    assert(keyword);
+    if (strlen(text) <= strlen(keyword)) return NULL;
+    buf_init(&buf, strlen(text) - strlen(keyword));
+    if (strncmp(text, keyword, strlen(keyword)) != 0) goto fail;
+    text += strlen(keyword);
+    while (*text && isspace(*text)) ++text;
+    if (*text == '\0' || *text != '{') goto fail;
+    ++text;
+    buf_addstr(&buf, text);
+    p = strrchr(buf.buf, '}');
+    if (!p) goto fail;
+    buf_setlen(&buf, p - buf.buf);
+    return buf_detach(&buf, NULL);
+fail:
+    buf_release(&buf);
+    return NULL;
+}
+
 /*
+ * \}
  * \name Routines specific to string values
  * \{
  */
 
-static value_t *
+value_t *
 value_new_string(const char *text)
 {
     value_t *val;
@@ -64,42 +98,20 @@ value_clone_string(value_t *val)
  * \{
  */
 
-static char *
-is_lua_code(const char *text)
-{
-    buf_t buf;
-    char *p;
-    const char *keyword  = "lua",
-               *preamble = "local self = ...; ";
-    assert(text);
-    buf_init(&buf, strlen(text) + strlen(preamble));
-    buf_addstr(&buf, text);
-    p = buf.buf;
-    if (strlen(p) < strlen(keyword)) goto fail;
-    if (strncmp(p, keyword, strlen(keyword)) != 0) goto fail;
-    p += strlen(keyword);
-    while (*p && isspace(*p)) ++p;
-    if (*p == '\0' || *p != '{') goto fail;
-    ++p;
-    buf_splicestr(&buf, 0, p - buf.buf, preamble);
-    p = strrchr(buf.buf, '}');
-    if (!p) goto fail;
-    buf_setlen(&buf, p - buf.buf);
-    return buf_detach(&buf, NULL);
-fail:
-    buf_release(&buf);
-    return NULL;
-}
-
-static value_t *
+value_t *
 value_new_lua(const char *source)
 {
     value_t *val;
+    buf_t buf;
+    const char *preamble = "local self = ...; ";
     assert(source);
     val = malloc(sizeof *val);
     if (!val) return val;
+    buf_init(&buf, strlen(preamble) + strlen(source));
+    buf_addstr(&buf, preamble);
+    buf_addstr(&buf, source);
     val->type = VALUE_LUA;
-    val->u.lua.source = strdup(source);
+    val->u.lua.source = buf_detach(&buf, NULL);
     val->u.lua.result = NULL;
     return val;
 }
@@ -172,11 +184,11 @@ value_eval_lua(value_t *val, void *composer, const char *metatable)
  */
 
 value_t *
-value_new(const char *text)
+value_new_auto(const char *text)
 {
     char *source;
     assert(text);
-    if ((source = is_lua_code(text))) {
+    if ((source = value_match_and_extract_block(text, "lua"))) {
         value_t *val = value_new_lua(source);
         free(source);
         return val;

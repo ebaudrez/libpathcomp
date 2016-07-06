@@ -20,16 +20,35 @@
 
 #include <config.h>
 #include "tap.h"
-#include "value.h"
+#include "value.c"
 #include "interpreter.h"
 #include <string.h>
+
+static void
+test_block(void)
+{
+    char *s;
+    s = value_match_and_extract_block("ident { contents }", "ident");
+    is(s, " contents ");
+    free(s);
+    s = value_match_and_extract_block("ident{contents }", "ident");
+    is(s, "contents ");
+    free(s);
+    s = value_match_and_extract_block("ident            {contents }  ", "ident");
+    is(s, "contents ");
+    free(s);
+    s = value_match_and_extract_block("ident contents }", "ident");
+    is(s, NULL);
+    s = value_match_and_extract_block("ident { contents }", "keyword");
+    is(s, NULL);
+}
 
 static void
 test_string(void)
 {
     value_t *val;
 
-    ok(val = value_new("abc"));
+    ok(val = value_new_string("abc"));
     cmp_ok(val->type, "==", VALUE_STRING);
     is(value_eval(val, NULL, NULL), "abc");
     value_free(val);
@@ -40,27 +59,15 @@ test_lua(void)
 {
     value_t *val;
 
-    ok(val = value_new("lua { return 1+2 }"));
+    ok(val = value_new_lua("return 1+2"));
     cmp_ok(val->type, "==", VALUE_LUA);
     is(value_eval(val, NULL, NULL), "3");
     value_free(val);
-    ok(val = value_new("lua [ return 1+2+3 ]"));
-    cmp_ok(val->type, "==", VALUE_STRING);
-    is(value_eval(val, NULL, NULL), "lua [ return 1+2+3 ]", "invalid Lua function syntax leads to interpretation as string");
-    value_free(val);
-    ok(val = value_new("lua { return 1+2+3"));
-    cmp_ok(val->type, "==", VALUE_STRING);
-    is(value_eval(val, NULL, NULL), "lua { return 1+2+3", "missing closing brace leads to interpretation as string");
-    value_free(val);
-    ok(val = value_new("lua{ return 1+2+3+4 }"));
-    cmp_ok(val->type, "==", VALUE_LUA);
-    is(value_eval(val, NULL, NULL), "10", "allows open brace immediately following Lua keyword");
-    value_free(val);
-    ok(val = value_new("lua { return some_weird_name + 2 }"));
+    ok(val = value_new_lua("return some_weird_name + 2"));
     cmp_ok(val->type, "==", VALUE_LUA);
     ok(!value_eval(val, NULL, NULL), "use of undefined variables raises an error");
     value_free(val);
-    ok(val = value_new("lua { return self.slot }"));
+    ok(val = value_new_lua("return self.slot"));
     cmp_ok(val->type, "==", VALUE_LUA);
     ok(!value_eval(val, NULL, NULL), "inadvertent use of value_eval() with NULL composer raises an error");
     value_free(val);
@@ -68,12 +75,36 @@ test_lua(void)
      * metatable, but this functionality is tested in test_lua.c */
 }
 
+static void
+test_auto(void)
+{
+    value_t *val;
+    ok(val = value_new_auto(" some string contents"));
+    cmp_ok(val->type, "==", VALUE_STRING);
+    is(value_eval(val, NULL, NULL), " some string contents");
+    value_free(val);
+    ok(val = value_new_auto("lua { return 1+2 }"));
+    cmp_ok(val->type, "==", VALUE_LUA);
+    is(value_eval(val, NULL, NULL), "3");
+    value_free(val);
+    ok(val = value_new_auto("lua [ return 1+2+3 ]"));
+    cmp_ok(val->type, "==", VALUE_STRING);
+    is(value_eval(val, NULL, NULL), "lua [ return 1+2+3 ]", "invalid Lua function syntax leads to interpretation as string");
+    value_free(val);
+    ok(val = value_new_auto("lua { return 1+2+3"));
+    cmp_ok(val->type, "==", VALUE_STRING);
+    is(value_eval(val, NULL, NULL), "lua { return 1+2+3", "missing closing brace leads to interpretation as string");
+    value_free(val);
+}
+
 int
 main(void)
 {
     plan(NO_PLAN);
+    test_block();
     test_string();
     test_lua();
+    test_auto();
     interpreter_cleanup();
     done_testing();
 }
