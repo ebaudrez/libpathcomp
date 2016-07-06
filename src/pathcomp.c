@@ -45,10 +45,9 @@ struct pathcomp_t {
 
 static cf_t *config;
 
-#define PATHCOMP_ACTION_ADD 0
-#define PATHCOMP_ACTION_REPLACE 1
-#define PATHCOMP_ACTION_ADD_IF 2
-#define PATHCOMP_ACTION_NONE 3
+typedef enum { PATHCOMP_ACTION_ADD, PATHCOMP_ACTION_REPLACE,
+    PATHCOMP_ACTION_ADD_IF, PATHCOMP_ACTION_NONE } pathcomp_action_t;
+
 #define PATHCOMP_ORIGIN_RUNTIME NULL
 #define PATHCOMP_ATT_ROOT "root"
 #define PATHCOMP_ATT_COMPOSE "compose"
@@ -85,7 +84,8 @@ find_section_with_name(cf_section_t *sec, char *name)
 }
 
 static void
-pathcomp_add_or_replace(pathcomp_t *composer, const char *name, value_t *value, const char *origin, int action)
+pathcomp_add_or_replace(pathcomp_t *composer, const char *name, value_t *value,
+        const char *origin, pathcomp_action_t action)
 {
     list_t *patt;
     assert(name);
