@@ -32,6 +32,10 @@ strarray_len(const char **strings)
     return (int) (p - strings);
 }
 
+/* Valgrind may report 'still reachable' memory leaks for the following
+ * function, due to the dies_ok() test in test_find_first(). Removing the
+ * dies_ok() test (which creates a fork) makes the memory leak messages
+ * disappear. */
 static list_t *
 test_construction(const char **strings)
 {
@@ -113,7 +117,6 @@ test_find_first(list_t *list)
     ok(!p, "no more occurrences of string");
     p = list_find_first(NULL, el_equal_to, "01234");
     ok(!p, "no matches on NULL list (and does not die)");
-    /* Valgrind will report a 'still reachable' memory leak for the following test */
     dies_ok(p = list_find_first(list, NULL, NULL); , "assert fails on NULL function");
 }
 
