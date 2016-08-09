@@ -155,18 +155,32 @@ pathcomp_make_from_config(pathcomp_t *composer)
     pathcomp_add_atts_from_sections(composer, composer->name);
 }
 
+/* returns the number of elements pushed on the Lua stack */
+static int
+pathcomp_push_value(pathcomp_t *composer, const char *name)
+{
+    list_t *p;
+    att_t *att;
+    assert(composer);
+    assert(name);
+    p = list_find_first(composer->attributes, (list_traversal_t *) att_name_equal_to, (void *) name);
+    /* TODO here is an opportunity to emit an error when unknown attributes are
+     * referenced */
+    if (!p) return 0;
+    att = p->el;
+    return att_push(att, composer, composer->metatable);
+}
+
 static int
 pathcomp_eval_callback(lua_State *L)
 {
     pathcomp_t *composer;
-    const char *name, *value;
+    const char *name;
     assert(lua_isuserdata(L, -2));
     composer = *((pathcomp_t **) lua_touserdata(L, -2));
     assert(lua_isstring(L, -1));
     name = lua_tostring(L, -1);
-    value = pathcomp_eval_nocopy(composer, name); /* lua_pushstring() creates a copy */
-    lua_pushstring(L, value);
-    return 1;
+    return pathcomp_push_value(composer, name);
 }
 
 pathcomp_t *

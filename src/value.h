@@ -43,6 +43,7 @@ extern value_t    *value_new_auto(const char *);
 extern value_t    *value_clone(value_t *);
 extern void        value_free(value_t *);
 extern const char *value_eval(value_t *, void *, const char *);
+extern int         value_push(value_t *, void *, const char *);
 extern void        value_dump(value_t *, value_dump_info_t *);
 
 #endif /* VALUE_INCLUDED */

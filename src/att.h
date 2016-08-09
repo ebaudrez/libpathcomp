@@ -34,6 +34,7 @@ extern const char *att_get_origin(att_t *);
 extern const char *att_eval(att_t *, void *, const char *);
 extern void        att_rewind(att_t *);
 extern int         att_next(att_t *);
+extern int         att_push(att_t *, void *, const char *);
 extern void        att_dump(att_t *, buf_t *);
 
 #endif /* ATT_INCLUDED */

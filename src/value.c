@@ -253,6 +253,27 @@ value_eval(value_t *val, void *composer, const char *metatable)
     }
 }
 
+int
+value_push(value_t *val, void *composer, const char *metatable)
+{
+    assert(val);
+    lua_State *L = interpreter_get_state();
+    const char *str;
+    switch (val->type) {
+        case VALUE_STRING:
+            lua_pushstring(L, val->u.string);
+            return 1;
+        case VALUE_LUA:
+            str = value_eval_lua(val, composer, metatable); /* lua_pushstring() will create a copy */
+            lua_pushstring(L, str);
+            return 1;
+        default:
+            assert(0);
+    }
+    assert(0);
+    return 0;
+}
+
 void
 value_dump(value_t *val, value_dump_info_t *info)
 {

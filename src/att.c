@@ -155,6 +155,13 @@ att_next(att_t *att)
     return att->current != NULL;
 }
 
+int
+att_push(att_t *att, void *composer, const char *metatable)
+{
+    assert(att);
+    return att->current ? value_push(att->current->el, composer, metatable) : 0;
+}
+
 void
 att_dump(att_t *att, buf_t *buf)
 {
