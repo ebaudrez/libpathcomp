@@ -288,7 +288,7 @@ value_dump(value_t *val, value_dump_info_t *info)
             buf_addf(buf, "       %sstring(0x%x) | %s\n", marker, val, val->u.string);
             break;
         case VALUE_LUA:
-            buf_addf(buf, "       %slua(0x%x)     | %s | (source:) %s\n", marker, val, val->u.lua.result ? val->u.lua.result : "(null)", val->u.lua.source);
+            buf_addf(buf, "       %slua(0x%x)    | %s | (source:) %s\n", marker, val, val->u.lua.result ? val->u.lua.result : "(null)", val->u.lua.source);
             break;
         default:
             assert(0);
