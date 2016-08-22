@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Edward Baudrez <edward.baudrez@gmail.com>
+ * Copyright (C) 2015, 2016 Edward Baudrez <edward.baudrez@gmail.com>
  * This file is part of Libpathcomp.
  *
  * Libpathcomp is free software; you can redistribute it and/or modify
@@ -59,10 +59,22 @@ extern void pathcomp_free(pathcomp_t *composer);
 extern void pathcomp_set(pathcomp_t *composer, const char *name, const char *value);
 
 /**
+ * Set the value of attribute \a name to \a value (of type \a int), replacing
+ * its former value(s), if any
+ */
+extern void pathcomp_set_int(pathcomp_t *composer, const char *name, int value);
+
+/**
  * Add value \a value to the values already present for attribute \a name,
  * instead of replacing them
  */
 extern void pathcomp_add(pathcomp_t *composer, const char *name, const char *value);
+
+/**
+ * Add value \a value (of type \a int) to the values already present for
+ * attribute \a name, instead of replacing them
+ */
+extern void pathcomp_add_int(pathcomp_t *composer, const char *name, int value);
 
 /**
  * Evaluate attribute \a name and return its value

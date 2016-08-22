@@ -23,6 +23,8 @@
 #include "value.c"
 #include "interpreter.h"
 #include <string.h>
+#include <limits.h>
+#include <stdlib.h>
 
 static void
 test_block(void)
@@ -75,6 +77,34 @@ test_lua(void)
      * metatable, but this functionality is tested in test_lua.c */
 }
 
+#define STRINGIFY_HELPER(n) #n
+#define STRINGIFY(n) STRINGIFY_HELPER(n)
+static void
+test_int(void)
+{
+    value_t *val;
+    ok(val = value_new_int(123));
+    cmp_ok(val->type, "==", VALUE_INT);
+    is(value_eval(val, NULL, NULL), "123");
+    value_free(val);
+    ok(val = value_new_int(-789));
+    cmp_ok(val->type, "==", VALUE_INT);
+    is(value_eval(val, NULL, NULL), "-789");
+    value_free(val);
+    ok(val = value_new_int(INT_MAX));
+    cmp_ok(val->type, "==", VALUE_INT);
+    cmp_ok(val->u.integer.value, "==", INT_MAX);
+    is(value_eval(val, NULL, NULL), STRINGIFY(INT_MAX));
+    value_free(val);
+    ok(val = value_new_int(INT_MIN));
+    cmp_ok(val->type, "==", VALUE_INT);
+    cmp_ok(val->u.integer.value, "==", INT_MIN);
+    /* cannot stringify INT_MIN as it is not a literal */
+    int converted = atoi(value_eval(val, NULL, NULL));
+    cmp_ok(converted, "==", INT_MIN);
+    value_free(val);
+}
+
 static void
 test_auto(void)
 {
@@ -95,6 +125,22 @@ test_auto(void)
     cmp_ok(val->type, "==", VALUE_STRING);
     is(value_eval(val, NULL, NULL), "lua { return 1+2+3", "missing closing brace leads to interpretation as string");
     value_free(val);
+    ok(val = value_new_auto("123"));
+    cmp_ok(val->type, "==", VALUE_STRING, "value_new_auto() doesn't recognize integers");
+    is(value_eval(val, NULL, NULL), "123");
+    value_free(val);
+    ok(val = value_new_auto("-987"));
+    cmp_ok(val->type, "==", VALUE_STRING, "value_new_auto() doesn't recognize integers");
+    is(value_eval(val, NULL, NULL), "-987");
+    value_free(val);
+    ok(val = value_new_auto("3.141592"));
+    cmp_ok(val->type, "==", VALUE_STRING, "value_new_auto() doesn't recognize reals");
+    is(value_eval(val, NULL, NULL), "3.141592");
+    value_free(val);
+    ok(val = value_new_auto("-1."));
+    cmp_ok(val->type, "==", VALUE_STRING, "value_new_auto() doesn't recognize reals");
+    is(value_eval(val, NULL, NULL), "-1.");
+    value_free(val);
 }
 
 int
@@ -104,6 +150,7 @@ main(void)
     test_block();
     test_string();
     test_lua();
+    test_int();
     test_auto();
     interpreter_cleanup();
     done_testing();

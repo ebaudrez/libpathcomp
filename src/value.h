@@ -22,13 +22,17 @@
 #include "buf.h"
 
 typedef struct {
-    enum { VALUE_STRING, VALUE_LUA } type;
+    enum { VALUE_STRING, VALUE_LUA, VALUE_INT } type;
     union {
         char *string;
         struct {
             char *source;
             char *result;
         } lua;
+        struct {
+            int   value;
+            char *result;
+        } integer;
     } u;
 } value_t;
 
@@ -39,6 +43,7 @@ typedef struct {
 
 extern value_t    *value_new_string(const char *);
 extern value_t    *value_new_lua(const char *);
+extern value_t    *value_new_int(int);
 extern value_t    *value_new_auto(const char *);
 extern value_t    *value_clone(value_t *);
 extern void        value_free(value_t *);

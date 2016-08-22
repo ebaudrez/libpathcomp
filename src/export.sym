@@ -1,6 +1,7 @@
 pathcomp_add
 pathcomp_add_config_from_file
 pathcomp_add_config_from_string
+pathcomp_add_int
 pathcomp_cleanup
 pathcomp_clone
 pathcomp_done
@@ -17,4 +18,5 @@ pathcomp_new
 pathcomp_next
 pathcomp_rewind
 pathcomp_set
+pathcomp_set_int
 pathcomp_yield

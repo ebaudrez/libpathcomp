@@ -21,6 +21,8 @@
 #include <config.h>
 #include "tap.h"
 #include "pathcomp.h"
+#include "taputil.h"
+#include "list.h"
 
 const char *config = "\
 [test.empty]";
@@ -110,6 +112,28 @@ test_no_rewind_after_add(void)
     pathcomp_cleanup();
 }
 
+static void
+test_set_add_int(void)
+{
+    pathcomp_t *c;
+    ok(c = pathcomp_new("int"));
+    pathcomp_set(c, "val", "lua { return 'person' .. self.n }");
+    for (int i = 0; i < 5; ++i) pathcomp_add_int(c, "n", i);
+    list_t *got = NULL;
+    for (;;) {
+        got = list_push(got, pathcomp_eval(c, "val"));
+        if (!pathcomp_next(c)) break;
+    }
+    list_t *expected = list_from("person0", "person1", "person2", "person3", "person4", NULL);
+    cmp_bag(got, expected);
+    list_foreach(got, (list_traversal_t *) free, NULL);
+    list_free(got);
+    list_free(expected);
+    pathcomp_set_int(c, "n", 999);
+    is(pathcomp_eval_nocopy(c, "val"), "person999");
+    pathcomp_free(c);
+}
+
 int
 main(void)
 {
@@ -119,5 +143,6 @@ main(void)
     pathcomp_cleanup();
     test_no_rewind_after_set();
     test_no_rewind_after_add();
+    test_set_add_int();
     done_testing();
 }

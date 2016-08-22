@@ -179,6 +179,50 @@ value_eval_lua(value_t *val, void *composer, const char *metatable)
 
 /*
  * \}
+ * \name Routines specific to int values
+ * \{
+ */
+
+value_t *
+value_new_int(int ival)
+{
+    value_t *val;
+    val = malloc(sizeof *val);
+    if (!val) return val;
+    val->type = VALUE_INT;
+    val->u.integer.value = ival;
+    val->u.integer.result = NULL;
+    return val;
+}
+
+static value_t *
+value_clone_int(value_t *val)
+{
+    value_t *clone;
+    assert(val);
+    clone = malloc(sizeof *clone);
+    if (!clone) return clone;
+    clone->type = VALUE_INT;
+    clone->u.integer.value = val->u.integer.value;
+    clone->u.integer.result = val->u.integer.result ? strdup(val->u.integer.result) : NULL;
+    return clone;
+}
+
+static const char *
+value_eval_int(value_t *val)
+{
+    assert(val);
+    buf_t buf;
+    /* 24 digits should conceivably fit any 64-bit integer, including sign and
+     * terminating null, and it's the smallest size buf_grow() would have
+     * allocated anyway */
+    buf_init(&buf, 24);
+    buf_addf(&buf, "%d", val->u.integer.value);
+    return val->u.integer.result = buf_detach(&buf, NULL);
+}
+
+/*
+ * \}
  * \name Generic \a value_t routines
  * \{
  */
@@ -207,6 +251,8 @@ value_clone(value_t *val)
             return value_clone_string(val);
         case VALUE_LUA:
             return value_clone_lua(val);
+        case VALUE_INT:
+            return value_clone_int(val);
         default:
             assert(0);
     }
@@ -224,6 +270,10 @@ value_free(value_t *val)
         case VALUE_LUA:
             free(val->u.lua.source);
             free(val->u.lua.result);
+            free(val);
+            break;
+        case VALUE_INT:
+            free(val->u.integer.result);
             free(val);
             break;
         default:
@@ -248,9 +298,13 @@ value_eval(value_t *val, void *composer, const char *metatable)
             return val->u.string;
         case VALUE_LUA:
             return value_eval_lua(val, composer, metatable);
+        case VALUE_INT:
+            return value_eval_int(val);
         default:
             assert(0);
     }
+    assert(0);
+    return NULL;
 }
 
 int
@@ -266,6 +320,9 @@ value_push(value_t *val, void *composer, const char *metatable)
         case VALUE_LUA:
             str = value_eval_lua(val, composer, metatable); /* lua_pushstring() will create a copy */
             lua_pushstring(L, str);
+            return 1;
+        case VALUE_INT:
+            lua_pushinteger(L, (lua_Integer) val->u.integer.value);
             return 1;
         default:
             assert(0);
@@ -289,6 +346,9 @@ value_dump(value_t *val, value_dump_info_t *info)
             break;
         case VALUE_LUA:
             buf_addf(buf, "       %slua(0x%x)    | %s | (source:) %s\n", marker, val, val->u.lua.result ? val->u.lua.result : "(null)", val->u.lua.source);
+            break;
+        case VALUE_INT:
+            buf_addf(buf, "       %sint(0x%x)    | %s | (source:) %d\n", marker, val, val->u.integer.result ? val->u.integer.result : "(null)", val->u.integer.value);
             break;
         default:
             assert(0);

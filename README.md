@@ -30,8 +30,8 @@ This file should be used together with a C program whose source could look like:
     pathcomp_add_config_from_file("my-config");
     composer = pathcomp_new("data");
     pathcomp_set(composer, "instrument", "N6");
-    pathcomp_set(composer, "year", "1989");
-    pathcomp_set(composer, "month", "3");
+    pathcomp_set_int(composer, "year", 1989);
+    pathcomp_set_int(composer, "month", 3);
     char *path = pathcomp_yield(composer);
     printf("path: %s\n", path); /* prints "path: /opt/data/N6/N6_8903.dat" */
     free(path);
@@ -330,6 +330,10 @@ just like the original.
 ## Setting and adding attribute values
 
     pathcomp_set(composer, "year", "2004");
+    // alternatively, the year can be supplied as an int
+    pathcomp_set_int(composer, "year", 2004);
+    for (int month = 1; month <= 12; month++)
+        pathcomp_add_int(composer, "month", month);
     pathcomp_set(composer, "extension", ".txt");
     pathcomp_add(composer, "extension", ".dat");
     pathcomp_add(composer, "extension", ".nc");
@@ -354,13 +358,22 @@ pathcomp_add() are equivalent.
 In other words, pathcomp_set() is for single-valued attributes, pathcomp_add()
 for multi-valued attributes.
 
+Although Libpathcomp is primarily concerned with the composition of text
+strings, often you'll need to set the value of an attribute to an integer. In
+particular, if the value of an attribute is obtained from a loop, the loop
+variable is likely an integer. pathcomp_set_int() and pathcomp_add_int() are the
+equivalent of pathcomp_set() and pathcomp_add(), except that they accept and
+store a value of type _int_ instead of a string. When the attribute is
+evaluated, the integer is converted to a string using the "%d" conversion
+specification (see printf(3)).
+
 Please note the following:
 
   * An attribute needn't exist before you call pathcomp_set() or pathcomp_add();
     you can use them to create new attributes.
-  * Attributes are always text, reflecting their use as components of pathnames.
-    This makes it cumbersome to set or add attributes that have a numerical
-    value in the calling function. This may change in a future version.
+  * Attributes always _evaluate_ as text strings, reflecting their use as
+    components of pathnames. However, since version 0.3, they can be supplied as
+    integers, which is particularly useful inside loops.
   * Composer objects are completely open. That means you may set or add any
     attribute, or create new ones, at run time. There is no protection against
     overwriting an existing attribute.
@@ -379,9 +392,10 @@ Please note the following:
 
 To evaluate an attribute, use pathcomp_eval(). If the attribute is a single
 string value, that value is returned. Otherwise, if it's a Lua function, this
-function is called, and the result is returned. Otherwise, if it's a
-multi-valued attribute, the result corresponding to the current alternative is
-returned. (More on the 'current alternative' later.)
+function is called, and the result is returned. Otherwise, if it's an integer
+value, the integer is converted to a string, and the result is returned.
+Otherwise, if it's a multi-valued attribute, the result corresponding to the
+current alternative is returned. (More on the 'current alternative' later.)
 
 Note that pathcomp_eval() always returns a string, even for attributes that look
 like numbers. The string returned by pathcomp_eval() is allocated dynamically,
@@ -393,9 +407,9 @@ testing. For more information about it, you should read the sources.
 
 ## Working with alternatives
 
-    pathcomp_add(composer, "version", "1");
-    pathcomp_add(composer, "version", "2");
-    pathcomp_add(composer, "version", "3");
+    pathcomp_add_int(composer, "version", 1);
+    pathcomp_add_int(composer, "version", 2);
+    pathcomp_add_int(composer, "version", 3);
     while (!pathcomp_done(composer)) {
         char *val;
         /* returns "1", "2", "3" in successive iterations */
@@ -917,7 +931,7 @@ Edward Baudrez
 
 # COPYRIGHT AND LICENSE
 
-Copyright (C) 2015 Edward Baudrez <edward.baudrez@gmail.com>
+Copyright (C) 2015, 2016 Edward Baudrez <edward.baudrez@gmail.com>
 
 Libpathcomp is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

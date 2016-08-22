@@ -22,6 +22,8 @@
 #include "tap.h"
 #include "pathcomp.h"
 #include <string.h>
+#include <limits.h>
+#include "buf.h"
 
 const char *config = "\
 [test.basic]\n\
@@ -43,6 +45,10 @@ const char *config = "\
     hhmmss     = lua { return self.hhmm .. self.ss }\n\
     prefix     = lua { return string.format('%s_%s_L%s_%s_%s', self.instrument, self.imager, self.level, self.resolution, self.product) }\n\
     filename   = lua { return self.prefix .. '_' .. self.yyyy .. self.mmdd .. '_' .. self.hhmmss .. '_' .. self.version .. self.extension }\n\
+\n\
+[test.int]\n\
+    plus4 = lua { return self.val + 4 }\n\
+    concat = lua { return 'concat' .. self.val }\n\
 \n\
 [test.args]\n\
     sum    = lua { ? }\n\
@@ -78,6 +84,31 @@ test_callbacks(void)
     is(pathcomp_eval_nocopy(c, "hhmmss"), "113000");
     is(pathcomp_eval_nocopy(c, "prefix"), "G2_SEV1_L20_BARG_SOL_M15_R50");
     is(pathcomp_eval_nocopy(c, "filename"), "G2_SEV1_L20_BARG_SOL_M15_R50_20040301_113000_V003.hdf.gz");
+    pathcomp_free(c);
+}
+
+#define STRINGIFY_HELPER(n) #n
+#define STRINGIFY(n) STRINGIFY_HELPER(n)
+static void
+test_int(void)
+{
+    pathcomp_t *c = NULL;
+    ok(c = pathcomp_new("test.int"));
+    pathcomp_set_int(c, "val", 15);
+    is(pathcomp_eval_nocopy(c, "plus4"), "19");
+    is(pathcomp_eval_nocopy(c, "concat"), "concat15");
+    pathcomp_set_int(c, "val", -15);
+    is(pathcomp_eval_nocopy(c, "plus4"), "-11");
+    is(pathcomp_eval_nocopy(c, "concat"), "concat-15");
+    pathcomp_set_int(c, "val", INT_MAX);
+    is(pathcomp_eval_nocopy(c, "concat"), "concat" STRINGIFY(INT_MAX));
+    pathcomp_set_int(c, "val", INT_MIN);
+    /* cannot stringify INT_MIN as it's an expression */
+    buf_t buf;
+    buf_init(&buf, 0);
+    buf_addf(&buf, "concat%d", INT_MIN);
+    is(pathcomp_eval_nocopy(c, "concat"), buf.buf);
+    buf_release(&buf);
     pathcomp_free(c);
 }
 
@@ -140,6 +171,7 @@ main(void)
     pathcomp_add_config_from_string(config);
     test_basic();
     test_callbacks();
+    test_int();
     test_args();
     test_env();
     test_incomplete();

@@ -286,12 +286,28 @@ pathcomp_set(pathcomp_t *composer, const char *name, const char *value)
 }
 
 void
+pathcomp_set_int(pathcomp_t *composer, const char *name, int value)
+{
+    assert(composer);
+    assert(name);
+    pathcomp_add_or_replace(composer, name, value_new_int(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_REPLACE);
+}
+
+void
 pathcomp_add(pathcomp_t *composer, const char *name, const char *value)
 {
     assert(composer);
     assert(name);
     assert(value);
     pathcomp_add_or_replace(composer, name, value_new_auto(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_ADD);
+}
+
+void
+pathcomp_add_int(pathcomp_t *composer, const char *name, int value)
+{
+    assert(composer);
+    assert(name);
+    pathcomp_add_or_replace(composer, name, value_new_int(value), PATHCOMP_ORIGIN_RUNTIME, PATHCOMP_ACTION_ADD);
 }
 
 void
