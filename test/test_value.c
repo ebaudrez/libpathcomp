@@ -103,6 +103,10 @@ test_int(void)
     int converted = atoi(value_eval(val, NULL, NULL));
     cmp_ok(converted, "==", INT_MIN);
     value_free(val);
+    ok(val = value_new_int(5001));
+    is(value_eval(val, NULL, NULL), "5001");
+    is(value_eval(val, NULL, NULL), "5001", "force two consecutive evaluations; should not leak memory");
+    value_free(val);
 }
 
 static void

@@ -218,6 +218,7 @@ value_eval_int(value_t *val)
      * allocated anyway */
     buf_init(&buf, 24);
     buf_addf(&buf, "%d", val->source.integer);
+    free(val->result);
     return val->result = buf_detach(&buf, NULL);
 }
 
