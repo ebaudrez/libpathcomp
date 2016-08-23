@@ -83,15 +83,25 @@ find_section_with_name(cf_section_t *sec, char *name)
     return !strcmp(sec->name, name);
 }
 
+static att_t *
+pathcomp_retrieve_att(pathcomp_t *composer, const char *name)
+{
+    list_t *patt;
+    assert(composer);
+    assert(name);
+    patt = list_find_first(composer->attributes, (list_traversal_t *) att_name_equal_to, (void *) name);
+    return patt ? patt->el : NULL;
+}
+
 static void
 pathcomp_add_or_replace(pathcomp_t *composer, const char *name, value_t *value,
         const char *origin, pathcomp_action_t action)
 {
-    list_t *patt;
+    att_t *att = NULL;
     assert(name);
     assert(value);
-    patt = list_find_first(composer->attributes, (list_traversal_t *) att_name_equal_to, (void *) name);
-    if (!patt) {
+    att = pathcomp_retrieve_att(composer, name);
+    if (!att) {
         att_t *new;
         new = att_new(name, value, origin);
         composer->attributes = list_push(composer->attributes, new);
@@ -101,15 +111,15 @@ pathcomp_add_or_replace(pathcomp_t *composer, const char *name, value_t *value,
     if (action == PATHCOMP_ACTION_ADD_IF) {
         const char *old_origin;
         int old_inherited, new_inherited;
-        old_origin = att_get_origin(patt->el);
+        old_origin = att_get_origin(att);
         old_inherited = old_origin && (strcmp(old_origin, composer->name) != 0);
         new_inherited = origin && (strcmp(origin, composer->name) != 0);
         if (new_inherited && !old_inherited) action = PATHCOMP_ACTION_NONE;
         else if (!new_inherited && old_inherited) action = PATHCOMP_ACTION_REPLACE;
         else action = PATHCOMP_ACTION_ADD;
     }
-    if (action == PATHCOMP_ACTION_REPLACE) att_replace_value(patt->el, value, origin);
-    else if (action == PATHCOMP_ACTION_ADD) att_add_value(patt->el, value);
+    if (action == PATHCOMP_ACTION_REPLACE) att_replace_value(att, value, origin);
+    else if (action == PATHCOMP_ACTION_ADD) att_add_value(att, value);
     else if (action == PATHCOMP_ACTION_NONE) value_free(value);
     else assert(0);
 }
@@ -159,15 +169,13 @@ pathcomp_make_from_config(pathcomp_t *composer)
 static int
 pathcomp_push_value(pathcomp_t *composer, const char *name)
 {
-    list_t *p;
     att_t *att;
     assert(composer);
     assert(name);
-    p = list_find_first(composer->attributes, (list_traversal_t *) att_name_equal_to, (void *) name);
+    att = pathcomp_retrieve_att(composer, name);
     /* TODO here is an opportunity to emit an error when unknown attributes are
      * referenced */
-    if (!p) return 0;
-    att = p->el;
+    if (!att) return 0;
     return att_push(att, composer, composer->metatable);
 }
 
@@ -238,12 +246,10 @@ pathcomp_free(pathcomp_t *composer)
 const char *
 pathcomp_eval_nocopy(pathcomp_t *composer, const char *name)
 {
-    list_t *p;
     att_t *att;
     assert(composer);
-    p = list_find_first(composer->attributes, (list_traversal_t *) att_name_equal_to, (void *) name);
-    if (!p) return NULL;
-    att = p->el;
+    att = pathcomp_retrieve_att(composer, name);
+    if (!att) return NULL;
     return att_eval(att, composer, composer->metatable);
 }
 

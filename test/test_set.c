@@ -144,9 +144,8 @@ test_int_internal(void)
     pathcomp_set_int(c, "n", 19);
     pathcomp_set(c, "val", "lua { return 'str' .. self.n }");
     is(pathcomp_eval_nocopy(c, "val"), "str19");
-    list_t *patt = list_find_first(c->attributes, (list_traversal_t *) att_name_equal_to, (void *) "n");
-    ok(patt);
-    att_t *att = patt->el;
+    att_t *att = pathcomp_retrieve_att(c, "n");
+    ok(att);
     is(att->name, "n", "we've got the right attribute");
     ok(att->alternatives);
     ok(!att->alternatives->next, "only one alternative");
