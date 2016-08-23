@@ -20,11 +20,13 @@
 
 #include <config.h>
 #include "tap.h"
-#include "pathcomp.h"
+#include "pathcomp.c"
 #include "taputil.h"
 #include "list.h"
+#include "att.c"
+#include "value.h"
 
-const char *config = "\
+const char *test_config = "\
 [test.empty]";
 
 static void
@@ -134,15 +136,38 @@ test_set_add_int(void)
     pathcomp_free(c);
 }
 
+static void
+test_int_internal(void)
+{
+    pathcomp_t *c;
+    ok(c = pathcomp_new("int"));
+    pathcomp_set_int(c, "n", 19);
+    pathcomp_set(c, "val", "lua { return 'str' .. self.n }");
+    is(pathcomp_eval_nocopy(c, "val"), "str19");
+    list_t *patt = list_find_first(c->attributes, (list_traversal_t *) att_name_equal_to, (void *) "n");
+    ok(patt);
+    att_t *att = patt->el;
+    is(att->name, "n", "we've got the right attribute");
+    ok(att->alternatives);
+    ok(!att->alternatives->next, "only one alternative");
+    value_t *p = att->alternatives->el;
+    cmp_ok(p->type, "==", VALUE_INT, "value of type int");
+    is(p->u.integer.result, NULL, "value_push() does not do unnecessary int-to-string conversion");
+    is(pathcomp_eval_nocopy(c, "n"), "19");
+    is(p->u.integer.result, "19", "does contain string after explicit eval()");
+    pathcomp_free(c);
+}
+
 int
 main(void)
 {
     plan(NO_PLAN);
-    pathcomp_add_config_from_string(config);
+    pathcomp_add_config_from_string(test_config);
     test_set();
     pathcomp_cleanup();
     test_no_rewind_after_set();
     test_no_rewind_after_add();
     test_set_add_int();
+    test_int_internal();
     done_testing();
 }
