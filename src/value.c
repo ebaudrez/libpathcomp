@@ -309,14 +309,13 @@ value_push(value_t *val, void *composer, const char *metatable)
 {
     assert(val);
     lua_State *L = interpreter_get_state();
-    const char *str;
     switch (val->type) {
         case VALUE_STRING:
             lua_pushstring(L, val->result);
             return 1;
         case VALUE_LUA:
-            str = value_eval_lua(val, composer, metatable); /* lua_pushstring() will create a copy */
-            lua_pushstring(L, str);
+            value_eval_lua(val, composer, metatable);
+            lua_pushstring(L, val->result); /* lua_pushstring() will create a copy */
             return 1;
         case VALUE_INT:
             lua_pushinteger(L, (lua_Integer) val->source.integer);
