@@ -151,9 +151,9 @@ test_int_internal(void)
     ok(!att->alternatives->next, "only one alternative");
     value_t *p = att->alternatives->el;
     cmp_ok(p->type, "==", VALUE_INT, "value of type int");
-    is(p->u.integer.result, NULL, "value_push() does not do unnecessary int-to-string conversion");
+    is(p->result, NULL, "value_push() does not do unnecessary int-to-string conversion");
     is(pathcomp_eval_nocopy(c, "n"), "19");
-    is(p->u.integer.result, "19", "does contain string after explicit eval()");
+    is(p->result, "19", "does contain string after explicit eval()");
     pathcomp_free(c);
 }
 

@@ -76,7 +76,7 @@ value_new_string(const char *text)
     val = malloc(sizeof *val);
     if (!val) return val;
     val->type = VALUE_STRING;
-    val->u.string = strdup(text);
+    val->result = strdup(text);
     return val;
 }
 
@@ -88,7 +88,7 @@ value_clone_string(value_t *val)
     clone = malloc(sizeof *clone);
     if (!clone) return clone;
     clone->type = VALUE_STRING;
-    clone->u.string = strdup(val->u.string);
+    clone->result = strdup(val->result);
     return clone;
 }
 
@@ -111,8 +111,8 @@ value_new_lua(const char *source)
     buf_addstr(&buf, preamble);
     buf_addstr(&buf, source);
     val->type = VALUE_LUA;
-    val->u.lua.source = buf_detach(&buf, NULL);
-    val->u.lua.result = NULL;
+    val->source.lua = buf_detach(&buf, NULL);
+    val->result = NULL;
     return val;
 }
 
@@ -124,8 +124,8 @@ value_clone_lua(value_t *val)
     clone = malloc(sizeof *clone);
     if (!clone) return clone;
     clone->type = VALUE_LUA;
-    clone->u.lua.source = strdup(val->u.lua.source);
-    clone->u.lua.result = val->u.lua.result ? strdup(val->u.lua.result) : NULL;
+    clone->source.lua = strdup(val->source.lua);
+    clone->result = val->result ? strdup(val->result) : NULL;
     return clone;
 }
 
@@ -149,12 +149,12 @@ value_eval_lua(value_t *val, void *composer, const char *metatable)
     int         nargs = 0;
     const char *s;
     assert(val);
-    if (luaL_loadstring(L, val->u.lua.source) != LUA_OK) {
+    if (luaL_loadstring(L, val->source.lua) != LUA_OK) {
         const char *error = lua_tostring(L, -1);
         pathcomp_log_error("cannot parse Lua code: %s", error);
         lua_pop(L, 1);
-        free(val->u.lua.result);
-        return val->u.lua.result = NULL;
+        free(val->result);
+        return val->result = NULL;
     }
     if (composer && metatable) {
         p = lua_newuserdata(L, sizeof(*p));
@@ -167,14 +167,14 @@ value_eval_lua(value_t *val, void *composer, const char *metatable)
         const char *error = lua_tostring(L, -1);
         pathcomp_log_error("cannot execute Lua code: %s", error);
         lua_pop(L, 1);
-        free(val->u.lua.result);
-        return val->u.lua.result = NULL;
+        free(val->result);
+        return val->result = NULL;
     }
-    free(val->u.lua.result);
+    free(val->result);
     s = lua_tostring(L, -1);
-    val->u.lua.result = s ? strdup(s) : NULL;
+    val->result = s ? strdup(s) : NULL;
     lua_pop(L, 1);
-    return val->u.lua.result;
+    return val->result;
 }
 
 /*
@@ -190,8 +190,8 @@ value_new_int(int ival)
     val = malloc(sizeof *val);
     if (!val) return val;
     val->type = VALUE_INT;
-    val->u.integer.value = ival;
-    val->u.integer.result = NULL;
+    val->source.integer = ival;
+    val->result = NULL;
     return val;
 }
 
@@ -203,8 +203,8 @@ value_clone_int(value_t *val)
     clone = malloc(sizeof *clone);
     if (!clone) return clone;
     clone->type = VALUE_INT;
-    clone->u.integer.value = val->u.integer.value;
-    clone->u.integer.result = val->u.integer.result ? strdup(val->u.integer.result) : NULL;
+    clone->source.integer = val->source.integer;
+    clone->result = val->result ? strdup(val->result) : NULL;
     return clone;
 }
 
@@ -217,8 +217,8 @@ value_eval_int(value_t *val)
      * terminating null, and it's the smallest size buf_grow() would have
      * allocated anyway */
     buf_init(&buf, 24);
-    buf_addf(&buf, "%d", val->u.integer.value);
-    return val->u.integer.result = buf_detach(&buf, NULL);
+    buf_addf(&buf, "%d", val->source.integer);
+    return val->result = buf_detach(&buf, NULL);
 }
 
 /*
@@ -264,21 +264,17 @@ value_free(value_t *val)
     if (!val) return;
     switch (val->type) {
         case VALUE_STRING:
-            free(val->u.string);
-            free(val);
             break;
         case VALUE_LUA:
-            free(val->u.lua.source);
-            free(val->u.lua.result);
-            free(val);
+            free(val->source.lua);
             break;
         case VALUE_INT:
-            free(val->u.integer.result);
-            free(val);
             break;
         default:
             assert(0);
     }
+    free(val->result);
+    free(val);
 }
 
 /*
@@ -295,7 +291,7 @@ value_eval(value_t *val, void *composer, const char *metatable)
     assert(val);
     switch (val->type) {
         case VALUE_STRING:
-            return val->u.string;
+            return val->result;
         case VALUE_LUA:
             return value_eval_lua(val, composer, metatable);
         case VALUE_INT:
@@ -315,14 +311,14 @@ value_push(value_t *val, void *composer, const char *metatable)
     const char *str;
     switch (val->type) {
         case VALUE_STRING:
-            lua_pushstring(L, val->u.string);
+            lua_pushstring(L, val->result);
             return 1;
         case VALUE_LUA:
             str = value_eval_lua(val, composer, metatable); /* lua_pushstring() will create a copy */
             lua_pushstring(L, str);
             return 1;
         case VALUE_INT:
-            lua_pushinteger(L, (lua_Integer) val->u.integer.value);
+            lua_pushinteger(L, (lua_Integer) val->source.integer);
             return 1;
         default:
             assert(0);
@@ -342,13 +338,13 @@ value_dump(value_t *val, value_dump_info_t *info)
     if (val == info->current) marker = '*';
     switch (val->type) {
         case VALUE_STRING:
-            buf_addf(buf, "       %cstring(0x%x) | %s\n", marker, val, val->u.string);
+            buf_addf(buf, "       %cstring(0x%x) | %s\n", marker, val, val->result);
             break;
         case VALUE_LUA:
-            buf_addf(buf, "       %clua(0x%x)    | %s | (source:) %s\n", marker, val, val->u.lua.result ? val->u.lua.result : "(null)", val->u.lua.source);
+            buf_addf(buf, "       %clua(0x%x)    | %s | (source:) %s\n", marker, val, val->result ? val->result : "(null)", val->source.lua);
             break;
         case VALUE_INT:
-            buf_addf(buf, "       %cint(0x%x)    | %s | (source:) %d\n", marker, val, val->u.integer.result ? val->u.integer.result : "(null)", val->u.integer.value);
+            buf_addf(buf, "       %cint(0x%x)    | %s | (source:) %d\n", marker, val, val->result ? val->result : "(null)", val->source.integer);
             break;
         default:
             assert(0);

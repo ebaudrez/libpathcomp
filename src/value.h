@@ -24,16 +24,10 @@
 typedef struct {
     enum { VALUE_STRING, VALUE_LUA, VALUE_INT } type;
     union {
-        char *string;
-        struct {
-            char *source;
-            char *result;
-        } lua;
-        struct {
-            int   value;
-            char *result;
-        } integer;
-    } u;
+        char *lua;
+        int   integer;
+    } source;
+    char *result;
 } value_t;
 
 typedef struct {

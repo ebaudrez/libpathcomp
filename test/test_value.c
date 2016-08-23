@@ -93,12 +93,12 @@ test_int(void)
     value_free(val);
     ok(val = value_new_int(INT_MAX));
     cmp_ok(val->type, "==", VALUE_INT);
-    cmp_ok(val->u.integer.value, "==", INT_MAX);
+    cmp_ok(val->source.integer, "==", INT_MAX);
     is(value_eval(val, NULL, NULL), STRINGIFY(INT_MAX));
     value_free(val);
     ok(val = value_new_int(INT_MIN));
     cmp_ok(val->type, "==", VALUE_INT);
-    cmp_ok(val->u.integer.value, "==", INT_MIN);
+    cmp_ok(val->source.integer, "==", INT_MIN);
     /* cannot stringify INT_MIN as it is not a literal */
     int converted = atoi(value_eval(val, NULL, NULL));
     cmp_ok(converted, "==", INT_MIN);
