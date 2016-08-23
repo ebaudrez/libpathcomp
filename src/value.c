@@ -335,20 +335,20 @@ void
 value_dump(value_t *val, value_dump_info_t *info)
 {
     buf_t *buf;
-    char marker[] = " ";
+    char marker = ' ';
     assert(val);
     assert(info);
     buf = info->buf;
-    if (val == info->current) strncpy(marker, "*", (sizeof marker) - 1);
+    if (val == info->current) marker = '*';
     switch (val->type) {
         case VALUE_STRING:
-            buf_addf(buf, "       %sstring(0x%x) | %s\n", marker, val, val->u.string);
+            buf_addf(buf, "       %cstring(0x%x) | %s\n", marker, val, val->u.string);
             break;
         case VALUE_LUA:
-            buf_addf(buf, "       %slua(0x%x)    | %s | (source:) %s\n", marker, val, val->u.lua.result ? val->u.lua.result : "(null)", val->u.lua.source);
+            buf_addf(buf, "       %clua(0x%x)    | %s | (source:) %s\n", marker, val, val->u.lua.result ? val->u.lua.result : "(null)", val->u.lua.source);
             break;
         case VALUE_INT:
-            buf_addf(buf, "       %sint(0x%x)    | %s | (source:) %d\n", marker, val, val->u.integer.result ? val->u.integer.result : "(null)", val->u.integer.value);
+            buf_addf(buf, "       %cint(0x%x)    | %s | (source:) %d\n", marker, val, val->u.integer.result ? val->u.integer.result : "(null)", val->u.integer.value);
             break;
         default:
             assert(0);
