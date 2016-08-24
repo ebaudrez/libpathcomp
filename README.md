@@ -793,8 +793,8 @@ ordering the cache directory first.
         free(path);
     }
 
-You can also use pathcomp_yield() and pathcomp_next() in a loop. However, unlike
-pathcomp_find(), these functions do not automatically advance to the next
+You can also use pathcomp_yield() and pathcomp_mkdir() in a loop. However,
+unlike pathcomp_find(), these functions do not automatically advance to the next
 combination. You need to iterate manually using pathcomp_next(), and check for
 the end of the iteration with pathcomp_done().
 
