@@ -118,9 +118,10 @@ static void
 test_set_add_int(void)
 {
     pathcomp_t *c;
+    int i;
     ok(c = pathcomp_new("int"));
     pathcomp_set(c, "val", "lua { return 'person' .. self.n }");
-    for (int i = 0; i < 5; ++i) pathcomp_add_int(c, "n", i);
+    for (i = 0; i < 5; ++i) pathcomp_add_int(c, "n", i);
     list_t *got = NULL;
     for (;;) {
         got = list_push(got, pathcomp_eval(c, "val"));
