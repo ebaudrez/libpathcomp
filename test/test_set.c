@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Edward Baudrez <edward.baudrez@gmail.com>
+ * Copyright (C) 2015, 2016 Edward Baudrez <edward.baudrez@gmail.com>
  * This file is part of Libpathcomp.
  *
  * Libpathcomp is free software; you can redistribute it and/or modify
