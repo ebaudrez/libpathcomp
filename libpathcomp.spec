@@ -14,7 +14,7 @@
 #
 
 Name: libpathcomp
-Version: 0.2
+Version: 0.3
 Release: 1
 %define lib_name libpathcomp
 %define so_version 1
@@ -158,7 +158,7 @@ make check %{?_smp_mflags} || (cat ./test/test-suite.log && false)
 
 %files -n %lib_name%so_version
 %defattr(-, root, root)
-%{_libdir}/libpathcomp.so.1.0.0
+%{_libdir}/libpathcomp.so.1.1.0
 %{_libdir}/libpathcomp.so.1
 
 %files devel
