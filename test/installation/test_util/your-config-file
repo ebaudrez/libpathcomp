@@ -1,0 +1,21 @@
+[gerb.archive]
+    root       = /mnt/tsunami/gerb-reproc/Archive
+    extension  = lua { return instrument == 'GL' and '.hdf' or '.hdf.gz' }
+    yyyy       = lua { return string.sub(self.slot,  1,  4) }
+    mmdd       = lua { return string.sub(self.slot,  5,  8) }
+    hhmm       = lua { return string.sub(self.slot, 10, 13) }
+    ss         = lua { return string.sub(self.slot, 14, 15) }
+    hhmmss     = lua { return self.hhmm .. self.ss }
+    prefix     = lua { return string.format('%s_%s_L%s_%s_%s', self.instrument, self.imager, self.level, self.resolution, self.product) }
+    filename   = lua { return string.format('%s_%s%s_%s_%s%s', self.prefix, self.yyyy, self.mmdd, self.hhmmss, self.version, self.extension) }
+    compose    = lua { return string.format('%s/%s/%s/%s/%s/%s', self.instrument, self.imager, self.prefix, self.yyyy, self.mmdd, self.filename) }
+
+[your-name-here]
+    copy-from  = gerb.archive
+    instrument = G1
+    imager     = SEV2
+    resolution = BARG
+    level      = 20
+    product    = SOL_M15_R50
+    version    = V006
+

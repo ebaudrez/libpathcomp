@@ -49,6 +49,7 @@ AC_CONFIG_FILES([Makefile
                  include/Makefile
                  src/Makefile
                  test/Makefile
+                 test/installation/Makefile
                  libpathcomp.pc
                  Doxyfile])
 AC_OUTPUT

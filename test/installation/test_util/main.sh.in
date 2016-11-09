@@ -1,0 +1,2 @@
+#!/bin/bash -ex
+@PATHCOMP_BIN@ -f your-config-file -c your-name-here slot=20130209_124500

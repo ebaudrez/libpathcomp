@@ -1,0 +1,4 @@
+AM_CFLAGS = $(PATHCOMP_CFLAGS)
+LDADD = $(PATHCOMP_LIBS)
+bin_PROGRAMS = main
+TESTS = test_main.sh

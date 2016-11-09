@@ -1,3 +1,4 @@
+SUBDIRS = . installation
 check_PROGRAMS = test_buf test_cf test_list test_value test_att test_string \
                  test_lua test_yield test_set test_find test_mkdir test_empty \
                  test_file test_glob test_sections test_clone test_usage
