@@ -77,12 +77,11 @@ test_lua(void)
      * metatable, but this functionality is tested in test_lua.c */
 }
 
-#define STRINGIFY_HELPER(n) #n
-#define STRINGIFY(n) STRINGIFY_HELPER(n)
 static void
 test_int(void)
 {
     value_t *val;
+    int converted;
     ok(val = value_new_int(123));
     cmp_ok(val->type, "==", VALUE_INT);
     is(value_eval(val, NULL, NULL), "123");
@@ -94,13 +93,15 @@ test_int(void)
     ok(val = value_new_int(INT_MAX));
     cmp_ok(val->type, "==", VALUE_INT);
     cmp_ok(val->source.integer, "==", INT_MAX);
-    is(value_eval(val, NULL, NULL), STRINGIFY(INT_MAX));
+    /* do not stringify INT_MAX as it may be a hexadecimal constant */
+    converted = atoi(value_eval(val, NULL, NULL));
+    cmp_ok(converted, "==", INT_MAX);
     value_free(val);
     ok(val = value_new_int(INT_MIN));
     cmp_ok(val->type, "==", VALUE_INT);
     cmp_ok(val->source.integer, "==", INT_MIN);
     /* cannot stringify INT_MIN as it is not a literal */
-    int converted = atoi(value_eval(val, NULL, NULL));
+    converted = atoi(value_eval(val, NULL, NULL));
     cmp_ok(converted, "==", INT_MIN);
     value_free(val);
     ok(val = value_new_int(5001));

@@ -87,12 +87,11 @@ test_callbacks(void)
     pathcomp_free(c);
 }
 
-#define STRINGIFY_HELPER(n) #n
-#define STRINGIFY(n) STRINGIFY_HELPER(n)
 static void
 test_int(void)
 {
     pathcomp_t *c = NULL;
+    buf_t buf;
     ok(c = pathcomp_new("test.int"));
     pathcomp_set_int(c, "val", 15);
     is(pathcomp_eval_nocopy(c, "plus4"), "19");
@@ -101,10 +100,13 @@ test_int(void)
     is(pathcomp_eval_nocopy(c, "plus4"), "-11");
     is(pathcomp_eval_nocopy(c, "concat"), "concat-15");
     pathcomp_set_int(c, "val", INT_MAX);
-    is(pathcomp_eval_nocopy(c, "concat"), "concat" STRINGIFY(INT_MAX));
+    /* do not stringify INT_MAX as it may be a hexadecimal constant */
+    buf_init(&buf, 0);
+    buf_addf(&buf, "concat%d", INT_MAX);
+    is(pathcomp_eval_nocopy(c, "concat"), buf.buf);
+    buf_release(&buf);
     pathcomp_set_int(c, "val", INT_MIN);
     /* cannot stringify INT_MIN as it's an expression */
-    buf_t buf;
     buf_init(&buf, 0);
     buf_addf(&buf, "concat%d", INT_MIN);
     is(pathcomp_eval_nocopy(c, "concat"), buf.buf);
