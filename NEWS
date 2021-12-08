@@ -1,3 +1,12 @@
+0.4     2021-12-08      Edward Baudrez <edward.baudrez@gmail.com>
+
+Other changes:
+
+	* Tests: Added installation checks (‘make installcheck’).
+
+	* Tests: Fixed two tests that failed when ‘INT_MAX’ is a hexadecimal
+	constant.
+
 0.3	2016-10-10	Edward Baudrez <edward.baudrez@gmail.com>
 
 New features:

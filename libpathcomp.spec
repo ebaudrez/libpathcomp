@@ -14,7 +14,7 @@
 #
 
 Name: libpathcomp
-Version: 0.3
+Version: 0.4
 Release: 1
 %define lib_name libpathcomp
 %define so_version 1
