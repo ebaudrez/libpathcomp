@@ -948,4 +948,4 @@ with Libpathcomp; if not, see <http://www.gnu.org/licenses/>.
 
 [Lua]: http://www.lua.org
 
-<!--- vim:set filetype=mkd textwidth=80 softtabstop=4 shiftwidth=4 expandtab: -->
+<!--- vim:set textwidth=80 softtabstop=4 shiftwidth=4 expandtab: -->
